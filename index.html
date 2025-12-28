@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="LEXORA - هوشمندترین اپلیکیشن یادگیری لغات انگلیسی">
+    
+    <title>LEXORA | لکسورا</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /**
+         * ╔═══════════════════════════════════════════════════════════════╗
+         * ║                      LEXORA v1.0.0                            ║
+         * ║   👨‍💻 طراح و برنامه‌نویس: محمد عباسی                           ║
+         * ║   🧠 Algorithm: FSRS-4.5                                      ║
+         * ╚═══════════════════════════════════════════════════════════════╝
+         */
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --brand-primary: #6366f1;
+            --brand-secondary: #8b5cf6;
+            --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --bg-card: #16161f;
+            --bg-card-hover: #1e1e2a;
+            --bg-elevated: #1f1f2a;
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #71717a;
+            --text-muted: #52525b;
+            
+            --accent-primary: #6366f1;
+            --accent-primary-hover: #818cf8;
+            --accent-primary-light: rgba(99, 102, 241, 0.12);
+            --accent-primary-glow: rgba(99, 102, 241, 0.4);
+            
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.12);
+            --warning: #f59e0b;
+            --warning-light: rgba(245, 158, 11, 0.12);
+            --error: #ef4444;
+            --error-light: rgba(239, 68, 68, 0.12);
+            --info: #3b82f6;
+            --info-light: rgba(59, 130, 246, 0.12);
+            
+            --border-primary: rgba(255, 255, 255, 0.06);
+            --border-secondary: rgba(255, 255, 255, 0.1);
+            --border-accent: rgba(99, 102, 241, 0.3);
+            
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 30px var(--accent-primary-glow);
+            --shadow-glow-sm: 0 0 15px var(--accent-primary-glow);
+            
+            --font-primary: 'Vazirmatn', system-ui, sans-serif;
+            --font-mono: 'SF Mono', monospace;
+            
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+            --text-5xl: 3rem;
+            
+            --font-normal: 400;
+            --font-medium: 500;
+            --font-semibold: 600;
+            --font-bold: 700;
+            --font-extrabold: 800;
+            
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.25rem;
+            --radius-full: 9999px;
+            
+            --duration-150: 150ms;
+            --duration-200: 200ms;
+            --duration-300: 300ms;
+            --ease-out: cubic-bezier(0, 0, 0.2, 1);
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            
+            --z-sticky: 200;
+            --z-fixed: 300;
+            --z-modal: 500;
+            --z-toast: 800;
+            
+            --max-width: 430px;
+            --header-height: 56px;
+            --tabbar-height: 64px;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #fafafa;
+            --bg-secondary: #f4f4f5;
+            --bg-tertiary: #e4e4e7;
+            --bg-card: #ffffff;
+            --bg-card-hover: #fafafa;
+            --bg-elevated: #ffffff;
+            --text-primary: #18181b;
+            --text-secondary: #52525b;
+            --text-tertiary: #71717a;
+            --text-muted: #a1a1aa;
+            --accent-primary: #4f46e5;
+            --border-primary: rgba(0, 0, 0, 0.06);
+            --border-secondary: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            font-size: var(--text-base);
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .en {
+            font-family: system-ui, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        #app {
+            max-width: var(--max-width);
+            min-height: 100vh;
+            min-height: 100dvh;
+            margin: 0 auto;
+            background-color: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        @media (min-width: 431px) {
+            #app {
+                border-left: 1px solid var(--border-primary);
+                border-right: 1px solid var(--border-primary);
+            }
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+            height: var(--header-height);
+            padding: 0 var(--space-4);
+            padding-top: var(--safe-top);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--brand-gradient);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-bold);
+            font-size: var(--text-lg);
+            color: white;
+            box-shadow: var(--shadow-glow-sm);
+        }
+
+        .header-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .page {
+            display: none;
+            padding: var(--space-4);
+            padding-bottom: calc(var(--tabbar-height) + var(--safe-bottom) + var(--space-4));
+            animation: fadeIn var(--duration-300) var(--ease-out);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: var(--max-width);
+            height: calc(var(--tabbar-height) + var(--safe-bottom));
+            padding-bottom: var(--safe-bottom);
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: var(--z-fixed);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-3);
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all var(--duration-200) var(--ease-out);
+            border-radius: var(--radius-xl);
+            min-width: 60px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .tab-item:active { transform: scale(0.92); }
+        .tab-item.active { color: var(--accent-primary); }
+        .tab-item.active .tab-icon { transform: scale(1.1); }
+
+        .tab-icon {
+            font-size: 24px;
+            transition: transform var(--duration-200) var(--ease-bounce);
+        }
+
+        .tab-label {
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+        }
+
+        .tab-item-add { margin-top: -20px; }
+
+        .tab-item-add .tab-icon-wrapper {
+            width: 52px;
+            height: 52px;
+            background: var(--brand-gradient);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .tab-item-add:active .tab-icon-wrapper { transform: scale(0.9); }
+        .tab-item-add .tab-icon { color: white; font-size: 28px; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-5);
+            font-family: var(--font-primary);
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            border: none;
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            transition: all var(--duration-200) var(--ease-out);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active { transform: scale(0.96); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-primary {
+            background: var(--brand-gradient);
+            color: white;
+            box-shadow: var(--shadow-md), var(--shadow-glow-sm);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-secondary);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: var(--radius-full);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-sm { padding: var(--space-2) var(--space-4); font-size: var(--text-sm); }
+        .btn-lg { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
+        .btn-block { width: 100%; }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-5);
+        }
+
+        .card-interactive {
+            cursor: pointer;
+            transition: all var(--duration-200) var(--ease-out);
+        }
+
+        .card-interactive:hover {
+            border-color: var(--border-secondary);
+            background: var(--bg-card-hover);
+        }
+
+        .card-interactive:active { transform: scale(0.98); }
+
+        .streak-card {
+            background: var(--brand-gradient);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-5);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .streak-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .streak-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+
+        .streak-title { font-size: var(--text-lg); font-weight: var(--font-semibold); opacity: 0.9; }
+        .streak-badge {
+            background: rgba(255,255,255,0.2);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+        }
+
+        .streak-value { font-size: var(--text-5xl); font-weight: var(--font-extrabold); line-height: 1; }
+        .streak-label { font-size: var(--text-sm); opacity: 0.8; margin-top: var(--space-1); }
+
+        .streak-progress { margin-top: var(--space-4); }
+        .streak-progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        .streak-progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: var(--radius-full);
+            transition: width var(--duration-300);
+        }
+        .streak-progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--space-2);
+            font-size: var(--text-xs);
+            opacity: 0.8;
+        }
+
+        .review-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-5);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+
+        .review-title { font-size: var(--text-lg); font-weight: var(--font-semibold); }
+        .review-count { font-size: var(--text-sm); color: var(--text-tertiary); }
+
+        .review-stats {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .review-stat {
+            flex: 1;
+            text-align: center;
+            padding: var(--space-3);
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-xl);
+        }
+
+        .review-stat-value { font-size: var(--text-xl); font-weight: var(--font-bold); }
+        .review-stat-label { font-size: var(--text-xs); color: var(--text-tertiary); margin-top: var(--space-1); }
+
+        .review-stat.new .review-stat-value { color: var(--info); }
+        .review-stat.learning .review-stat-value { color: var(--warning); }
+        .review-stat.review .review-stat-value { color: var(--success); }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-4);
+            text-align: center;
+        }
+
+        .stat-icon { font-size: 28px; margin-bottom: var(--space-2); }
+        .stat-value { font-size: var(--text-2xl); font-weight: var(--font-bold); }
+        .stat-label { font-size: var(--text-xs); color: var(--text-tertiary); margin-top: var(--space-1); }
+
+        .deck-list { display: flex; flex-direction: column; gap: var(--space-3); }
+
+        .deck-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            transition: all var(--duration-200);
+        }
+
+        .deck-card:hover { background: var(--bg-card-hover); }
+        .deck-card:active { transform: scale(0.98); }
+
+        .deck-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-primary-light);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .deck-info { flex: 1; min-width: 0; }
+        .deck-name { font-weight: var(--font-semibold); margin-bottom: var(--space-1); }
+        .deck-meta { font-size: var(--text-sm); color: var(--text-tertiary); }
+
+        .deck-progress { width: 60px; }
+        .deck-progress-value { font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--accent-primary); }
+
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-top: var(--space-1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--brand-gradient);
+            border-radius: var(--radius-full);
+        }
+
+        .section { margin-bottom: var(--space-6); }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        .section-title { font-size: var(--text-lg); font-weight: var(--font-semibold); }
+        .section-action { font-size: var(--text-sm); color: var(--accent-primary); cursor: pointer; }
+
+        .input-group { margin-bottom: var(--space-4); }
+        .input-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            font-family: var(--font-primary);
+            font-size: var(--text-base);
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            outline: none;
+            transition: all var(--duration-200);
+        }
+
+        .input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-primary-light);
+        }
+
+        .input::placeholder { color: var(--text-muted); }
+
+        .input-en {
+            font-family: system-ui, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+
+        textarea.input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: calc(var(--safe-top) + var(--space-4));
+            left: var(--space-4);
+            right: var(--space-4);
+            z-index: var(--z-toast);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+            pointer-events: none;
+        }
+
+        .toast {
+            max-width: var(--max-width);
+            width: 100%;
+            padding: var(--space-4);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-secondary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            pointer-events: auto;
+            animation: slideDown var(--duration-300) var(--ease-out);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast-icon { font-size: 20px; }
+        .toast-message { flex: 1; font-size: var(--text-sm); }
+
+        .toast-success { border-color: var(--success); }
+        .toast-error { border-color: var(--error); }
+        .toast-warning { border-color: var(--warning); }
+        .toast-info { border-color: var(--info); }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: var(--z-modal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--duration-300);
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal {
+            width: 100%;
+            max-width: 400px;
+            max-height: 85vh;
+            background: var(--bg-card);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform var(--duration-300);
+        }
+
+        .modal-overlay.active .modal { transform: scale(1); }
+
+        .modal-header {
+            padding: var(--space-5);
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title { font-size: var(--text-lg); font-weight: var(--font-semibold); }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: var(--space-5);
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .modal-footer {
+            padding: var(--space-4) var(--space-5);
+            border-top: 1px solid var(--border-primary);
+            display: flex;
+            gap: var(--space-3);
+            justify-content: flex-end;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--space-12) var(--space-4);
+        }
+
+        .empty-icon { font-size: 64px; margin-bottom: var(--space-4); opacity: 0.5; }
+        .empty-title { font-size: var(--text-lg); font-weight: var(--font-semibold); margin-bottom: var(--space-2); }
+        .empty-text { color: var(--text-secondary); margin-bottom: var(--space-6); }
+
+        .settings-group {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            margin-bottom: var(--space-4);
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-primary);
+            cursor: pointer;
+        }
+
+        .settings-item:last-child { border-bottom: none; }
+        .settings-item:active { background: var(--bg-card-hover); }
+
+        .settings-item-info { display: flex; align-items: center; gap: var(--space-3); }
+        .settings-item-icon { font-size: 24px; }
+        .settings-item-label { font-weight: var(--font-medium); }
+        .settings-item-value { color: var(--text-tertiary); font-size: var(--text-sm); }
+
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: background var(--duration-200);
+        }
+
+        .toggle.active { background: var(--accent-primary); }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: var(--radius-full);
+            transition: transform var(--duration-200);
+        }
+
+        .toggle.active::after { transform: translateX(22px); }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-3);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            border-radius: var(--radius-full);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .badge-primary { background: var(--accent-primary-light); color: var(--accent-primary); }
+        .badge-success { background: var(--success-light); color: var(--success); }
+        .badge-warning { background: var(--warning-light); color: var(--warning); }
+        .badge-error { background: var(--error-light); color: var(--error); }
+
+        #page-review {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - var(--header-height) - var(--safe-top));
+        }
+
+        .review-session-header {
+            padding: var(--space-4);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-3);
+        }
+
+        .review-progress-info { flex: 1; }
+
+        .review-stats-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .review-remaining strong {
+            color: var(--text-primary);
+            font-weight: var(--font-bold);
+        }
+
+        .review-progress-bar {
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .review-progress-fill {
+            height: 100%;
+            background: var(--brand-gradient);
+            transition: width var(--duration-300);
+        }
+
+        .flashcard-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+            overflow-y: auto;
+        }
+
+        .flashcard-loading, .flashcard-empty { text-align: center; }
+
+        .flashcard {
+            width: 100%;
+            max-width: 500px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            animation: cardSlideIn var(--duration-300) var(--ease-out);
+        }
+
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .flashcard-content { padding: var(--space-6); }
+
+        .flashcard-badge {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: var(--space-4);
+        }
+
+        .flashcard-main {
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .flashcard-word {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+            word-break: break-word;
+        }
+
+        .flashcard-pronunciation {
+            font-family: var(--font-mono);
+            font-size: var(--text-lg);
+            color: var(--text-tertiary);
+            direction: ltr;
+        }
+
+        .flashcard-divider {
+            height: 1px;
+            background: var(--border-primary);
+            margin: var(--space-6) 0;
+        }
+
+        .flashcard-answer {
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+
+        .flashcard-meaning {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .flashcard-example {
+            background: var(--bg-tertiary);
+            padding: var(--space-4);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-4);
+        }
+
+        .flashcard-example-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .flashcard-example-text {
+            font-size: var(--text-base);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .flashcard-mnemonic {
+            background: var(--accent-primary-light);
+            padding: var(--space-4);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-accent);
+        }
+
+        .flashcard-mnemonic-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--accent-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .flashcard-mnemonic-text {
+            font-size: var(--text-base);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .flashcard-type-answer { margin-bottom: var(--space-4); }
+
+        .type-answer-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+            text-align: center;
+        }
+
+        .type-answer-input {
+            width: 100%;
+            padding: var(--space-4);
+            font-size: var(--text-xl);
+            text-align: center;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            color: var(--text-primary);
+            outline: none;
+            transition: all var(--duration-200);
+        }
+
+        .type-answer-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-primary-light);
+        }
+
+        .type-answer-input.correct {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+
+        .type-answer-input.incorrect {
+            border-color: var(--error);
+            background: var(--error-light);
+        }
+
+        .flashcard-actions { text-align: center; }
+        .flashcard-hint { margin-top: var(--space-2); }
+
+        .flashcard-rating { margin-top: var(--space-6); }
+
+        .rating-title {
+            text-align: center;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+        }
+
+        .rating-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-2);
+            margin-bottom: var(--space-2);
+        }
+
+        .rating-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-3) var(--space-2);
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            transition: all var(--duration-200);
+            font-family: var(--font-primary);
+        }
+
+        .rating-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .rating-btn:active { transform: translateY(0); }
+
+        .rating-label {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+        }
+
+        .rating-interval {
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+        }
+
+        .rating-again { border-color: var(--error); }
+        .rating-again:hover {
+            background: var(--error-light);
+            border-color: var(--error);
+        }
+
+        .rating-hard { border-color: var(--warning); }
+        .rating-hard:hover {
+            background: var(--warning-light);
+            border-color: var(--warning);
+        }
+
+        .rating-good { border-color: var(--success); }
+        .rating-good:hover {
+            background: var(--success-light);
+            border-color: var(--success);
+        }
+
+        .rating-easy { border-color: var(--info); }
+        .rating-easy:hover {
+            background: var(--info-light);
+            border-color: var(--info);
+        }
+
+        .rating-hint { text-align: center; }
+
+        .session-complete {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-4);
+        }
+
+        .session-complete-content {
+            text-align: center;
+            max-width: 400px;
+            animation: fadeIn var(--duration-300);
+        }
+
+        .session-complete-icon {
+            font-size: 80px;
+            margin-bottom: var(--space-4);
+        }
+
+        .session-complete-title {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+
+        .session-complete-subtitle {
+            font-size: var(--text-base);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-8);
+        }
+
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .session-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-4);
+        }
+
+        .session-stat-value {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--accent-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .session-stat-label {
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+        }
+
+        @media (max-width: 400px) {
+            .rating-buttons { grid-template-columns: repeat(2, 1fr); }
+            .flashcard-word { font-size: var(--text-3xl); }
+            .session-stats { grid-template-columns: 1fr; }
+        }
+
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: var(--space-2); }
+        .gap-3 { gap: var(--space-3); }
+        .gap-4 { gap: var(--space-4); }
+        .w-full { width: 100%; }
+        .text-center { text-align: center; }
+        .text-sm { font-size: var(--text-sm); }
+        .text-xs { font-size: var(--text-xs); }
+        .text-lg { font-size: var(--text-lg); }
+        .text-xl { font-size: var(--text-xl); }
+        .text-2xl { font-size: var(--text-2xl); }
+        .font-medium { font-weight: var(--font-medium); }
+        .font-semibold { font-weight: var(--font-semibold); }
+        .font-bold { font-weight: var(--font-bold); }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-tertiary { color: var(--text-tertiary); }
+        .text-muted { color: var(--text-muted); }
+        .text-accent { color: var(--accent-primary); }
+        .text-success { color: var(--success); }
+        .text-error { color: var(--error); }
+        .mt-2 { margin-top: var(--space-2); }
+        .mt-3 { margin-top: var(--space-3); }
+        .mt-4 { margin-top: var(--space-4); }
+        .mt-6 { margin-top: var(--space-6); }
+        .mb-2 { margin-bottom: var(--space-2); }
+        .mb-4 { margin-bottom: var(--space-4); }
+        .mb-6 { margin-bottom: var(--space-6); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: var(--radius-full); }
+
+        ::selection { background: var(--accent-primary); color: white; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="toast-container" id="toastContainer"></div>
+
+        <header class="header">
+            <div class="header-brand">
+                <div class="header-logo">L</div>
+                <span class="header-title">LEXORA</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" id="themeToggle" title="تغییر تم">🌙</button>
+            </div>
+        </header>
+
+        <main class="main" id="mainContent">
+            
+            <div class="page active" id="page-home">
+                <div class="section">
+                    <p class="text-secondary mb-2">سلام! 👋</p>
+                    <h1 class="text-2xl font-bold" id="welcomeTitle">به LEXORA خوش آمدید</h1>
+                </div>
+
+                <div class="section">
+                    <div class="streak-card">
+                        <div class="streak-header">
+                            <span class="streak-title">🔥 روزهای متوالی</span>
+                            <span class="streak-badge">رکورد: <span id="streakRecord">۰</span> روز</span>
+                        </div>
+                        <div class="streak-value" id="streakValue">۰</div>
+                        <div class="streak-label">روز متوالی یادگیری</div>
+                        <div class="streak-progress">
+                            <div class="streak-progress-bar">
+                                <div class="streak-progress-fill" id="dailyProgressBar" style="width: 0%"></div>
+                            </div>
+                            <div class="streak-progress-text">
+                                <span id="dailyProgressText">۰/۲۰ لغت امروز</span>
+                                <span id="dailyProgressPercent">۰٪</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span class="review-title">📖 مرور امروز</span>
+                            <span class="review-count" id="totalDueCount">۰ کارت</span>
+                        </div>
+                        <div class="review-stats">
+                            <div class="review-stat new">
+                                <div class="review-stat-value" id="newCount">۰</div>
+                                <div class="review-stat-label">جدید</div>
+                            </div>
+                            <div class="review-stat learning">
+                                <div class="review-stat-value" id="learningCount">۰</div>
+                                <div class="review-stat-label">در حال یادگیری</div>
+                            </div>
+                            <div class="review-stat review">
+                                <div class="review-stat-value" id="reviewCount">۰</div>
+                                <div class="review-stat-label">مرور</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block btn-lg" id="startReviewBtn">
+                            🚀 شروع مرور
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <span class="section-title">📊 آمار کلی</span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-value" id="totalCards">۰</div>
+                            <div class="stat-label">کل لغات</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-value" id="learnedCards">۰</div>
+                            <div class="stat-label">یادگرفته</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⏱️</div>
+                            <div class="stat-value" id="studyTime">۰h</div>
+                            <div class="stat-label">زمان مطالعه</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-value" id="accuracy">۰٪</div>
+                            <div class="stat-label">دقت</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <span class="section-title">📚 مجموعه‌های من</span>
+                        <span class="section-action" onclick="Router.go('library')">مشاهده همه</span>
+                    </div>
+                    <div class="deck-list" id="homeDecks"></div>
+                </div>
+
+                <div class="section text-center mt-6">
+                    <p class="text-muted text-sm">
+                        طراحی و توسعه: <strong class="text-secondary">محمد عباسی</strong>
+                    </p>
+                    <p class="text-muted text-xs mt-2">LEXORA v1.0.0</p>
+                </div>
+            </div>
+
+            <div class="page" id="page-library">
+                <div class="section">
+                    <h1 class="text-2xl font-bold mb-2">📚 کتابخانه</h1>
+                    <p class="text-secondary">مجموعه‌های لغات شما</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <span class="section-title">مجموعه‌های آماده</span>
+                    </div>
+                    <div class="deck-list" id="presetDecks"></div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <span class="section-title">مجموعه‌های من</span>
+                        <button class="btn btn-sm btn-secondary" onclick="App.showCreateDeckModal()">
+                            ➕ جدید
+                        </button>
+                    </div>
+                    <div class="deck-list" id="myDecks"></div>
+                </div>
+            </div>
+
+            <div class="page" id="page-add">
+                <div class="section">
+                    <h1 class="text-2xl font-bold mb-2">➕ افزودن لغت</h1>
+                    <p class="text-secondary">لغت جدید به مجموعه اضافه کنید</p>
+                </div>
+
+                <div class="card">
+                    <div class="input-group">
+                        <label class="input-label">کلمه انگلیسی *</label>
+                        <input type="text" class="input input-en" id="addWord" placeholder="مثال: ubiquitous">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">تلفظ (IPA)</label>
+                        <input type="text" class="input input-en" id="addPronunciation" placeholder="مثال: /juːˈbɪkwɪtəs/">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">معنی فارسی *</label>
+                        <input type="text" class="input" id="addMeaning" placeholder="مثال: همه‌جا حاضر، فراگیر">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">جمله نمونه</label>
+                        <textarea class="input input-en" id="addExample" placeholder="مثال: Smartphones have become ubiquitous."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">یادیار (Mnemonic)</label>
+                        <textarea class="input" id="addMnemonic" placeholder="یک داستان یا تصویر ذهنی برای به خاطر سپردن..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">انتخاب مجموعه</label>
+                        <select class="input" id="addDeck">
+                            <option value="">انتخاب کنید...</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary btn-block btn-lg mt-4" onclick="App.addCard()">
+                        ✅ ذخیره لغت
+                    </button>
+                </div>
+            </div>
+
+            <div class="page" id="page-stats">
+                <div class="section">
+                    <h1 class="text-2xl font-bold mb-2">📊 آمار و پیشرفت</h1>
+                    <p class="text-secondary">عملکرد یادگیری شما</p>
+                </div>
+
+                <div class="section">
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📚</div>
+                            <div class="stat-value" id="statTotalCards">۰</div>
+                            <div class="stat-label">کل لغات</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-value" id="statMastered">۰</div>
+                            <div class="stat-label">تسلط کامل</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔄</div>
+                            <div class="stat-value" id="statReviewed">۰</div>
+                            <div class="stat-label">مرور شده</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-value" id="statStreak">۰</div>
+                            <div class="stat-label">روز متوالی</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="card">
+                        <div class="section-header mb-4">
+                            <span class="section-title">⏱️ زمان مطالعه</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-2xl font-bold" id="statTodayTime">۰ دقیقه</div>
+                                <div class="text-sm text-tertiary">امروز</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold" id="statWeekTime">۰ ساعت</div>
+                                <div class="text-sm text-tertiary">این هفته</div>
+                            </div>
+                            <div style="text-align: left;">
+                                <div class="text-2xl font-bold" id="statTotalTime">۰ ساعت</div>
+                                <div class="text-sm text-tertiary">کل</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="card">
+                        <div class="section-header mb-4">
+                            <span class="section-title">🎯 نرخ موفقیت</span>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-accent" id="statAccuracy">۰٪</div>
+                            <div class="text-sm text-tertiary mt-2">میانگین پاسخ‌های صحیح</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page" id="page-settings">
+                <div class="section">
+                    <h1 class="text-2xl font-bold mb-2">⚙️ تنظیمات</h1>
+                    <p class="text-secondary">شخصی‌سازی LEXORA</p>
+                </div>
+
+                <div class="section">
+                    <div class="section-title mb-4">🎨 ظاهر</div>
+                    <div class="settings-group">
+                        <div class="settings-item" onclick="Theme.toggle()">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">🌙</span>
+                                <span class="settings-item-label">تم تاریک</span>
+                            </div>
+                            <div class="toggle" id="darkModeToggle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title mb-4">📖 یادگیری</div>
+                    <div class="settings-group">
+                        <div class="settings-item">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">🎯</span>
+                                <span class="settings-item-label">هدف روزانه</span>
+                            </div>
+                            <span class="settings-item-value" id="dailyGoalValue">۲۰ لغت</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">🆕</span>
+                                <span class="settings-item-label">کارت جدید روزانه</span>
+                            </div>
+                            <span class="settings-item-value" id="newCardsValue">۱۰ کارت</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title mb-4">💾 داده‌ها</div>
+                    <div class="settings-group">
+                        <div class="settings-item" onclick="App.exportData()">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">📤</span>
+                                <span class="settings-item-label">خروجی گرفتن</span>
+                            </div>
+                            <span class="settings-item-value">Export</span>
+                        </div>
+                        <div class="settings-item" onclick="App.importData()">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">📥</span>
+                                <span class="settings-item-label">وارد کردن</span>
+                            </div>
+                            <span class="settings-item-value">Import</span>
+                        </div>
+                        <div class="settings-item" onclick="App.clearData()">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">🗑️</span>
+                                <span class="settings-item-label">پاک کردن همه داده‌ها</span>
+                            </div>
+                            <span class="settings-item-value text-error">حذف</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title mb-4">ℹ️ درباره</div>
+                    <div class="settings-group">
+                        <div class="settings-item">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">📱</span>
+                                <span class="settings-item-label">نسخه</span>
+                            </div>
+                            <span class="settings-item-value">1.0.0</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">👨‍💻</span>
+                                <span class="settings-item-label">توسعه‌دهنده</span>
+                            </div>
+                            <span class="settings-item-value">محمد عباسی</span>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-item-info">
+                                <span class="settings-item-icon">🧠</span>
+                                <span class="settings-item-label">الگوریتم</span>
+                            </div>
+                            <span class="settings-item-value">FSRS-4.5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page" id="page-review">
+                <div class="review-session-header">
+                    <div class="review-progress-info">
+                        <div class="review-stats-bar">
+                            <span class="review-remaining">باقی‌مانده: <strong id="cardsRemaining">۰</strong></span>
+                            <span class="review-timer">⏱️ <span id="sessionTimer">۰:۰۰</span></span>
+                        </div>
+                        <div class="review-progress-bar">
+                            <div class="review-progress-fill" id="reviewProgressBar"></div>
+                        </div>
+                    </div>
+                    <button class="btn-icon" onclick="Review.endSession()" title="پایان جلسه">✕</button>
+                </div>
+
+                <div class="flashcard-container" id="flashcardContainer">
+                    
+                    <div class="flashcard-loading" id="flashcardLoading">
+                        <p class="text-secondary mt-4">در حال بارگذاری...</p>
+                    </div>
+
+                    <div class="flashcard-empty hidden" id="flashcardEmpty">
+                        <div class="empty-state">
+                            <div class="empty-icon">🎉</div>
+                            <div class="empty-title">تمام شد!</div>
+                            <div class="empty-text">کارتی برای مرور امروز ندارید</div>
+                            <button class="btn btn-primary mt-4" onclick="Router.go('home')">بازگشت به خانه</button>
+                        </div>
+                    </div>
+
+                    <div class="flashcard hidden" id="flashcard">
+                        
+                        <div class="flashcard-content" id="cardFront">
+                            <div class="flashcard-badge">
+                                <span class="badge" id="cardStateBadge">جدید</span>
+                            </div>
+
+                            <div class="flashcard-main">
+                                <div class="flashcard-word en" id="cardWord">ubiquitous</div>
+                                <div class="flashcard-pronunciation" id="cardPronunciation">/juːˈbɪkwɪtəs/</div>
+                            </div>
+
+                            <div class="flashcard-type-answer hidden" id="typeAnswerSection">
+                                <div class="type-answer-label">معنی فارسی را بنویسید:</div>
+                                <input 
+                                    type="text" 
+                                    class="type-answer-input" 
+                                    id="typeAnswerInput"
+                                    placeholder="معنی..."
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                >
+                                <button class="btn btn-primary btn-block mt-3" onclick="Review.checkAnswer()">
+                                    بررسی پاسخ
+                                </button>
+                            </div>
+
+                            <div class="flashcard-actions" id="showAnswerSection">
+                                <button class="btn btn-secondary btn-lg btn-block" onclick="Review.showAnswer()">
+                                    نمایش پاسخ
+                                </button>
+                                <div class="flashcard-hint">
+                                    <small class="text-tertiary">یا Space بزنید</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard-content hidden" id="cardBack">
+                            <div class="flashcard-badge">
+                                <span class="badge badge-success" id="cardAnswerBadge">پاسخ</span>
+                            </div>
+
+                            <div class="flashcard-main">
+                                <div class="flashcard-word en" id="cardWordBack">ubiquitous</div>
+                                <div class="flashcard-pronunciation" id="cardPronunciationBack">/juːˈbɪkwɪtəs/</div>
+                            </div>
+
+                            <div class="flashcard-divider"></div>
+
+                            <div class="flashcard-answer">
+                                <div class="flashcard-meaning" id="cardMeaning">همه‌جا حاضر، فراگیر</div>
+                            </div>
+
+                            <div class="flashcard-example" id="cardExampleSection">
+                                <div class="flashcard-example-label">📝 مثال:</div>
+                                <div class="flashcard-example-text en" id="cardExample">
+                                    Smartphones have become ubiquitous in modern life.
+                                </div>
+                            </div>
+
+                            <div class="flashcard-mnemonic" id="cardMnemonicSection">
+                                <div class="flashcard-mnemonic-label">💡 یادیار:</div>
+                                <div class="flashcard-mnemonic-text" id="cardMnemonic">
+                                    تصور کنید که همه‌جا گوشی هوشمند می‌بینید!
+                                </div>
+                            </div>
+
+                            <div class="flashcard-rating">
+                                <div class="rating-title">چقدر این کارت را به خاطر آوردید؟</div>
+                                <div class="rating-buttons">
+                                    <button class="rating-btn rating-again" onclick="Review.rate(1)">
+                                        <span class="rating-label">دوباره</span>
+                                        <span class="rating-interval" id="intervalAgain">&lt;۱ دقیقه</span>
+                                    </button>
+                                    <button class="rating-btn rating-hard" onclick="Review.rate(2)">
+                                        <span class="rating-label">سخت</span>
+                                        <span class="rating-interval" id="intervalHard">۵ دقیقه</span>
+                                    </button>
+                                    <button class="rating-btn rating-good" onclick="Review.rate(3)">
+                                        <span class="rating-label">خوب</span>
+                                        <span class="rating-interval" id="intervalGood">۱۰ دقیقه</span>
+                                    </button>
+                                    <button class="rating-btn rating-easy" onclick="Review.rate(4)">
+                                        <span class="rating-label">آسان</span>
+                                        <span class="rating-interval" id="intervalEasy">۴ روز</span>
+                                    </button>
+                                </div>
+                                <div class="rating-hint">
+                                    <small class="text-tertiary">1️⃣ 2️⃣ 3️⃣ 4️⃣ یا Space برای "خوب"</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="session-complete hidden" id="sessionComplete">
+                    <div class="session-complete-content">
+                        <div class="session-complete-icon">🎉</div>
+                        <div class="session-complete-title">عالی بود!</div>
+                        <div class="session-complete-subtitle">جلسه مرور به پایان رسید</div>
+                        
+                        <div class="session-stats">
+                            <div class="session-stat">
+                                <div class="session-stat-value" id="sessionCardsReviewed">۰</div>
+                                <div class="session-stat-label">کارت مرور شده</div>
+                            </div>
+                            <div class="session-stat">
+                                <div class="session-stat-value" id="sessionTimeSpent">۰:۰۰</div>
+                                <div class="session-stat-label">زمان مطالعه</div>
+                            </div>
+                            <div class="session-stat">
+                                <div class="session-stat-value" id="sessionAccuracy">۰٪</div>
+                                <div class="session-stat-label">دقت</div>
+                            </div>
+                        </div>
+
+                        <div class="session-complete-actions">
+                            <button class="btn btn-primary btn-block btn-lg" onclick="Review.continueReview()">
+                                ادامه مرور
+                            </button>
+                            <button class="btn btn-secondary btn-block mt-3" onclick="Router.go('home')">
+                                بازگشت به خانه
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <nav class="tabbar">
+            <a class="tab-item active" data-page="home">
+                <span class="tab-icon">🏠</span>
+                <span class="tab-label">خانه</span>
+            </a>
+            <a class="tab-item" data-page="library">
+                <span class="tab-icon">📚</span>
+                <span class="tab-label">کتابخانه</span>
+            </a>
+            <a class="tab-item tab-item-add" data-page="add">
+                <div class="tab-icon-wrapper">
+                    <span class="tab-icon">➕</span>
+                </div>
+            </a>
+            <a class="tab-item" data-page="stats">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">آمار</span>
+            </a>
+            <a class="tab-item" data-page="settings">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-label">تنظیمات</span>
+            </a>
+        </nav>
+
+        <div class="modal-overlay" id="createDeckModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <span class="modal-title">➕ مجموعه جدید</span>
+                    <button class="modal-close" onclick="App.hideCreateDeckModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label class="input-label">نام مجموعه *</label>
+                        <input type="text" class="input" id="newDeckName" placeholder="مثال: لغات IELTS">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">توضیحات</label>
+                        <textarea class="input" id="newDeckDesc" placeholder="توضیح کوتاه..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">آیکون</label>
+                        <div class="flex gap-2" style="flex-wrap: wrap;">
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="📘">📘</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="📗">📗</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="📙">📙</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="📕">📕</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="📓">📓</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="📔">📔</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="📒">📒</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="🎯">🎯</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="💼">💼</button>
+                            <button class="btn btn-secondary btn-sm deck-icon-btn" data-icon="🎓">🎓</button>
+                        </div>
+                        <input type="hidden" id="newDeckIcon" value="📘">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="App.hideCreateDeckModal()">انصراف</button>
+                    <button class="btn btn-primary" onclick="App.createDeck()">ایجاد</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /**
+         * ╔═══════════════════════════════════════════════════════════════╗
+         * ║                      LEXORA v1.0.0                            ║
+         * ║                        لکسورا                                 ║
+         * ║                                                               ║
+         * ║   👨‍💻 طراح و برنامه‌نویس: محمد عباسی                           ║
+         * ║   🧠 Algorithm: FSRS-4.5                                      ║
+         * ╚═══════════════════════════════════════════════════════════════╝
+         */
+
+        const CONFIG = {
+            name: 'LEXORA',
+            version: '1.0.0',
+            developer: 'محمد عباسی',
+            dbName: 'lexora-db',
+            dbVersion: 1,
+            fsrs: {
+                w: [0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61],
+                requestRetention: 0.9,
+                maximumInterval: 36500,
+                easyBonus: 1.3,
+                hardInterval: 1.2
+            },
+            dailyGoal: 20,
+            newCardsPerDay: 10
+        };
+
+        const Utils = {
+            generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+            },
+            toPersian(num) {
+                const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+                return String(num).replace(/\d/g, d => persianDigits[d]);
+            },
+            formatNumber(num) {
+                return this.toPersian(num.toLocaleString('en-US'));
+            },
+            today() {
+                return new Date().toISOString().split('T')[0];
+            },
+            now() {
+                return Date.now();
+            },
+            daysBetween(date1, date2) {
+                const d1 = new Date(date1);
+                const d2 = new Date(date2);
+                return Math.floor((d2 - d1) / (1000 * 60 * 60 * 24));
+            },
+            clone(obj) {
+                return JSON.parse(JSON.stringify(obj));
+            }
+        };
+
+        const Toast = {
+            container: null,
+            init() {
+                this.container = document.getElementById('toastContainer');
+            },
+            show(message, type = 'info', duration = 3000) {
+                const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.innerHTML = `
+                    <span class="toast-icon">${icons[type]}</span>
+                    <span class="toast-message">${message}</span>
+                `;
+                this.container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-10px)';
+                    toast.style.transition = 'all 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            },
+            success(msg) { this.show(msg, 'success'); },
+            error(msg) { this.show(msg, 'error'); },
+            warning(msg) { this.show(msg, 'warning'); },
+            info(msg) { this.show(msg, 'info'); }
+        };
+
+        const Theme = {
+            current: 'dark',
+            init() {
+                const saved = localStorage.getItem('lexora-theme') || 'dark';
+                this.set(saved);
+            },
+            set(theme) {
+                this.current = theme;
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('lexora-theme', theme);
+                const meta = document.querySelector('meta[name="theme-color"]');
+                if (meta) meta.content = theme === 'dark' ? '#0a0a0f' : '#fafafa';
+                document.getElementById('themeToggle').textContent = theme === 'dark' ? '🌙' : '☀️';
+                this.updateToggle();
+            },
+            toggle() {
+                this.set(this.current === 'dark' ? 'light' : 'dark');
+                Toast.info(this.current === 'dark' ? 'تم تاریک فعال شد' : 'تم روشن فعال شد');
+            },
+            updateToggle() {
+                const toggle = document.getElementById('darkModeToggle');
+                if (toggle) {
+                    toggle.classList.toggle('active', this.current === 'dark');
+                }
+            }
+        };
+
+        const Router = {
+            currentPage: 'home',
+            init() {
+                document.querySelectorAll('.tab-item').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.go(tab.dataset.page);
+                    });
+                });
+                window.addEventListener('popstate', (e) => {
+                    if (e.state && e.state.page) {
+                        this.go(e.state.page, false);
+                    }
+                });
+                const hash = window.location.hash.slice(1) || 'home';
+                this.go(hash, false);
+            },
+            go(page, pushState = true) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                const targetPage = document.getElementById(`page-${page}`);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                    this.currentPage = page;
+                    document.querySelectorAll('.tab-item').forEach(tab => {
+                        tab.classList.toggle('active', tab.dataset.page === page);
+                    });
+                    if (pushState) {
+                        history.pushState({ page }, '', `#${page}`);
+                    }
+                    document.querySelector('.main').scrollTop = 0;
+                    this.onPageChange(page);
+                }
+            },
+            onPageChange(page) {
+                switch(page) {
+                    case 'home':
+                        App.updateHomeStats();
+                        break;
+                    case 'library':
+                        App.renderLibrary();
+                        break;
+                    case 'add':
+                        App.updateDeckSelect();
+                        break;
+                    case 'stats':
+                        App.updateStats();
+                        break;
+                    case 'settings':
+                        Theme.updateToggle();
+                        break;
+                }
+            }
+        };
+
+        const DB = {
+            db: null,
+            async init() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(CONFIG.dbName, CONFIG.dbVersion);
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        this.db = request.result;
+                        console.log('✅ Database connected');
+                        resolve(this.db);
+                    };
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('decks')) {
+                            const deckStore = db.createObjectStore('decks', { keyPath: 'id' });
+                            deckStore.createIndex('name', 'name', { unique: false });
+                            deckStore.createIndex('createdAt', 'createdAt', { unique: false });
+                        }
+                        if (!db.objectStoreNames.contains('cards')) {
+                            const cardStore = db.createObjectStore('cards', { keyPath: 'id' });
+                            cardStore.createIndex('deckId', 'deckId', { unique: false });
+                            cardStore.createIndex('due', 'due', { unique: false });
+                            cardStore.createIndex('state', 'state', { unique: false });
+                        }
+                        if (!db.objectStoreNames.contains('stats')) {
+                            db.createObjectStore('stats', { keyPath: 'date' });
+                        }
+                        if (!db.objectStoreNames.contains('settings')) {
+                            db.createObjectStore('settings', { keyPath: 'key' });
+                        }
+                        console.log('✅ Database schema created');
+                    };
+                });
+            },
+            async getAll(storeName) {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction(storeName, 'readonly');
+                    const store = tx.objectStore(storeName);
+                    const request = store.getAll();
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            },
+            async get(storeName, key) {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction(storeName, 'readonly');
+                    const store = tx.objectStore(storeName);
+                    const request = store.get(key);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            },
+            async put(storeName, data) {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction(storeName, 'readwrite');
+                    const store = tx.objectStore(storeName);
+                    const request = store.put(data);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            },
+            async delete(storeName, key) {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction(storeName, 'readwrite');
+                    const store = tx.objectStore(storeName);
+                    const request = store.delete(key);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            },
+            async clear(storeName) {
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction(storeName, 'readwrite');
+                    const store = tx.objectStore(storeName);
+                    const request = store.clear();
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        };
+
+        const FSRS = {
+            State: { New: 0, Learning: 1, Review: 2, Relearning: 3 },
+            Rating: { Again: 1, Hard: 2, Good: 3, Easy: 4 },
+            createCard() {
+                return {
+                    due: new Date(),
+                    stability: 0,
+                    difficulty: 0,
+                    elapsedDays: 0,
+                    scheduledDays: 0,
+                    reps: 0,
+                    lapses: 0,
+                    state: this.State.New,
+                    lastReview: null
+                };
+            },
+            initDifficulty(rating) {
+                const w = CONFIG.fsrs.w;
+                return Math.min(Math.max(w[4] - Math.exp(w[5] * (rating - 1)) + 1, 1), 10);
+            },
+            initStability(rating) {
+                const w = CONFIG.fsrs.w;
+                return Math.max(w[rating - 1], 0.1);
+            },
+            nextInterval(stability) {
+                const requestRetention = CONFIG.fsrs.requestRetention;
+                const maxInterval = CONFIG.fsrs.maximumInterval;
+                const interval = (stability / 0.9) * (Math.pow(requestRetention, 1 / -0.5) - 1);
+                return Math.min(Math.max(Math.round(interval), 1), maxInterval);
+            },
+            nextDifficulty(d, rating) {
+                const w = CONFIG.fsrs.w;
+                const nextD = d - w[6] * (rating - 3);
+                return Math.min(Math.max(this.meanReversion(w[4], nextD), 1), 10);
+            },
+            meanReversion(init, current) {
+                const w = CONFIG.fsrs.w;
+                return w[7] * init + (1 - w[7]) * current;
+            },
+            nextRecallStability(d, s, r, rating) {
+                const w = CONFIG.fsrs.w;
+                const hardPenalty = rating === this.Rating.Hard ? w[15] : 1;
+                const easyBonus = rating === this.Rating.Easy ? w[16] : 1;
+                return s * (1 + Math.exp(w[8]) * (11 - d) * Math.pow(s, -w[9]) * (Math.exp((1 - r) * w[10]) - 1) * hardPenalty * easyBonus);
+            },
+            nextForgetStability(d, s, r) {
+                const w = CONFIG.fsrs.w;
+                return w[11] * Math.pow(d, -w[12]) * (Math.pow(s + 1, w[13]) - 1) * Math.exp((1 - r) * w[14]);
+            },
+            getRetrievability(card) {
+                if (card.state === this.State.New) return 0;
+                const elapsedDays = (Date.now() - new Date(card.lastReview).getTime()) / (1000 * 60 * 60 * 24);
+                return Math.pow(1 + elapsedDays / (9 * card.stability), -1);
+            },
+            schedule(card, rating) {
+                const now = new Date();
+                const newCard = Utils.clone(card);
+                newCard.reps += 1;
+                newCard.lastReview = now.toISOString();
+                
+                if (card.state === this.State.New) {
+                    newCard.difficulty = this.initDifficulty(rating);
+                    newCard.stability = this.initStability(rating);
+                    if (rating === this.Rating.Again) {
+                        newCard.state = this.State.Learning;
+                        newCard.scheduledDays = 0;
+                        newCard.due = new Date(now.getTime() + 1 * 60 * 1000);
+                    } else if (rating === this.Rating.Hard) {
+                        newCard.state = this.State.Learning;
+                        newCard.scheduledDays = 0;
+                        newCard.due = new Date(now.getTime() + 5 * 60 * 1000);
+                    } else if (rating === this.Rating.Good) {
+                        newCard.state = this.State.Learning;
+                        newCard.scheduledDays = 0;
+                        newCard.due = new Date(now.getTime() + 10 * 60 * 1000);
+                    } else {
+                        newCard.state = this.State.Review;
+                        const interval = this.nextInterval(newCard.stability);
+                        newCard.scheduledDays = interval;
+                        newCard.due = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+                    }
+                } else if (card.state === this.State.Learning || card.state === this.State.Relearning) {
+                    newCard.difficulty = this.nextDifficulty(card.difficulty, rating);
+                    if (rating === this.Rating.Again) {
+                        newCard.stability = this.initStability(rating);
+                        newCard.state = this.State.Learning;
+                        newCard.scheduledDays = 0;
+                        newCard.due = new Date(now.getTime() + 1 * 60 * 1000);
+                    } else if (rating === this.Rating.Hard) {
+                        newCard.stability = this.initStability(rating);
+                        newCard.state = this.State.Learning;
+                        newCard.scheduledDays = 0;
+                        newCard.due = new Date(now.getTime() + 5 * 60 * 1000);
+                    } else if (rating === this.Rating.Good) {
+                        newCard.stability = this.initStability(rating);
+                        newCard.state = this.State.Review;
+                        const interval = this.nextInterval(newCard.stability);
+                        newCard.scheduledDays = interval;
+                        newCard.due = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+                    } else {
+                        newCard.stability = this.initStability(rating) * CONFIG.fsrs.easyBonus;
+                        newCard.state = this.State.Review;
+                        const interval = this.nextInterval(newCard.stability);
+                        newCard.scheduledDays = interval;
+                        newCard.due = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+                    }
+                } else {
+                    const elapsedDays = Math.max(0, Utils.daysBetween(card.lastReview, now));
+                    const retrievability = this.getRetrievability(card);
+                    newCard.difficulty = this.nextDifficulty(card.difficulty, rating);
+                    newCard.elapsedDays = elapsedDays;
+                    if (rating === this.Rating.Again) {
+                        newCard.lapses += 1;
+                        newCard.stability = this.nextForgetStability(card.difficulty, card.stability, retrievability);
+                        newCard.state = this.State.Relearning;
+                        newCard.scheduledDays = 0;
+                        newCard.due = new Date(now.getTime() + 1 * 60 * 1000);
+                    } else {
+                        newCard.stability = this.nextRecallStability(card.difficulty, card.stability, retrievability, rating);
+                        newCard.state = this.State.Review;
+                        let interval = this.nextInterval(newCard.stability);
+                        if (rating === this.Rating.Hard) {
+                            interval = Math.min(interval, card.scheduledDays * CONFIG.fsrs.hardInterval);
+                        }
+                        newCard.scheduledDays = interval;
+                        newCard.due = new Date(now.getTime() + interval * 24 * 60 * 60 * 1000);
+                    }
+                }
+                return newCard;
+            },
+            getSchedulingInfo(card) {
+                const info = {};
+                for (let rating = 1; rating <= 4; rating++) {
+                    const scheduled = this.schedule(card, rating);
+                    const interval = scheduled.scheduledDays;
+                    if (interval === 0) {
+                        const minutes = Math.round((scheduled.due - new Date()) / (1000 * 60));
+                        info[rating] = minutes <= 1 ? '۱ دقیقه' : `${Utils.toPersian(minutes)} دقیقه`;
+                    } else if (interval === 1) {
+                        info[rating] = 'فردا';
+                    } else if (interval < 30) {
+                        info[rating] = `${Utils.toPersian(interval)} روز`;
+                    } else if (interval < 365) {
+                        const months = Math.round(interval / 30);
+                        info[rating] = `${Utils.toPersian(months)} ماه`;
+                    } else {
+                        const years = Math.round(interval / 365 * 10) / 10;
+                        info[rating] = `${Utils.toPersian(years)} سال`;
+                    }
+                }
+                return info;
+            }
+        };
+
+        const Review = {
+            session: {
+                cards: [],
+                currentIndex: 0,
+                startTime: null,
+                endTime: null,
+                reviewed: [],
+                stats: { again: 0, hard: 0, good: 0, easy: 0 }
+            },
+            timerInterval: null,
+            async startSession(deckId = null) {
+                let cards = await DB.getAll('cards');
+                const settings = await DB.get('settings', 'general') || {};
+                const now = new Date();
+                let dueCards = cards.filter(card => {
+                    const dueDate = new Date(card.due);
+                    return dueDate <= now;
+                });
+                if (deckId) {
+                    dueCards = dueCards.filter(c => c.deckId === deckId);
+                }
+                let newCards = dueCards.filter(c => c.state === FSRS.State.New);
+                let learningCards = dueCards.filter(c => c.state === FSRS.State.Learning || c.state === FSRS.State.Relearning);
+                let reviewCards = dueCards.filter(c => c.state === FSRS.State.Review);
+                const maxNew = settings.newCardsPerDay || CONFIG.newCardsPerDay;
+                newCards = newCards.slice(0, maxNew);
+                const sessionCards = [...learningCards, ...reviewCards, ...newCards];
+                if (sessionCards.length === 0) {
+                    Router.go('review');
+                    document.getElementById('flashcardLoading').classList.add('hidden');
+                    document.getElementById('flashcardEmpty').classList.remove('hidden');
+                    return;
+                }
+                this.session.cards = sessionCards;
+                this.session.currentIndex = 0;
+                this.session.startTime = Date.now();
+                this.session.reviewed = [];
+                this.session.stats = { again: 0, hard: 0, good: 0, easy: 0 };
+                Router.go('review');
+                setTimeout(() => {
+                    document.getElementById('flashcardLoading').classList.add('hidden');
+                    document.getElementById('flashcard').classList.remove('hidden');
+                    this.showCard();
+                    this.startTimer();
+                }, 500);
+            },
+            showCard() {
+                const card = this.session.cards[this.session.currentIndex];
+                if (!card) {
+                    this.endSession();
+                    return;
+                }
+                this.updateProgress();
+                document.getElementById('cardFront').classList.remove('hidden');
+                document.getElementById('cardBack').classList.add('hidden');
+                document.getElementById('cardWord').textContent = card.word;
+                document.getElementById('cardPronunciation').textContent = card.pronunciation || '';
+                const stateBadge = document.getElementById('cardStateBadge');
+                const stateNames = { 0: 'جدید', 1: 'در حال یادگیری', 2: 'مرور', 3: 'تکرار' };
+                stateBadge.textContent = stateNames[card.state];
+                stateBadge.className = 'badge';
+                if (card.state === FSRS.State.New) stateBadge.classList.add('badge-primary');
+                else if (card.state === FSRS.State.Review) stateBadge.classList.add('badge-success');
+                else stateBadge.classList.add('badge-warning');
+                document.getElementById('typeAnswerSection').classList.add('hidden');
+                document.getElementById('showAnswerSection').classList.remove('hidden');
+            },
+            showAnswer() {
+                const card = this.session.cards[this.session.currentIndex];
+                if (!card) return;
+                document.getElementById('cardFront').classList.add('hidden');
+                document.getElementById('cardBack').classList.remove('hidden');
+                document.getElementById('cardWordBack').textContent = card.word;
+                document.getElementById('cardPronunciationBack').textContent = card.pronunciation || '';
+                document.getElementById('cardMeaning').textContent = card.meaning;
+                const exampleSection = document.getElementById('cardExampleSection');
+                if (card.example) {
+                    exampleSection.classList.remove('hidden');
+                    document.getElementById('cardExample').textContent = card.example;
+                } else {
+                    exampleSection.classList.add('hidden');
+                }
+                const mnemonicSection = document.getElementById('cardMnemonicSection');
+                if (card.mnemonic) {
+                    mnemonicSection.classList.remove('hidden');
+                    document.getElementById('cardMnemonic').textContent = card.mnemonic;
+                } else {
+                    mnemonicSection.classList.add('hidden');
+                }
+                const intervals = FSRS.getSchedulingInfo(card);
+                document.getElementById('intervalAgain').textContent = intervals[1];
+                document.getElementById('intervalHard').textContent = intervals[2];
+                document.getElementById('intervalGood').textContent = intervals[3];
+                document.getElementById('intervalEasy').textContent = intervals[4];
+            },
+            checkAnswer() {
+                const card = this.session.cards[this.session.currentIndex];
+                const input = document.getElementById('typeAnswerInput');
+                const userAnswer = input.value.trim();
+                const correctAnswer = card.meaning.trim();
+                const isCorrect = userAnswer === correctAnswer;
+                if (isCorrect) {
+                    input.classList.add('correct');
+                    input.classList.remove('incorrect');
+                    Toast.success('درست است! ✅');
+                    setTimeout(() => this.showAnswer(), 800);
+                } else {
+                    input.classList.add('incorrect');
+                    input.classList.remove('correct');
+                    Toast.error(`پاسخ صحیح: ${correctAnswer}`);
+                    setTimeout(() => this.showAnswer(), 1500);
+                }
+            },
+            async rate(rating) {
+                const card = this.session.cards[this.session.currentIndex];
+                if (!card) return;
+                const updatedCard = FSRS.schedule(card, rating);
+                await DB.put('cards', updatedCard);
+                const ratingNames = { 1: 'again', 2: 'hard', 3: 'good', 4: 'easy' };
+                this.session.stats[ratingNames[rating]]++;
+                this.session.reviewed.push({ cardId: card.id, rating: rating, timestamp: Date.now() });
+                this.session.currentIndex++;
+                if (this.session.currentIndex < this.session.cards.length) {
+                    const flashcard = document.getElementById('flashcard');
+                    flashcard.style.opacity = '0';
+                    flashcard.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.showCard();
+                        flashcard.style.opacity = '1';
+                        flashcard.style.transform = 'scale(1)';
+                    }, 200);
+                } else {
+                    this.completeSession();
+                }
+            },
+            updateProgress() {
+                const total = this.session.cards.length;
+                const current = this.session.currentIndex;
+                const remaining = total - current;
+                const progress = (current / total) * 100;
+                document.getElementById('cardsRemaining').textContent = Utils.toPersian(remaining);
+                document.getElementById('reviewProgressBar').style.width = `${progress}%`;
+            },
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - this.session.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('sessionTimer').textContent = `${Utils.toPersian(minutes)}:${Utils.toPersian(seconds.toString().padStart(2, '0'))}`;
+                }, 1000);
+            },
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            },
+            async completeSession() {
+                this.stopTimer();
+                this.session.endTime = Date.now();
+                document.getElementById('flashcard').classList.add('hidden');
+                document.getElementById('sessionComplete').classList.remove('hidden');
+                const totalCards = this.session.reviewed.length;
+                const totalTime = Math.floor((this.session.endTime - this.session.startTime) / 1000);
+                const minutes = Math.floor(totalTime / 60);
+                const seconds = totalTime % 60;
+                const accuracy = totalCards > 0 ? Math.round(((this.session.stats.good + this.session.stats.easy) / totalCards) * 100) : 0;
+                document.getElementById('sessionCardsReviewed').textContent = Utils.toPersian(totalCards);
+                document.getElementById('sessionTimeSpent').textContent = `${Utils.toPersian(minutes)}:${Utils.toPersian(seconds.toString().padStart(2, '0'))}`;
+                document.getElementById('sessionAccuracy').textContent = `${Utils.toPersian(accuracy)}٪`;
+                await this.updateStreak();
+                await this.saveSessionStats();
+                await App.updateHomeStats();
+            },
+            async updateStreak() {
+                const settings = await DB.get('settings', 'general') || {};
+                const today = Utils.today();
+                const lastStudy = settings.lastStudyDate;
+                if (lastStudy === today) return;
+                if (lastStudy) {
+                    const daysDiff = Utils.daysBetween(lastStudy, today);
+                    if (daysDiff === 1) {
+                        settings.streak = (settings.streak || 0) + 1;
+                        if (settings.streak > (settings.streakRecord || 0)) {
+                            settings.streakRecord = settings.streak;
+                        }
+                    } else if (daysDiff > 1) {
+                        settings.streak = 1;
+                    }
+                } else {
+                    settings.streak = 1;
+                    settings.streakRecord = 1;
+                }
+                settings.lastStudyDate = today;
+                await DB.put('settings', settings);
+            },
+            async saveSessionStats() {
+                const today = Utils.today();
+                let stats = await DB.get('stats', today);
+                if (!stats) {
+                    stats = { date: today, cardsReviewed: 0, studyTime: 0, again: 0, hard: 0, good: 0, easy: 0 };
+                }
+                stats.cardsReviewed += this.session.reviewed.length;
+                stats.studyTime += Math.floor((this.session.endTime - this.session.startTime) / 1000);
+                stats.again += this.session.stats.again;
+                stats.hard += this.session.stats.hard;
+                stats.good += this.session.stats.good;
+                stats.easy += this.session.stats.easy;
+                await DB.put('stats', stats);
+                const settings = await DB.get('settings', 'general') || {};
+                settings.totalStudyTime = (settings.totalStudyTime || 0) + Math.floor((this.session.endTime - this.session.startTime) / 1000);
+                await DB.put('settings', settings);
+            },
+            async continueReview() {
+                document.getElementById('sessionComplete').classList.add('hidden');
+                await this.startSession();
+            },
+            endSession() {
+                if (this.session.reviewed.length === 0) {
+                    Router.go('home');
+                    return;
+                }
+                if (confirm('آیا می‌خواهید جلسه مرور را پایان دهید؟')) {
+                    this.stopTimer();
+                    Router.go('home');
+                }
+            },
+            handleKeyboard(e) {
+                if (Router.currentPage !== 'review') return;
+                const flashcard = document.getElementById('flashcard');
+                if (flashcard.classList.contains('hidden')) return;
+                const showingFront = !document.getElementById('cardFront').classList.contains('hidden');
+                const showingBack = !document.getElementById('cardBack').classList.contains('hidden');
+                if (showingFront) {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        if (!document.getElementById('typeAnswerSection').classList.contains('hidden')) {
+                            this.checkAnswer();
+                        } else {
+                            this.showAnswer();
+                        }
+                    }
+                } else if (showingBack) {
+                    if (e.code === 'Digit1' || e.code === 'Numpad1') {
+                        e.preventDefault();
+                        this.rate(1);
+                    } else if (e.code === 'Digit2' || e.code === 'Numpad2') {
+                        e.preventDefault();
+                        this.rate(2);
+                    } else if (e.code === 'Digit3' || e.code === 'Numpad3' || e.code === 'Space') {
+                        e.preventDefault();
+                        this.rate(3);
+                    } else if (e.code === 'Digit4' || e.code === 'Numpad4') {
+                        e.preventDefault();
+                        this.rate(4);
+                    }
+                }
+            }
+        };
+
+        const App = {
+            async init() {
+                console.log(`
+╔═══════════════════════════════════════════════════════════════╗
+║                      LEXORA v1.0.0                            ║
+║   👨‍💻 طراح و برنامه‌نویس: محمد عباسی                           ║
+║   🧠 Algorithm: FSRS-4.5                                      ║
+╚═══════════════════════════════════════════════════════════════╝
+                `);
+                Toast.init();
+                Theme.init();
+                try {
+                    await DB.init();
+                    await this.initializeDefaultData();
+                } catch (error) {
+                    console.error('Database initialization failed:', error);
+                    Toast.error('خطا در بارگذاری دیتابیس');
+                }
+                Router.init();
+                this.initUI();
+                await this.updateHomeStats();
+                setTimeout(() => {
+                    Toast.success('به LEXORA خوش آمدید! 🎉');
+                }, 500);
+            },
+            async initializeDefaultData() {
+                const decks = await DB.getAll('decks');
+                if (decks.length === 0) {
+                    const defaultDeck = {
+                        id: Utils.generateId(),
+                        name: 'لغات من',
+                        description: 'مجموعه شخصی لغات',
+                        icon: '📘',
+                        isPreset: false,
+                        createdAt: new Date().toISOString(),
+                        cardCount: 0
+                    };
+                    await DB.put('decks', defaultDeck);
+                    console.log('✅ Default deck created');
+                }
+                const settings = await DB.get('settings', 'general');
+                if (!settings) {
+                    await DB.put('settings', {
+                        key: 'general',
+                        dailyGoal: CONFIG.dailyGoal,
+                        newCardsPerDay: CONFIG.newCardsPerDay,
+                        streak: 0,
+                        streakRecord: 0,
+                        lastStudyDate: null,
+                        totalStudyTime: 0
+                    });
+                    console.log('✅ Default settings created');
+                }
+            },
+            initUI() {
+                document.getElementById('themeToggle').addEventListener('click', () => Theme.toggle());
+                document.querySelectorAll('.deck-icon-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.deck-icon-btn').forEach(b => b.classList.remove('btn-primary'));
+                        btn.classList.add('btn-primary');
+                        btn.classList.remove('btn-secondary');
+                        document.getElementById('newDeckIcon').value = btn.dataset.icon;
+                    });
+                });
+                document.getElementById('startReviewBtn').addEventListener('click', () => {
+                    Review.startSession();
+                });
+                document.addEventListener('keydown', (e) => Review.handleKeyboard(e));
+            },
+            async updateHomeStats() {
+                const cards = await DB.getAll('cards');
+                const decks = await DB.getAll('decks');
+                const settings = await DB.get('settings', 'general') || {};
+                const now = new Date();
+                let newCount = 0;
+                let learningCount = 0;
+                let reviewCount = 0;
+                let masteredCount = 0;
+                cards.forEach(card => {
+                    const dueDate = new Date(card.due);
+                    if (card.state === FSRS.State.New) {
+                        newCount++;
+                    } else if (card.state === FSRS.State.Learning || card.state === FSRS.State.Relearning) {
+                        learningCount++;
+                    } else if (dueDate <= now) {
+                        reviewCount++;
+                    }
+                    if (card.stability > 30) {
+                        masteredCount++;
+                    }
+                });
+                const streak = settings.streak || 0;
+                const streakRecord = settings.streakRecord || 0;
+                const dailyGoal = settings.dailyGoal || CONFIG.dailyGoal;
+                const todayReviewed = 0;
+                const dailyProgress = Math.min((todayReviewed / dailyGoal) * 100, 100);
+                document.getElementById('streakValue').textContent = Utils.toPersian(streak);
+                document.getElementById('streakRecord').textContent = Utils.toPersian(streakRecord);
+                document.getElementById('dailyProgressBar').style.width = `${dailyProgress}%`;
+                document.getElementById('dailyProgressText').textContent = `${Utils.toPersian(todayReviewed)}/${Utils.toPersian(dailyGoal)} لغت امروز`;
+                document.getElementById('dailyProgressPercent').textContent = `${Utils.toPersian(Math.round(dailyProgress))}٪`;
+                document.getElementById('newCount').textContent = Utils.toPersian(Math.min(newCount, settings.newCardsPerDay || CONFIG.newCardsPerDay));
+                document.getElementById('learningCount').textContent = Utils.toPersian(learningCount);
+                document.getElementById('reviewCount').textContent = Utils.toPersian(reviewCount);
+                const totalDue = Math.min(newCount, settings.newCardsPerDay || CONFIG.newCardsPerDay) + learningCount + reviewCount;
+                document.getElementById('totalDueCount').textContent = `${Utils.toPersian(totalDue)} کارت`;
+                document.getElementById('totalCards').textContent = Utils.formatNumber(cards.length);
+                document.getElementById('learnedCards').textContent = Utils.formatNumber(masteredCount);
+                document.getElementById('studyTime').textContent = `${Utils.toPersian(Math.round((settings.totalStudyTime || 0) / 60))}h`;
+                document.getElementById('accuracy').textContent = `${Utils.toPersian(85)}٪`;
+                this.renderHomeDecks(decks.slice(0, 3), cards);
+            },
+            renderHomeDecks(decks, cards) {
+                const container = document.getElementById('homeDecks');
+                if (decks.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📚</div>
+                            <div class="empty-title">هنوز مجموعه‌ای ندارید</div>
+                            <div class="empty-text">اولین مجموعه لغات خود را بسازید</div>
+                            <button class="btn btn-primary" onclick="Router.go('library')">ساخت مجموعه</button>
+                        </div>
+                    `;
+                    return;
+                }
+                container.innerHTML = decks.map(deck => {
+                    const deckCards = cards.filter(c => c.deckId === deck.id);
+                    const dueCards = deckCards.filter(c => new Date(c.due) <= new Date()).length;
+                    const progress = deckCards.length > 0 ? Math.round((deckCards.filter(c => c.stability > 30).length / deckCards.length) * 100) : 0;
+                    return `
+                        <div class="deck-card" onclick="Router.go('library')">
+                            <div class="deck-icon">${deck.icon}</div>
+                            <div class="deck-info">
+                                <div class="deck-name">${deck.name}</div>
+                                <div class="deck-meta">${Utils.formatNumber(deckCards.length)} لغت • ${Utils.toPersian(dueCards)} کارت امروز</div>
+                            </div>
+                            <div class="deck-progress">
+                                <div class="deck-progress-value">${Utils.toPersian(progress)}٪</div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+            async renderLibrary() {
+                const decks = await DB.getAll('decks');
+                const cards = await DB.getAll('cards');
+                const presetContainer = document.getElementById('presetDecks');
+                const presetDecks = [
+                    { id: 'preset-504', name: '۵۰۴ واژه ضروری', icon: '📗', count: 504, isPreset: true },
+                    { id: 'preset-ielts', name: 'IELTS Essential', icon: '📘', count: 1000, isPreset: true },
+                    { id: 'preset-toefl', name: 'TOEFL Essential', icon: '📕', count: 500, isPreset: true },
+                    { id: 'preset-oxford', name: 'Oxford 3000', icon: '📙', count: 3000, isPreset: true }
+                ];
+                presetContainer.innerHTML = presetDecks.map(deck => `
+                    <div class="deck-card" onclick="Toast.info('این مجموعه در نسخه بعدی فعال می‌شود')">
+                        <div class="deck-icon">${deck.icon}</div>
+                        <div class="deck-info">
+                            <div class="deck-name">${deck.name}</div>
+                            <div class="deck-meta">${Utils.formatNumber(deck.count)} لغت</div>
+                        </div>
+                        <span class="badge badge-primary">آماده</span>
+                    </div>
+                `).join('');
+                const myContainer = document.getElementById('myDecks');
+                const userDecks = decks.filter(d => !d.isPreset);
+                if (userDecks.length === 0) {
+                    myContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📝</div>
+                            <div class="empty-title">مجموعه‌ای ندارید</div>
+                            <div class="empty-text">اولین مجموعه خود را بسازید</div>
+                        </div>
+                    `;
+                } else {
+                    myContainer.innerHTML = userDecks.map(deck => {
+                        const deckCards = cards.filter(c => c.deckId === deck.id);
+                        const dueCards = deckCards.filter(c => new Date(c.due) <= new Date()).length;
+                        const progress = deckCards.length > 0 ? Math.round((deckCards.filter(c => c.stability > 30).length / deckCards.length) * 100) : 0;
+                        return `
+                            <div class="deck-card">
+                                <div class="deck-icon">${deck.icon}</div>
+                                <div class="deck-info">
+                                    <div class="deck-name">${deck.name}</div>
+                                    <div class="deck-meta">${Utils.formatNumber(deckCards.length)} لغت • ${Utils.toPersian(dueCards)} کارت امروز</div>
+                                </div>
+                                <div class="deck-progress">
+                                    <div class="deck-progress-value">${Utils.toPersian(progress)}٪</div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: ${progress}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            },
+            async updateDeckSelect() {
+                const decks = await DB.getAll('decks');
+                const select = document.getElementById('addDeck');
+                select.innerHTML = '<option value="">انتخاب کنید...</option>' +
+                    decks.filter(d => !d.isPreset).map(deck => 
+                        `<option value="${deck.id}">${deck.icon} ${deck.name}</option>`
+                    ).join('');
+            },
+            async addCard() {
+                const word = document.getElementById('addWord').value.trim();
+                const pronunciation = document.getElementById('addPronunciation').value.trim();
+                const meaning = document.getElementById('addMeaning').value.trim();
+                const example = document.getElementById('addExample').value.trim();
+                const mnemonic = document.getElementById('addMnemonic').value.trim();
+                const deckId = document.getElementById('addDeck').value;
+                if (!word) {
+                    Toast.error('لطفاً کلمه انگلیسی را وارد کنید');
+                    return;
+                }
+                if (!meaning) {
+                    Toast.error('لطفاً معنی فارسی را وارد کنید');
+                    return;
+                }
+                if (!deckId) {
+                    Toast.error('لطفاً یک مجموعه انتخاب کنید');
+                    return;
+                }
+                const fsrsData = FSRS.createCard();
+                const card = {
+                    id: Utils.generateId(),
+                    deckId: deckId,
+                    word: word,
+                    pronunciation: pronunciation,
+                    meaning: meaning,
+                    example: example,
+                    mnemonic: mnemonic,
+                    createdAt: new Date().toISOString(),
+                    ...fsrsData,
+                    due: fsrsData.due.toISOString()
+                };
+                await DB.put('cards', card);
+                const deck = await DB.get('decks', deckId);
+                if (deck) {
+                    deck.cardCount = (deck.cardCount || 0) + 1;
+                    await DB.put('decks', deck);
+                }
+                document.getElementById('addWord').value = '';
+                document.getElementById('addPronunciation').value = '';
+                document.getElementById('addMeaning').value = '';
+                document.getElementById('addExample').value = '';
+                document.getElementById('addMnemonic').value = '';
+                Toast.success('لغت با موفقیت اضافه شد! ✅');
+                await this.updateHomeStats();
+            },
+            showCreateDeckModal() {
+                document.getElementById('createDeckModal').classList.add('active');
+                document.getElementById('newDeckName').focus();
+            },
+            hideCreateDeckModal() {
+                document.getElementById('createDeckModal').classList.remove('active');
+                document.getElementById('newDeckName').value = '';
+                document.getElementById('newDeckDesc').value = '';
+            },
+            async createDeck() {
+                const name = document.getElementById('newDeckName').value.trim();
+                const description = document.getElementById('newDeckDesc').value.trim();
+                const icon = document.getElementById('newDeckIcon').value || '📘';
+                if (!name) {
+                    Toast.error('لطفاً نام مجموعه را وارد کنید');
+                    return;
+                }
+                const deck = {
+                    id: Utils.generateId(),
+                    name: name,
+                    description: description,
+                    icon: icon,
+                    isPreset: false,
+                    createdAt: new Date().toISOString(),
+                    cardCount: 0
+                };
+                await DB.put('decks', deck);
+                this.hideCreateDeckModal();
+                Toast.success('مجموعه جدید ایجاد شد! 📚');
+                await this.renderLibrary();
+                await this.updateDeckSelect();
+                await this.updateHomeStats();
+            },
+            async updateStats() {
+                const cards = await DB.getAll('cards');
+                const settings = await DB.get('settings', 'general') || {};
+                let mastered = 0;
+                let reviewed = 0;
+                cards.forEach(card => {
+                    if (card.stability > 30) mastered++;
+                    if (card.reps > 0) reviewed++;
+                });
+                document.getElementById('statTotalCards').textContent = Utils.formatNumber(cards.length);
+                document.getElementById('statMastered').textContent = Utils.formatNumber(mastered);
+                document.getElementById('statReviewed').textContent = Utils.formatNumber(reviewed);
+                document.getElementById('statStreak').textContent = Utils.toPersian(settings.streak || 0);
+                document.getElementById('statTodayTime').textContent = `${Utils.toPersian(0)} دقیقه`;
+                document.getElementById('statWeekTime').textContent = `${Utils.toPersian(0)} ساعت`;
+                document.getElementById('statTotalTime').textContent = `${Utils.toPersian(Math.round((settings.totalStudyTime || 0) / 60))} ساعت`;
+                document.getElementById('statAccuracy').textContent = `${Utils.toPersian(85)}٪`;
+            },
+            async exportData() {
+                const data = {
+                    version: CONFIG.version,
+                    exportDate: new Date().toISOString(),
+                    decks: await DB.getAll('decks'),
+                    cards: await DB.getAll('cards'),
+                    settings: await DB.get('settings', 'general'),
+                    stats: await DB.getAll('stats')
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `lexora-backup-${Utils.today()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                Toast.success('فایل پشتیبان دانلود شد! 📥');
+            },
+            async importData() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    try {
+                        const text = await file.text();
+                        const data = JSON.parse(text);
+                        if (data.decks) {
+                            for (const deck of data.decks) {
+                                await DB.put('decks', deck);
+                            }
+                        }
+                        if (data.cards) {
+                            for (const card of data.cards) {
+                                await DB.put('cards', card);
+                            }
+                        }
+                        if (data.settings) {
+                            await DB.put('settings', data.settings);
+                        }
+                        Toast.success('داده‌ها با موفقیت وارد شدند! ✅');
+                        await this.updateHomeStats();
+                    } catch (error) {
+                        console.error('Import error:', error);
+                        Toast.error('خطا در خواندن فایل');
+                    }
+                };
+                input.click();
+            },
+            async clearData() {
+                if (!confirm('آیا مطمئن هستید؟ تمام داده‌ها پاک خواهند شد!')) {
+                    return;
+                }
+                await DB.clear('decks');
+                await DB.clear('cards');
+                await DB.clear('stats');
+                await DB.clear('settings');
+                await this.initializeDefaultData();
+                await this.updateHomeStats();
+                Toast.success('تمام داده‌ها پاک شدند');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
