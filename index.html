@@ -2782,6 +2782,752 @@
             background: linear-gradient(135deg, var(--success), #059669);
             color: white;
         }
+		/* ═══════════════════════════════════════════════════════════════ */
+        /* GAMIFICATION - XP & LEVEL SYSTEM */
+        /* ═══════════════════════════════════════════════════════════════ */
+        .xp-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+        }
+
+        .level-badge {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .xp-info {
+            flex: 1;
+        }
+
+        .xp-level-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 4px;
+        }
+
+        .xp-bar-container {
+            height: 8px;
+            background: rgba(146, 64, 14, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .xp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #eab308);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .xp-text {
+            font-size: 11px;
+            color: #a16207;
+            margin-top: 4px;
+        }
+
+        /* Daily Reward */
+        .daily-reward-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            transition: var(--transition);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.6); }
+        }
+
+        .daily-reward-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .daily-reward-btn.claimed {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            animation: none;
+            cursor: default;
+        }
+
+        /* Medals/Badges */
+        .badges-section {
+            margin-top: 20px;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .badge-item {
+            aspect-ratio: 1;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 8px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .badge-item.earned {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-color: #f59e0b;
+        }
+
+        .badge-item.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .badge-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .badge-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .badge-item.earned .badge-name {
+            color: #92400e;
+        }
+
+        /* Level Up Modal */
+        .level-up-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .level-up-modal.active {
+            display: flex;
+        }
+
+        .level-up-content {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            text-align: center;
+            max-width: 320px;
+            animation: levelUpAnim 0.5s ease;
+        }
+
+        @keyframes levelUpAnim {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .level-up-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .level-up-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fde68a;
+            margin-bottom: 8px;
+        }
+
+        .level-up-level {
+            font-size: 48px;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .level-up-reward {
+            font-size: 16px;
+            color: #a5b4fc;
+            margin-bottom: 24px;
+        }
+
+        .level-up-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* CHALLENGES */
+        /* ═══════════════════════════════════════════════════════════════ */
+        .challenges-section {
+            margin-top: 24px;
+        }
+
+        .challenge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card.active {
+            border-color: var(--primary);
+        }
+
+        .challenge-card.completed {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .challenge-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .challenge-card.completed .challenge-icon {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .challenge-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .challenge-reward {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+
+        .challenge-progress {
+            margin-bottom: 12px;
+        }
+
+        .challenge-progress-bar {
+            height: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .challenge-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .challenge-card.completed .challenge-progress-fill {
+            background: linear-gradient(90deg, var(--success), #059669);
+        }
+
+        .challenge-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .challenge-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .challenge-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .challenge-btn.claim {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .challenge-time {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* ADVANCED STATS - HEAT MAP */
+        /* ═══════════════════════════════════════════════════════════════ */
+        .heatmap-section {
+            margin-top: 24px;
+        }
+
+        .heatmap-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .heatmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .heatmap-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .heatmap-year-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .heatmap-year-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .heatmap-year {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .heatmap-months {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-right: 32px;
+        }
+
+        .heatmap-month {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            width: calc(100% / 12);
+            text-align: center;
+        }
+
+        .heatmap-grid-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .heatmap-days {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 90px;
+        }
+
+        .heatmap-day-label {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            height: 12px;
+        }
+
+        .heatmap-grid {
+            flex: 1;
+            display: grid;
+            grid-template-rows: repeat(7, 1fr);
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(10px, 1fr);
+            gap: 3px;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            min-width: 10px;
+            min-height: 10px;
+        }
+
+        .heatmap-cell.level-1 { background: #dcfce7; }
+        .heatmap-cell.level-2 { background: #86efac; }
+        .heatmap-cell.level-3 { background: #22c55e; }
+        .heatmap-cell.level-4 { background: #16a34a; }
+        .heatmap-cell.level-5 { background: #15803d; }
+
+        [data-theme="dark"] .heatmap-cell.level-1 { background: #14532d; }
+        [data-theme="dark"] .heatmap-cell.level-2 { background: #166534; }
+        [data-theme="dark"] .heatmap-cell.level-3 { background: #22c55e; }
+        [data-theme="dark"] .heatmap-cell.level-4 { background: #4ade80; }
+        [data-theme="dark"] .heatmap-cell.level-5 { background: #86efac; }
+
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .heatmap-legend-cell {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        /* Weakness Analysis */
+        .weakness-section {
+            margin-top: 24px;
+        }
+
+        .weakness-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .weakness-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .weakness-item:last-child {
+            border-bottom: none;
+        }
+
+        .weakness-rank {
+            width: 28px;
+            height: 28px;
+            background: var(--danger-light);
+            color: var(--danger);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .weakness-info {
+            flex: 1;
+        }
+
+        .weakness-word {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .weakness-meaning {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .weakness-stats {
+            text-align: left;
+        }
+
+        .weakness-accuracy {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        .weakness-attempts {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .weakness-practice-btn {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* TAG SYSTEM */
+        /* ═══════════════════════════════════════════════════════════════ */
+        .tags-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tag-filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tag-filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .tag-count {
+            font-size: 11px;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .tag-filter-btn:not(.active) .tag-count {
+            background: var(--bg-tertiary);
+        }
+
+        /* Card Tags */
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .card-tag {
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Favorite/Star */
+        .star-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0.4;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+            opacity: 0.7;
+        }
+
+        .star-btn.starred {
+            opacity: 1;
+        }
+
+        /* Tag Manager Modal */
+        .tag-manager-section {
+            margin-top: 20px;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tag-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .tag-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .tag-name {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tag-card-count {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Quick Stats Mini Cards */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .mini-stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mini-stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .mini-stat-icon.xp { background: #fef3c7; }
+        .mini-stat-icon.streak { background: #fee2e2; }
+        .mini-stat-icon.accuracy { background: #dbeafe; }
+        .mini-stat-icon.mastered { background: #dcfce7; }
+
+        .mini-stat-info {
+            flex: 1;
+        }
+
+        .mini-stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .mini-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2797,6 +3543,49 @@
                 <h1 class="hero-title">LEXORA</h1>
                 <p class="hero-subtitle">یادگیری هوشمند زبان انگلیسی</p>
                 <div class="hero-stats">
+				<!-- XP Display -->
+                <div class="xp-display" id="xpDisplay">
+                    <div class="level-badge" id="levelBadge">۱</div>
+                    <div class="xp-info">
+                        <div class="xp-level-text">سطح <span id="currentLevel">۱</span> - تازه‌کار</div>
+                        <div class="xp-bar-container">
+                            <div class="xp-bar-fill" id="xpBarFill" style="width: 0%"></div>
+                        </div>
+                        <div class="xp-text"><span id="currentXp">۰</span> / <span id="nextLevelXp">۱۰۰</span> XP</div>
+                    </div>
+                </div>
+
+                <!-- Daily Reward Button -->
+                <button class="daily-reward-btn" id="dailyRewardBtn" onclick="Gamification.claimDailyReward()">
+                    🎁 دریافت پاداش روزانه
+                </button>
+
+                <!-- Quick Action Buttons -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+                    <button class="btn-block btn-secondary" onclick="Challenges.open()" style="padding: 14px 8px;">
+                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">🏆</span>
+                        <span style="font-size: 12px;">چالش‌ها</span>
+                    </button>
+                    <button class="btn-block btn-secondary" onclick="AdvancedStats.open()" style="padding: 14px 8px;">
+                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">📊</span>
+                        <span style="font-size: 12px;">آمار</span>
+                    </button>
+                    <button class="btn-block btn-secondary" onclick="TagSystem.open()" style="padding: 14px 8px;">
+                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">🏷️</span>
+                        <span style="font-size: 12px;">تگ‌ها</span>
+                    </button>
+                </div>
+
+                <!-- Badges Preview -->
+                <div class="badges-section">
+                    <div class="section-title">
+                        <span>🏅</span> مدال‌های شما
+                        <span class="section-badge" id="earnedBadgesCount">۰/۱۲</span>
+                    </div>
+                    <div class="badges-grid" id="badgesGrid">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
                     <div class="hero-stat">
                         <span class="hero-stat-value" id="totalCards">0</span>
                         <span class="hero-stat-label">کل کارت‌ها</span>
@@ -5962,6 +6751,1376 @@ thank,/θæŋk/,تشکر کردن,Thank you so much,تِنک مثل تانک ق�
             
             console.log('✅ LEXORA v2.0 initialized with enhanced features');
         };
+		// ═══════════════════════════════════════════════════════════════
+        // GAMIFICATION SYSTEM - XP, Levels, Badges
+        // ═══════════════════════════════════════════════════════════════
+        const Gamification = {
+            // XP needed for each level (cumulative)
+            levelThresholds: [
+                0, 100, 250, 450, 700, 1000, 1400, 1900, 2500, 3200,  // 1-10
+                4000, 5000, 6200, 7600, 9200, 11000, 13000, 15500, 18500, 22000, // 11-20
+                26000, 30500, 35500, 41000, 47000, 54000, 62000, 71000, 81000, 92000 // 21-30
+            ],
+
+            // Level titles
+            levelTitles: {
+                1: 'تازه‌کار',
+                5: 'دانش‌آموز',
+                10: 'یادگیرنده',
+                15: 'پیشرفته',
+                20: 'حرفه‌ای',
+                25: 'استاد',
+                30: 'نابغه'
+            },
+
+            // Badge definitions
+            badges: [
+                { id: 'first_card', icon: '🎯', name: 'اولین قدم', desc: 'اولین کارت را مرور کنید', condition: (s) => s.totalReviews >= 1 },
+                { id: 'streak_3', icon: '🔥', name: 'آتش‌پاره', desc: '۳ روز متوالی مرور کنید', condition: (s) => s.maxStreak >= 3 },
+                { id: 'streak_7', icon: '💪', name: 'پایدار', desc: '۷ روز متوالی مرور کنید', condition: (s) => s.maxStreak >= 7 },
+                { id: 'streak_30', icon: '🏆', name: 'قهرمان', desc: '۳۰ روز متوالی مرور کنید', condition: (s) => s.maxStreak >= 30 },
+                { id: 'cards_50', icon: '📚', name: 'کتاب‌خوان', desc: '۵۰ کارت مرور کنید', condition: (s) => s.totalReviews >= 50 },
+                { id: 'cards_200', icon: '🎓', name: 'دانشجو', desc: '۲۰۰ کارت مرور کنید', condition: (s) => s.totalReviews >= 200 },
+                { id: 'cards_500', icon: '🦉', name: 'جغد دانا', desc: '۵۰۰ کارت مرور کنید', condition: (s) => s.totalReviews >= 500 },
+                { id: 'mastered_10', icon: '⭐', name: 'ستاره', desc: 'به ۱۰ کلمه تسلط پیدا کنید', condition: (s) => s.totalMastered >= 10 },
+                { id: 'mastered_50', icon: '🌟', name: 'درخشان', desc: 'به ۵۰ کلمه تسلط پیدا کنید', condition: (s) => s.totalMastered >= 50 },
+                { id: 'mastered_100', icon: '💎', name: 'الماس', desc: 'به ۱۰۰ کلمه تسلط پیدا کنید', condition: (s) => s.totalMastered >= 100 },
+                { id: 'accuracy_80', icon: '🎯', name: 'دقیق', desc: 'دقت بالای ۸۰٪ داشته باشید', condition: (s) => s.avgAccuracy >= 80 },
+                { id: 'level_10', icon: '👑', name: 'سلطان', desc: 'به سطح ۱۰ برسید', condition: (s) => s.level >= 10 }
+            ],
+
+            // Get gamification data
+            getData() {
+                return DB.get('gamification', {
+                    xp: 0,
+                    level: 1,
+                    totalReviews: 0,
+                    totalMastered: 0,
+                    maxStreak: 0,
+                    currentStreak: 0,
+                    avgAccuracy: 0,
+                    dailyRewardClaimed: null,
+                    earnedBadges: [],
+                    lastActivity: null
+                });
+            },
+
+            // Save gamification data
+            saveData(data) {
+                DB.set('gamification', data);
+            },
+
+            // Add XP
+            addXP(amount, reason = '') {
+                const data = this.getData();
+                const oldLevel = data.level;
+                
+                data.xp += amount;
+                data.level = this.calculateLevel(data.xp);
+                
+                this.saveData(data);
+                this.updateUI();
+                
+                // Show toast
+                Toast.success(`+${amount} XP ${reason}`);
+                
+                // Check for level up
+                if (data.level > oldLevel) {
+                    this.showLevelUp(data.level);
+                }
+                
+                // Check badges
+                this.checkBadges();
+                
+                return amount;
+            },
+
+            // Calculate level from XP
+            calculateLevel(xp) {
+                for (let i = this.levelThresholds.length - 1; i >= 0; i--) {
+                    if (xp >= this.levelThresholds[i]) {
+                        return i + 1;
+                    }
+                }
+                return 1;
+            },
+
+            // Get level title
+            getLevelTitle(level) {
+                let title = 'تازه‌کار';
+                for (const [lvl, name] of Object.entries(this.levelTitles)) {
+                    if (level >= parseInt(lvl)) {
+                        title = name;
+                    }
+                }
+                return title;
+            },
+
+            // Get XP for next level
+            getXPForNextLevel(level) {
+                if (level >= this.levelThresholds.length) {
+                    return this.levelThresholds[this.levelThresholds.length - 1] + 10000;
+                }
+                return this.levelThresholds[level];
+            },
+
+            // Get XP for current level
+            getXPForCurrentLevel(level) {
+                if (level <= 1) return 0;
+                return this.levelThresholds[level - 1];
+            },
+
+            // Record a review
+            recordReview(isCorrect) {
+                const data = this.getData();
+                data.totalReviews++;
+                data.lastActivity = Date.now();
+                
+                // Update accuracy
+                const reviews = DB.get('reviews', []);
+                const recentReviews = reviews.slice(-100);
+                const correctCount = recentReviews.filter(r => r.rating >= 3).length;
+                data.avgAccuracy = recentReviews.length > 0 
+                    ? Math.round((correctCount / recentReviews.length) * 100) 
+                    : 0;
+                
+                // Calculate XP based on performance
+                let xpGained = isCorrect ? 10 : 3;
+                
+                // Streak bonus
+                const settings = Settings.get();
+                if (settings.streak > 0) {
+                    xpGained += Math.min(settings.streak, 10); // Max +10 XP from streak
+                }
+                
+                // Update max streak
+                if (settings.streak > data.maxStreak) {
+                    data.maxStreak = settings.streak;
+                }
+                data.currentStreak = settings.streak;
+                
+                this.saveData(data);
+                this.addXP(xpGained, isCorrect ? '✓' : '');
+            },
+
+            // Record mastery
+            recordMastery() {
+                const data = this.getData();
+                data.totalMastered++;
+                this.saveData(data);
+                this.addXP(25, '🎓 تسلط!');
+                this.checkBadges();
+            },
+
+            // Claim daily reward
+            claimDailyReward() {
+                const data = this.getData();
+                const today = new Date().toDateString();
+                
+                if (data.dailyRewardClaimed === today) {
+                    Toast.info('پاداش امروز را قبلاً دریافت کرده‌اید');
+                    return;
+                }
+                
+                data.dailyRewardClaimed = today;
+                this.saveData(data);
+                
+                // Calculate reward based on streak
+                const settings = Settings.get();
+                const streakBonus = Math.min(settings.streak * 5, 50);
+                const reward = 20 + streakBonus;
+                
+                this.addXP(reward, '🎁 پاداش روزانه');
+                this.showConfetti();
+                
+                // Update button
+                this.updateDailyRewardButton();
+            },
+
+            // Check and award badges
+            checkBadges() {
+                const data = this.getData();
+                const stats = {
+                    totalReviews: data.totalReviews,
+                    totalMastered: data.totalMastered,
+                    maxStreak: data.maxStreak,
+                    avgAccuracy: data.avgAccuracy,
+                    level: data.level
+                };
+                
+                let newBadges = [];
+                
+                this.badges.forEach(badge => {
+                    if (!data.earnedBadges.includes(badge.id) && badge.condition(stats)) {
+                        data.earnedBadges.push(badge.id);
+                        newBadges.push(badge);
+                    }
+                });
+                
+                if (newBadges.length > 0) {
+                    this.saveData(data);
+                    newBadges.forEach(badge => {
+                        setTimeout(() => {
+                            Toast.success(`🏅 مدال جدید: ${badge.name}`);
+                            this.addXP(50, '🏅 مدال');
+                        }, 500);
+                    });
+                    this.renderBadges();
+                }
+            },
+
+            // Show level up modal
+            showLevelUp(newLevel) {
+                document.getElementById('newLevelDisplay').textContent = Utils.toPersian(newLevel);
+                document.getElementById('levelUpReward').textContent = 
+                    `🎁 ${Utils.toPersian(50)} XP جایزه دریافت کردید!`;
+                document.getElementById('levelUpModal').classList.add('active');
+                
+                this.showConfetti();
+                
+                // Add bonus XP for leveling up
+                const data = this.getData();
+                data.xp += 50;
+                this.saveData(data);
+            },
+
+            closeLevelUp() {
+                document.getElementById('levelUpModal').classList.remove('active');
+            },
+
+            // Show badge detail
+            showBadgeDetail(badgeId) {
+                const badge = this.badges.find(b => b.id === badgeId);
+                const data = this.getData();
+                const isEarned = data.earnedBadges.includes(badgeId);
+                
+                document.getElementById('badgeDetailIcon').textContent = badge.icon;
+                document.getElementById('badgeDetailName').textContent = badge.name;
+                document.getElementById('badgeDetailDesc').textContent = badge.desc;
+                document.getElementById('badgeDetailStatus').innerHTML = isEarned 
+                    ? '<span style="color: var(--success);">✅ کسب شده</span>'
+                    : '<span style="color: var(--text-tertiary);">🔒 قفل</span>';
+                
+                document.getElementById('badgeDetailModal').classList.add('active');
+            },
+
+            closeBadgeDetail() {
+                document.getElementById('badgeDetailModal').classList.remove('active');
+            },
+
+            // Show confetti animation
+            showConfetti() {
+                const colors = ['#f59e0b', '#10b981', '#6366f1', '#ec4899', '#8b5cf6'];
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                        document.body.appendChild(confetti);
+                        
+                        setTimeout(() => confetti.remove(), 4000);
+                    }, i * 30);
+                }
+            },
+
+            // Update UI
+            updateUI() {
+                const data = this.getData();
+                const currentLevelXP = this.getXPForCurrentLevel(data.level);
+                const nextLevelXP = this.getXPForNextLevel(data.level);
+                const progressXP = data.xp - currentLevelXP;
+                const neededXP = nextLevelXP - currentLevelXP;
+                const progress = Math.min((progressXP / neededXP) * 100, 100);
+                
+                // Update level badge
+                const levelBadge = document.getElementById('levelBadge');
+                if (levelBadge) levelBadge.textContent = Utils.toPersian(data.level);
+                
+                // Update level text
+                const currentLevel = document.getElementById('currentLevel');
+                if (currentLevel) currentLevel.textContent = Utils.toPersian(data.level);
+                
+                // Update XP bar
+                const xpBarFill = document.getElementById('xpBarFill');
+                if (xpBarFill) xpBarFill.style.width = `${progress}%`;
+                
+                // Update XP text
+                const currentXp = document.getElementById('currentXp');
+                if (currentXp) currentXp.textContent = Utils.toPersian(progressXP);
+                
+                const nextLevelXpEl = document.getElementById('nextLevelXp');
+                if (nextLevelXpEl) nextLevelXpEl.textContent = Utils.toPersian(neededXP);
+                
+                // Update level title
+                const xpLevelText = document.querySelector('.xp-level-text');
+                if (xpLevelText) {
+                    xpLevelText.innerHTML = `سطح <span id="currentLevel">${Utils.toPersian(data.level)}</span> - ${this.getLevelTitle(data.level)}`;
+                }
+                
+                this.updateDailyRewardButton();
+                this.renderBadges();
+            },
+
+            // Update daily reward button
+            updateDailyRewardButton() {
+                const data = this.getData();
+                const today = new Date().toDateString();
+                const btn = document.getElementById('dailyRewardBtn');
+                
+                if (!btn) return;
+                
+                if (data.dailyRewardClaimed === today) {
+                    btn.classList.add('claimed');
+                    btn.innerHTML = '✓ پاداش امروز دریافت شد';
+                    btn.disabled = true;
+                } else {
+                    btn.classList.remove('claimed');
+                    btn.innerHTML = '🎁 دریافت پاداش روزانه';
+                    btn.disabled = false;
+                }
+            },
+
+            // Render badges grid
+            renderBadges() {
+                const grid = document.getElementById('badgesGrid');
+                if (!grid) return;
+                
+                const data = this.getData();
+                
+                grid.innerHTML = this.badges.map(badge => {
+                    const isEarned = data.earnedBadges.includes(badge.id);
+                    return `
+                        <div class="badge-item ${isEarned ? 'earned' : 'locked'}" 
+                             onclick="Gamification.showBadgeDetail('${badge.id}')">
+                            <div class="badge-icon">${badge.icon}</div>
+                            <div class="badge-name">${badge.name}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Update count
+                const countEl = document.getElementById('earnedBadgesCount');
+                if (countEl) {
+                    countEl.textContent = `${Utils.toPersian(data.earnedBadges.length)}/${Utils.toPersian(this.badges.length)}`;
+                }
+            },
+
+            // Initialize
+            init() {
+                this.updateUI();
+                this.checkBadges();
+            }
+        };
+		// ═══════════════════════════════════════════════════════════════
+        // CHALLENGES SYSTEM
+        // ═══════════════════════════════════════════════════════════════
+        const Challenges = {
+            // Challenge definitions
+            definitions: {
+                daily: [
+                    {
+                        id: 'daily_10',
+                        icon: '📖',
+                        title: 'مرور روزانه',
+                        desc: '۱۰ کارت مرور کنید',
+                        target: 10,
+                        reward: 30,
+                        type: 'reviews_today'
+                    },
+                    {
+                        id: 'daily_20',
+                        icon: '📚',
+                        title: 'مرور پیشرفته',
+                        desc: '۲۰ کارت مرور کنید',
+                        target: 20,
+                        reward: 50,
+                        type: 'reviews_today'
+                    },
+                    {
+                        id: 'daily_perfect',
+                        icon: '💯',
+                        title: 'بدون خطا',
+                        desc: '۱۰ کارت متوالی بدون اشتباه',
+                        target: 10,
+                        reward: 75,
+                        type: 'perfect_streak'
+                    }
+                ],
+                weekly: [
+                    {
+                        id: 'weekly_100',
+                        icon: '🎯',
+                        title: 'یادگیرنده هفته',
+                        desc: '۱۰۰ کارت در هفته مرور کنید',
+                        target: 100,
+                        reward: 200,
+                        type: 'reviews_week'
+                    },
+                    {
+                        id: 'weekly_streak',
+                        icon: '🔥',
+                        title: 'هفت روز آتش',
+                        desc: '۷ روز متوالی مرور کنید',
+                        target: 7,
+                        reward: 300,
+                        type: 'streak'
+                    },
+                    {
+                        id: 'weekly_mastery',
+                        icon: '⭐',
+                        title: 'تسلط هفتگی',
+                        desc: 'به ۲۰ کلمه تسلط پیدا کنید',
+                        target: 20,
+                        reward: 250,
+                        type: 'mastery_week'
+                    }
+                ],
+                special: [
+                    {
+                        id: 'speed_demon',
+                        icon: '⚡',
+                        title: 'سرعتی',
+                        desc: '۳۰ کارت در ۱۰ دقیقه',
+                        target: 30,
+                        reward: 150,
+                        type: 'speed_challenge',
+                        timeLimit: 600 // 10 minutes in seconds
+                    },
+                    {
+                        id: 'night_owl',
+                        icon: '🦉',
+                        title: 'جغد شب',
+                        desc: 'بین ۱۲ تا ۴ صبح مرور کنید',
+                        target: 1,
+                        reward: 50,
+                        type: 'night_review'
+                    },
+                    {
+                        id: 'early_bird',
+                        icon: '🐦',
+                        title: 'سحرخیز',
+                        desc: 'قبل از ۷ صبح مرور کنید',
+                        target: 1,
+                        reward: 50,
+                        type: 'morning_review'
+                    }
+                ]
+            },
+
+            // Get challenges data
+            getData() {
+                const today = new Date().toDateString();
+                const data = DB.get('challenges', {
+                    lastReset: null,
+                    weekStart: null,
+                    progress: {},
+                    claimed: [],
+                    perfectStreak: 0,
+                    speedChallengeStart: null,
+                    speedChallengeCount: 0
+                });
+
+                // Reset daily if needed
+                if (data.lastReset !== today) {
+                    data.lastReset = today;
+                    data.progress.reviews_today = 0;
+                    data.progress.perfect_streak = 0;
+                    data.perfectStreak = 0;
+                    // Remove daily claimed
+                    data.claimed = data.claimed.filter(id => !id.startsWith('daily_'));
+                }
+
+                // Reset weekly if needed
+                const weekStart = this.getWeekStart();
+                if (data.weekStart !== weekStart) {
+                    data.weekStart = weekStart;
+                    data.progress.reviews_week = 0;
+                    data.progress.mastery_week = 0;
+                    // Remove weekly claimed
+                    data.claimed = data.claimed.filter(id => !id.startsWith('weekly_'));
+                }
+
+                DB.set('challenges', data);
+                return data;
+            },
+
+            getWeekStart() {
+                const now = new Date();
+                const dayOfWeek = now.getDay();
+                const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+                return new Date(now.setDate(diff)).toDateString();
+            },
+
+            // Record progress
+            recordProgress(type, amount = 1) {
+                const data = this.getData();
+                
+                if (!data.progress[type]) {
+                    data.progress[type] = 0;
+                }
+                data.progress[type] += amount;
+
+                // Handle perfect streak
+                if (type === 'correct_answer') {
+                    data.perfectStreak++;
+                    data.progress.perfect_streak = Math.max(data.progress.perfect_streak || 0, data.perfectStreak);
+                } else if (type === 'wrong_answer') {
+                    data.perfectStreak = 0;
+                }
+
+                // Handle streak from settings
+                const settings = Settings.get();
+                data.progress.streak = settings.streak;
+
+                DB.set('challenges', data);
+                this.checkCompletion();
+            },
+
+            // Start speed challenge
+            startSpeedChallenge() {
+                const data = this.getData();
+                data.speedChallengeStart = Date.now();
+                data.speedChallengeCount = 0;
+                DB.set('challenges', data);
+                Toast.info('⚡ چالش سرعتی شروع شد! ۱۰ دقیقه فرصت دارید');
+            },
+
+            // Record speed challenge progress
+            recordSpeedProgress() {
+                const data = this.getData();
+                if (!data.speedChallengeStart) return;
+
+                const elapsed = (Date.now() - data.speedChallengeStart) / 1000;
+                if (elapsed <= 600) { // 10 minutes
+                    data.speedChallengeCount++;
+                    data.progress.speed_challenge = data.speedChallengeCount;
+                    DB.set('challenges', data);
+                } else {
+                    // Time's up
+                    data.speedChallengeStart = null;
+                    DB.set('challenges', data);
+                }
+            },
+
+            // Check time-based challenges
+            checkTimeChallenge() {
+                const hour = new Date().getHours();
+                const data = this.getData();
+
+                // Night owl (12am - 4am)
+                if (hour >= 0 && hour < 4) {
+                    data.progress.night_review = 1;
+                }
+
+                // Early bird (before 7am)
+                if (hour >= 5 && hour < 7) {
+                    data.progress.morning_review = 1;
+                }
+
+                DB.set('challenges', data);
+            },
+
+            // Check completion
+            checkCompletion() {
+                const data = this.getData();
+                
+                const allChallenges = [
+                    ...this.definitions.daily,
+                    ...this.definitions.weekly,
+                    ...this.definitions.special
+                ];
+
+                allChallenges.forEach(challenge => {
+                    const progress = data.progress[challenge.type] || 0;
+                    if (progress >= challenge.target && !data.claimed.includes(challenge.id)) {
+                        // Mark as completed but not claimed
+                        // User needs to manually claim
+                    }
+                });
+
+                if (document.getElementById('challengesModal')?.classList.contains('active')) {
+                    this.render();
+                }
+            },
+
+            // Claim reward
+            claimReward(challengeId) {
+                const data = this.getData();
+                
+                if (data.claimed.includes(challengeId)) {
+                    Toast.info('این جایزه قبلاً دریافت شده');
+                    return;
+                }
+
+                const allChallenges = [
+                    ...this.definitions.daily,
+                    ...this.definitions.weekly,
+                    ...this.definitions.special
+                ];
+
+                const challenge = allChallenges.find(c => c.id === challengeId);
+                if (!challenge) return;
+
+                const progress = data.progress[challenge.type] || 0;
+                if (progress < challenge.target) {
+                    Toast.warning('هنوز این چالش تکمیل نشده');
+                    return;
+                }
+
+                data.claimed.push(challengeId);
+                DB.set('challenges', data);
+
+                Gamification.addXP(challenge.reward, '🏆 چالش');
+                Gamification.showConfetti();
+                
+                this.render();
+            },
+
+            // Open modal
+            open() {
+                document.getElementById('challengesModal').classList.add('active');
+                this.render();
+            },
+
+            close() {
+                document.getElementById('challengesModal').classList.remove('active');
+            },
+
+            // Render challenges
+            render() {
+                const data = this.getData();
+
+                this.renderCategory('dailyChallenges', this.definitions.daily, data);
+                this.renderCategory('weeklyChallenges', this.definitions.weekly, data);
+                this.renderCategory('specialChallenges', this.definitions.special, data);
+            },
+
+            renderCategory(containerId, challenges, data) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                container.innerHTML = challenges.map(challenge => {
+                    const progress = data.progress[challenge.type] || 0;
+                    const percentage = Math.min((progress / challenge.target) * 100, 100);
+                    const isCompleted = progress >= challenge.target;
+                    const isClaimed = data.claimed.includes(challenge.id);
+
+                    return `
+                        <div class="challenge-card ${isCompleted ? 'completed' : ''} ${!isClaimed && isCompleted ? 'active' : ''}">
+                            <div class="challenge-header">
+                                <div class="challenge-icon">${challenge.icon}</div>
+                                <div class="challenge-info">
+                                    <div class="challenge-title">${challenge.title}</div>
+                                    <div class="challenge-desc">${challenge.desc}</div>
+                                </div>
+                                <div class="challenge-reward">
+                                    <span>⚡</span>
+                                    <span>${Utils.toPersian(challenge.reward)}</span>
+                                </div>
+                            </div>
+                            <div class="challenge-progress">
+                                <div class="challenge-progress-bar">
+                                    <div class="challenge-progress-fill" style="width: ${percentage}%"></div>
+                                </div>
+                                <div class="challenge-progress-text">
+                                    <span>${Utils.toPersian(Math.min(progress, challenge.target))} / ${Utils.toPersian(challenge.target)}</span>
+                                    <span>${Utils.toPersian(Math.round(percentage))}٪</span>
+                                </div>
+                            </div>
+                            ${isClaimed ? `
+                                <button class="challenge-btn" disabled style="opacity: 0.5;">
+                                    ✓ دریافت شد
+                                </button>
+                            ` : isCompleted ? `
+                                <button class="challenge-btn claim" onclick="Challenges.claimReward('${challenge.id}')">
+                                    🎁 دریافت جایزه
+                                </button>
+                            ` : challenge.type === 'speed_challenge' && !data.speedChallengeStart ? `
+                                <button class="challenge-btn" onclick="Challenges.startSpeedChallenge()">
+                                    ⚡ شروع چالش
+                                </button>
+                            ` : `
+                                <button class="challenge-btn" onclick="Challenges.close(); Navigation.go('library');">
+                                    شروع مرور
+                                </button>
+                            `}
+                            ${challenge.timeLimit && data.speedChallengeStart ? `
+                                <div class="challenge-time">⏱️ زمان باقی‌مانده: ${this.formatTimeLeft(data.speedChallengeStart, challenge.timeLimit)}</div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            formatTimeLeft(startTime, limit) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                const remaining = Math.max(0, limit - elapsed);
+                const minutes = Math.floor(remaining / 60);
+                const seconds = Math.floor(remaining % 60);
+                return `${Utils.toPersian(minutes)}:${Utils.toPersian(seconds.toString().padStart(2, '0'))}`;
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // ADVANCED STATS
+        // ═══════════════════════════════════════════════════════════════
+        const AdvancedStats = {
+            currentYear: new Date().getFullYear(),
+
+            open() {
+                document.getElementById('advancedStatsModal').classList.add('active');
+                this.render();
+            },
+
+            close() {
+                document.getElementById('advancedStatsModal').classList.remove('active');
+            },
+
+            prevYear() {
+                this.currentYear--;
+                this.renderHeatmap();
+                document.getElementById('heatmapYear').textContent = Utils.toPersian(this.currentYear);
+            },
+
+            nextYear() {
+                if (this.currentYear < new Date().getFullYear()) {
+                    this.currentYear++;
+                    this.renderHeatmap();
+                    document.getElementById('heatmapYear').textContent = Utils.toPersian(this.currentYear);
+                }
+            },
+
+            render() {
+                this.renderMiniStats();
+                this.renderHeatmap();
+                this.renderWeakness();
+                this.renderProgressChart();
+            },
+
+            renderMiniStats() {
+                const gamificationData = Gamification.getData();
+                const cards = CardManager.getAll();
+                
+                // Calculate total mastered
+                let totalMastered = 0;
+                Object.values(cards).forEach(card => {
+                    if (card.stability >= 30) totalMastered++;
+                });
+
+                document.getElementById('totalXpStat').textContent = Utils.toPersian(gamificationData.xp);
+                document.getElementById('maxStreakStat').textContent = Utils.toPersian(gamificationData.maxStreak);
+                document.getElementById('avgAccuracyStat').textContent = `${Utils.toPersian(gamificationData.avgAccuracy)}٪`;
+                document.getElementById('totalMasteredStat').textContent = Utils.toPersian(totalMastered);
+            },
+
+            renderHeatmap() {
+                const grid = document.getElementById('heatmapGrid');
+                if (!grid) return;
+
+                const reviews = DB.get('reviews', []);
+                const reviewsByDay = {};
+
+                // Count reviews per day
+                reviews.forEach(review => {
+                    const date = new Date(review.timestamp).toDateString();
+                    reviewsByDay[date] = (reviewsByDay[date] || 0) + 1;
+                });
+
+                // Generate cells for the year
+                let html = '';
+                const startDate = new Date(this.currentYear, 0, 1);
+                const endDate = new Date(this.currentYear, 11, 31);
+                
+                // Adjust start to first Saturday
+                const startDay = startDate.getDay();
+                startDate.setDate(startDate.getDate() - startDay);
+
+                const current = new Date(startDate);
+                while (current <= endDate || current.getDay() !== 6) {
+                    const dateStr = current.toDateString();
+                    const count = reviewsByDay[dateStr] || 0;
+                    let level = 0;
+                    
+                    if (count > 0) level = 1;
+                    if (count >= 5) level = 2;
+                    if (count >= 10) level = 3;
+                    if (count >= 20) level = 4;
+                    if (count >= 30) level = 5;
+
+                    const isCurrentYear = current.getFullYear() === this.currentYear;
+                    const isFuture = current > new Date();
+
+                    html += `<div class="heatmap-cell ${isCurrentYear && !isFuture ? `level-${level}` : ''}" 
+                                  title="${isCurrentYear ? `${current.toLocaleDateString('fa-IR')}: ${Utils.toPersian(count)} مرور` : ''}"></div>`;
+                    
+                    current.setDate(current.getDate() + 1);
+                }
+
+                grid.innerHTML = html;
+                document.getElementById('heatmapYear').textContent = Utils.toPersian(this.currentYear);
+            },
+
+            renderWeakness() {
+                const container = document.getElementById('weaknessCard');
+                if (!container) return;
+
+                const reviews = DB.get('reviews', []);
+                const cardStats = {};
+
+                // Calculate accuracy per card
+                reviews.forEach(review => {
+                    if (!cardStats[review.cardId]) {
+                        cardStats[review.cardId] = { correct: 0, total: 0 };
+                    }
+                    cardStats[review.cardId].total++;
+                    if (review.rating >= 3) {
+                        cardStats[review.cardId].correct++;
+                    }
+                });
+
+                // Find weakest cards
+                const cards = CardManager.getAll();
+                const weakCards = Object.entries(cardStats)
+                    .filter(([cardId, stats]) => stats.total >= 3) // At least 3 reviews
+                    .map(([cardId, stats]) => ({
+                        card: cards[cardId],
+                        accuracy: Math.round((stats.correct / stats.total) * 100),
+                        attempts: stats.total
+                    }))
+                    .filter(item => item.card && item.accuracy < 70) // Less than 70% accuracy
+                    .sort((a, b) => a.accuracy - b.accuracy)
+                    .slice(0, 5);
+
+                if (weakCards.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 30px; color: var(--text-secondary);">
+                            <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
+                            <div>عالی! هیچ نقطه ضعفی پیدا نشد</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = weakCards.map((item, index) => `
+                    <div class="weakness-item">
+                        <div class="weakness-rank">${Utils.toPersian(index + 1)}</div>
+                        <div class="weakness-info">
+                            <div class="weakness-word">${item.card.word}</div>
+                            <div class="weakness-meaning">${item.card.meaning}</div>
+                        </div>
+                        <div class="weakness-stats">
+                            <div class="weakness-accuracy">${Utils.toPersian(item.accuracy)}٪</div>
+                            <div class="weakness-attempts">${Utils.toPersian(item.attempts)} تلاش</div>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            renderProgressChart() {
+                const container = document.getElementById('progressChart');
+                if (!container) return;
+
+                const reviews = DB.get('reviews', []);
+                const last7Days = [];
+                
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toDateString();
+                    
+                    const dayReviews = reviews.filter(r => 
+                        new Date(r.timestamp).toDateString() === dateStr
+                    ).length;
+                    
+                    last7Days.push({
+                        day: date.toLocaleDateString('fa-IR', { weekday: 'short' }),
+                        count: dayReviews
+                    });
+                }
+
+                const maxCount = Math.max(...last7Days.map(d => d.count), 1);
+
+                container.innerHTML = last7Days.map(day => {
+                    const height = (day.count / maxCount) * 140 + 10;
+                    return `
+                        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+                                ${Utils.toPersian(day.count)}
+                            </div>
+                            <div style="
+                                width: 100%;
+                                max-width: 32px;
+                                height: ${height}px;
+                                background: linear-gradient(to top, var(--primary), var(--secondary));
+                                border-radius: 6px 6px 0 0;
+                                transition: height 0.5s ease;
+                            "></div>
+                            <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 8px;">
+                                ${day.day}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        };
+		// ═══════════════════════════════════════════════════════════════
+        // TAG SYSTEM
+        // ═══════════════════════════════════════════════════════════════
+        const TagSystem = {
+            currentFilter: 'all',
+            selectedCardId: null,
+
+            // Default tags
+            defaultTags: [
+                { id: 'starred', name: 'ستاره‌دار', icon: '⭐', color: '#f59e0b' },
+                { id: 'difficult', name: 'سخت', icon: '🔴', color: '#ef4444' },
+                { id: 'easy', name: 'آسان', icon: '🟢', color: '#22c55e' },
+                { id: 'important', name: 'مهم', icon: '❗', color: '#8b5cf6' },
+                { id: 'review_later', name: 'مرور بعدی', icon: '🔄', color: '#3b82f6' },
+                { id: 'noun', name: 'اسم', icon: '📝', color: '#6366f1' },
+                { id: 'verb', name: 'فعل', icon: '🏃', color: '#ec4899' },
+                { id: 'adjective', name: 'صفت', icon: '🎨', color: '#14b8a6' },
+                { id: 'adverb', name: 'قید', icon: '⚡', color: '#f97316' }
+            ],
+
+            // Get tags data
+            getData() {
+                return DB.get('tags', {
+                    customTags: [],
+                    cardTags: {} // { cardId: [tagId, tagId, ...] }
+                });
+            },
+
+            saveData(data) {
+                DB.set('tags', data);
+            },
+
+            // Get all tags (default + custom)
+            getAllTags() {
+                const data = this.getData();
+                return [...this.defaultTags, ...data.customTags];
+            },
+
+            // Add tag to card
+            addTagToCard(cardId, tagId) {
+                const data = this.getData();
+                
+                if (!data.cardTags[cardId]) {
+                    data.cardTags[cardId] = [];
+                }
+                
+                if (!data.cardTags[cardId].includes(tagId)) {
+                    data.cardTags[cardId].push(tagId);
+                    this.saveData(data);
+                    Toast.success('تگ اضافه شد');
+                }
+            },
+
+            // Remove tag from card
+            removeTagFromCard(cardId, tagId) {
+                const data = this.getData();
+                
+                if (data.cardTags[cardId]) {
+                    data.cardTags[cardId] = data.cardTags[cardId].filter(t => t !== tagId);
+                    this.saveData(data);
+                }
+            },
+
+            // Get tags for a card
+            getCardTags(cardId) {
+                const data = this.getData();
+                const tagIds = data.cardTags[cardId] || [];
+                const allTags = this.getAllTags();
+                
+                return tagIds.map(id => allTags.find(t => t.id === id)).filter(Boolean);
+            },
+
+            // Toggle star for card
+            toggleStar(cardId) {
+                const data = this.getData();
+                
+                if (!data.cardTags[cardId]) {
+                    data.cardTags[cardId] = [];
+                }
+                
+                const starIndex = data.cardTags[cardId].indexOf('starred');
+                
+                if (starIndex > -1) {
+                    data.cardTags[cardId].splice(starIndex, 1);
+                    Toast.info('از ستاره‌دارها حذف شد');
+                } else {
+                    data.cardTags[cardId].push('starred');
+                    Toast.success('به ستاره‌دارها اضافه شد ⭐');
+                }
+                
+                this.saveData(data);
+                return data.cardTags[cardId].includes('starred');
+            },
+
+            // Check if card is starred
+            isStarred(cardId) {
+                const data = this.getData();
+                return data.cardTags[cardId]?.includes('starred') || false;
+            },
+
+            // Create custom tag
+            createTag(name, color = '#6366f1') {
+                const data = this.getData();
+                const id = 'custom_' + Date.now();
+                
+                data.customTags.push({
+                    id: id,
+                    name: name,
+                    icon: '🏷️',
+                    color: color
+                });
+                
+                this.saveData(data);
+                Toast.success(`تگ "${name}" ایجاد شد`);
+                
+                return id;
+            },
+
+            // Get cards by filter
+            getFilteredCards(filter) {
+                const cards = Object.values(CardManager.getAll());
+                const data = this.getData();
+                
+                switch (filter) {
+                    case 'all':
+                        return cards;
+                    
+                    case 'starred':
+                        return cards.filter(c => data.cardTags[c.id]?.includes('starred'));
+                    
+                    case 'difficult':
+                        return cards.filter(c => c.difficulty >= 7 || data.cardTags[c.id]?.includes('difficult'));
+                    
+                    case 'new':
+                        return cards.filter(c => !c.lastReview);
+                    
+                    case 'mastered':
+                        return cards.filter(c => c.stability >= 30);
+                    
+                    case 'noun':
+                    case 'verb':
+                    case 'adjective':
+                    case 'adverb':
+                        return cards.filter(c => data.cardTags[c.id]?.includes(filter));
+                    
+                    default:
+                        // Custom tag
+                        return cards.filter(c => data.cardTags[c.id]?.includes(filter));
+                }
+            },
+
+            // Count cards for each filter
+            getCounts() {
+                const cards = Object.values(CardManager.getAll());
+                const data = this.getData();
+                
+                return {
+                    all: cards.length,
+                    starred: cards.filter(c => data.cardTags[c.id]?.includes('starred')).length,
+                    difficult: cards.filter(c => c.difficulty >= 7 || data.cardTags[c.id]?.includes('difficult')).length,
+                    new: cards.filter(c => !c.lastReview).length,
+                    mastered: cards.filter(c => c.stability >= 30).length,
+                    noun: cards.filter(c => data.cardTags[c.id]?.includes('noun')).length,
+                    verb: cards.filter(c => data.cardTags[c.id]?.includes('verb')).length,
+                    adjective: cards.filter(c => data.cardTags[c.id]?.includes('adjective')).length,
+                    adverb: cards.filter(c => data.cardTags[c.id]?.includes('adverb')).length
+                };
+            },
+
+            // Open tag manager
+            open() {
+                document.getElementById('tagManagerModal').classList.add('active');
+                this.currentFilter = 'all';
+                this.updateCounts();
+                this.renderFilteredCards();
+            },
+
+            close() {
+                document.getElementById('tagManagerModal').classList.remove('active');
+            },
+
+            // Filter cards
+            filter(tag) {
+                this.currentFilter = tag;
+                
+                // Update active button
+                document.querySelectorAll('.tag-filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tag === tag);
+                });
+                
+                this.renderFilteredCards();
+            },
+
+            // Update tag counts
+            updateCounts() {
+                const counts = this.getCounts();
+                
+                document.getElementById('tagCountAll').textContent = Utils.toPersian(counts.all);
+                document.getElementById('tagCountStarred').textContent = Utils.toPersian(counts.starred);
+                document.getElementById('tagCountDifficult').textContent = Utils.toPersian(counts.difficult);
+                document.getElementById('tagCountNew').textContent = Utils.toPersian(counts.new);
+                document.getElementById('tagCountMastered').textContent = Utils.toPersian(counts.mastered);
+                
+                const nounEl = document.getElementById('tagCountNoun');
+                const verbEl = document.getElementById('tagCountVerb');
+                const adjEl = document.getElementById('tagCountAdjective');
+                const advEl = document.getElementById('tagCountAdverb');
+                
+                if (nounEl) nounEl.textContent = Utils.toPersian(counts.noun);
+                if (verbEl) verbEl.textContent = Utils.toPersian(counts.verb);
+                if (adjEl) adjEl.textContent = Utils.toPersian(counts.adjective);
+                if (advEl) advEl.textContent = Utils.toPersian(counts.adverb);
+            },
+
+            // Render filtered cards
+            renderFilteredCards() {
+                const container = document.getElementById('filteredCardsList');
+                const countEl = document.getElementById('filteredCount');
+                
+                if (!container) return;
+                
+                const cards = this.getFilteredCards(this.currentFilter);
+                countEl.textContent = Utils.toPersian(cards.length);
+                
+                if (cards.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <div style="font-size: 48px; margin-bottom: 12px;">📭</div>
+                            <div>کارتی با این فیلتر یافت نشد</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = cards.slice(0, 50).map(card => {
+                    const tags = this.getCardTags(card.id);
+                    const isStarred = this.isStarred(card.id);
+                    
+                    return `
+                        <div class="weakness-item" style="cursor: pointer;" onclick="TagSystem.showCardActions('${card.id}')">
+                            <button class="star-btn ${isStarred ? 'starred' : ''}" 
+                                    onclick="event.stopPropagation(); TagSystem.toggleStarUI('${card.id}', this)">
+                                ${isStarred ? '⭐' : '☆'}
+                            </button>
+                            <div class="weakness-info" style="flex: 1;">
+                                <div class="weakness-word">${card.word}</div>
+                                <div class="weakness-meaning">${card.meaning}</div>
+                                ${tags.length > 0 ? `
+                                    <div class="card-tags">
+                                        ${tags.map(t => `<span class="card-tag" style="border-color: ${t.color}; color: ${t.color};">${t.icon} ${t.name}</span>`).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <button class="weakness-practice-btn" onclick="event.stopPropagation(); TagSystem.openAddTag('${card.id}')">
+                                🏷️
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // Toggle star UI
+            toggleStarUI(cardId, btn) {
+                const isStarred = this.toggleStar(cardId);
+                btn.classList.toggle('starred', isStarred);
+                btn.textContent = isStarred ? '⭐' : '☆';
+                this.updateCounts();
+            },
+
+            // Show card actions
+            showCardActions(cardId) {
+                const card = CardManager.getAll()[cardId];
+                if (!card) return;
+                
+                // Could open a detail modal or start review
+                Toast.info(`${card.word}: ${card.meaning}`);
+            },
+
+            // Open add tag modal
+            openAddTag(cardId) {
+                this.selectedCardId = cardId;
+                
+                const allTags = this.getAllTags();
+                const currentTags = this.getCardTags(cardId).map(t => t.id);
+                
+                const container = document.getElementById('tagSelectOptions');
+                container.innerHTML = allTags.map(tag => `
+                    <button class="tag-filter-btn ${currentTags.includes(tag.id) ? 'active' : ''}" 
+                            data-tag="${tag.id}"
+                            onclick="TagSystem.toggleTagSelection('${tag.id}', this)"
+                            style="border-color: ${tag.color};">
+                        ${tag.icon} ${tag.name}
+                    </button>
+                `).join('');
+                
+                document.getElementById('newTagInput').value = '';
+                document.getElementById('addTagModal').classList.add('active');
+            },
+
+            closeAddTag() {
+                document.getElementById('addTagModal').classList.remove('active');
+                this.selectedCardId = null;
+            },
+
+            toggleTagSelection(tagId, btn) {
+                btn.classList.toggle('active');
+            },
+
+            confirmAddTag() {
+                if (!this.selectedCardId) return;
+                
+                const data = this.getData();
+                const cardId = this.selectedCardId;
+                
+                // Get selected tags from buttons
+                const selectedTags = [];
+                document.querySelectorAll('#tagSelectOptions .tag-filter-btn.active').forEach(btn => {
+                    selectedTags.push(btn.dataset.tag);
+                });
+                
+                // Check for new tag
+                const newTagName = document.getElementById('newTagInput').value.trim();
+                if (newTagName) {
+                    const newTagId = this.createTag(newTagName);
+                    selectedTags.push(newTagId);
+                }
+                
+                // Update card tags
+                data.cardTags[cardId] = selectedTags;
+                this.saveData(data);
+                
+                this.closeAddTag();
+                this.updateCounts();
+                this.renderFilteredCards();
+                
+                Toast.success('تگ‌ها به‌روز شد');
+            },
+
+            // Practice starred cards
+            practiceStarred() {
+                const starredCards = this.getFilteredCards('starred');
+                
+                if (starredCards.length === 0) {
+                    Toast.warning('هیچ کارت ستاره‌داری ندارید');
+                    return;
+                }
+                
+                // Start review with starred cards only
+                Review.cards = starredCards;
+                Review.currentIndex = 0;
+                Review.sessionStats = { reviewed: 0, correct: 0 };
+                Review.reviewMode = 'recognition';
+                
+                document.getElementById('flashcardModal').classList.add('active');
+                document.getElementById('completeScreen').classList.remove('active');
+                document.querySelectorAll('.card-mode').forEach(m => m.classList.remove('active'));
+                document.getElementById('recognitionMode').classList.add('active');
+                
+                Review.showCard();
+                this.close();
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // INTEGRATION - Update existing functions
+        // ═══════════════════════════════════════════════════════════════
+
+        // Extend Review.rate to include gamification
+        const originalRate = Review.rate;
+        Review.rate = function(rating) {
+            const isCorrect = rating >= 3;
+            
+            // Record for challenges
+            Challenges.recordProgress('reviews_today');
+            Challenges.recordProgress('reviews_week');
+            Challenges.recordProgress(isCorrect ? 'correct_answer' : 'wrong_answer');
+            Challenges.checkTimeChallenge();
+            Challenges.recordSpeedProgress();
+            
+            // Record for gamification
+            Gamification.recordReview(isCorrect);
+            
+            // Check mastery
+            if (this.currentCard) {
+                const newStability = FSRS.calculate(this.currentCard, rating).stability;
+                const oldStability = this.currentCard.stability || 0;
+                
+                if (oldStability < 30 && newStability >= 30) {
+                    Gamification.recordMastery();
+                    Challenges.recordProgress('mastery_week');
+                }
+            }
+            
+            // Call original
+            originalRate.call(this, rating);
+        };
+
+        // Add star button to flashcard
+        const addStarToFlashcard = () => {
+            const flashcardBack = document.querySelector('.flashcard-back');
+            if (flashcardBack && !flashcardBack.querySelector('.star-btn')) {
+                const starBtn = document.createElement('button');
+                starBtn.className = 'star-btn';
+                starBtn.style.cssText = 'position: absolute; top: 12px; left: 12px;';
+                starBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (Review.currentCard) {
+                        const isStarred = TagSystem.toggleStar(Review.currentCard.id);
+                        starBtn.classList.toggle('starred', isStarred);
+                        starBtn.textContent = isStarred ? '⭐' : '☆';
+                    }
+                };
+                flashcardBack.appendChild(starBtn);
+            }
+        };
+
+        // Update star button when showing card
+        const originalShowCard = Review.showCard;
+        Review.showCard = function() {
+            originalShowCard.call(this);
+            
+            if (this.currentCard) {
+                const starBtn = document.querySelector('.flashcard-back .star-btn');
+                if (starBtn) {
+                    const isStarred = TagSystem.isStarred(this.currentCard.id);
+                    starBtn.classList.toggle('starred', isStarred);
+                    starBtn.textContent = isStarred ? '⭐' : '☆';
+                }
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // FINAL INITIALIZATION
+        // ═══════════════════════════════════════════════════════════════
+        const originalAppInit = App.init;
+        App.init = function() {
+            // Call original init
+            originalAppInit.call(this);
+            
+            // Initialize gamification
+            Gamification.init();
+            
+            // Add star button to flashcard
+            setTimeout(addStarToFlashcard, 100);
+            
+            // Log
+            console.log('✅ LEXORA v2.5 - Gamification, Challenges, Stats, Tags initialized');
+        };
+
+        // Re-initialize if already loaded
+        if (document.readyState === 'complete') {
+            Gamification.init();
+            setTimeout(addStarToFlashcard, 100);
+        }
     </script>
 	<!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- MODE SELECTOR MODAL -->
@@ -6282,6 +8441,278 @@ goodbye,/ɡʊdˈbaɪ/,خداحافظ,Goodbye friend,گود بای = خدای خ�
         <button class="fab-btn fab-add-deck" onclick="DeckManager.open()" title="ساخت دک">
             ➕
         </button>
+    </div>
+	<!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- LEVEL UP MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="levelUpModal" class="level-up-modal">
+        <div class="level-up-content">
+            <div class="level-up-icon">🎉</div>
+            <div class="level-up-title">سطح بالا رفت!</div>
+            <div class="level-up-level" id="newLevelDisplay">۵</div>
+            <div class="level-up-reward" id="levelUpReward">🎁 ۵۰ XP جایزه دریافت کردید!</div>
+            <button class="level-up-btn" onclick="Gamification.closeLevelUp()">عالی! 🚀</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- BADGE DETAIL MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="badgeDetailModal" class="confirm-overlay">
+        <div class="confirm-modal" style="max-width: 320px; text-align: center;">
+            <div style="font-size: 64px; margin-bottom: 16px;" id="badgeDetailIcon">🏆</div>
+            <div class="confirm-header" id="badgeDetailName">نام مدال</div>
+            <div class="confirm-body" style="padding: 0 20px 20px;">
+                <p id="badgeDetailDesc" style="color: var(--text-secondary); margin-bottom: 12px;">توضیحات مدال</p>
+                <div id="badgeDetailStatus" style="font-weight: 700; color: var(--success);">✅ کسب شده</div>
+            </div>
+            <div class="confirm-actions">
+                <button class="confirm-cancel" onclick="Gamification.closeBadgeDetail()" style="flex: 1;">بستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- CHALLENGES MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="challengesModal" class="dictionary-modal">
+        <div class="dictionary-container">
+            <div class="deck-manager-header">
+                <h2>🏆 چالش‌های یادگیری</h2>
+                <button class="modal-close" onclick="Challenges.close()">✕</button>
+            </div>
+            <div class="dictionary-body" style="padding: 20px;">
+                <!-- Daily Challenges -->
+                <div class="section-title" style="margin-bottom: 16px;">
+                    <span>📅</span> چالش‌های روزانه
+                </div>
+                <div id="dailyChallenges">
+                    <!-- Will be populated by JS -->
+                </div>
+
+                <!-- Weekly Challenges -->
+                <div class="section-title" style="margin: 24px 0 16px;">
+                    <span>📆</span> چالش‌های هفتگی
+                </div>
+                <div id="weeklyChallenges">
+                    <!-- Will be populated by JS -->
+                </div>
+
+                <!-- Special Challenges -->
+                <div class="section-title" style="margin: 24px 0 16px;">
+                    <span>⭐</span> چالش‌های ویژه
+                </div>
+                <div id="specialChallenges">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ADVANCED STATS MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="advancedStatsModal" class="dictionary-modal">
+        <div class="dictionary-container">
+            <div class="deck-manager-header">
+                <h2>📊 آمار پیشرفته</h2>
+                <button class="modal-close" onclick="AdvancedStats.close()">✕</button>
+            </div>
+            <div class="dictionary-body" style="padding: 20px;">
+                <!-- Mini Stats -->
+                <div class="mini-stats">
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-icon xp">⚡</div>
+                        <div class="mini-stat-info">
+                            <div class="mini-stat-value" id="totalXpStat">۰</div>
+                            <div class="mini-stat-label">کل XP</div>
+                        </div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-icon streak">🔥</div>
+                        <div class="mini-stat-info">
+                            <div class="mini-stat-value" id="maxStreakStat">۰</div>
+                            <div class="mini-stat-label">بیشترین Streak</div>
+                        </div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-icon accuracy">🎯</div>
+                        <div class="mini-stat-info">
+                            <div class="mini-stat-value" id="avgAccuracyStat">۰٪</div>
+                            <div class="mini-stat-label">میانگین دقت</div>
+                        </div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-icon mastered">✅</div>
+                        <div class="mini-stat-info">
+                            <div class="mini-stat-value" id="totalMasteredStat">۰</div>
+                            <div class="mini-stat-label">تسلط یافته</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Heat Map -->
+                <div class="heatmap-section">
+                    <div class="heatmap-container">
+                        <div class="heatmap-header">
+                            <div class="heatmap-title">📅 فعالیت سالانه</div>
+                            <div class="heatmap-year-nav">
+                                <button class="heatmap-year-btn" onclick="AdvancedStats.prevYear()">◀</button>
+                                <span class="heatmap-year" id="heatmapYear">۱۴۰۳</span>
+                                <button class="heatmap-year-btn" onclick="AdvancedStats.nextYear()">▶</button>
+                            </div>
+                        </div>
+                        <div class="heatmap-months">
+                            <span class="heatmap-month">فرو</span>
+                            <span class="heatmap-month">ارد</span>
+                            <span class="heatmap-month">خرد</span>
+                            <span class="heatmap-month">تیر</span>
+                            <span class="heatmap-month">مرد</span>
+                            <span class="heatmap-month">شهر</span>
+                            <span class="heatmap-month">مهر</span>
+                            <span class="heatmap-month">آبا</span>
+                            <span class="heatmap-month">آذر</span>
+                            <span class="heatmap-month">دی</span>
+                            <span class="heatmap-month">بهم</span>
+                            <span class="heatmap-month">اسف</span>
+                        </div>
+                        <div class="heatmap-grid-wrapper">
+                            <div class="heatmap-days">
+                                <span class="heatmap-day-label">ش</span>
+                                <span class="heatmap-day-label">د</span>
+                                <span class="heatmap-day-label">س</span>
+                                <span class="heatmap-day-label">چ</span>
+                                <span class="heatmap-day-label">پ</span>
+                                <span class="heatmap-day-label">ج</span>
+                                <span class="heatmap-day-label">ش</span>
+                            </div>
+                            <div class="heatmap-grid" id="heatmapGrid">
+                                <!-- Will be populated by JS -->
+                            </div>
+                        </div>
+                        <div class="heatmap-legend">
+                            <span>کمتر</span>
+                            <div class="heatmap-legend-cell" style="background: var(--bg-tertiary);"></div>
+                            <div class="heatmap-legend-cell level-1"></div>
+                            <div class="heatmap-legend-cell level-2"></div>
+                            <div class="heatmap-legend-cell level-3"></div>
+                            <div class="heatmap-legend-cell level-4"></div>
+                            <div class="heatmap-legend-cell level-5"></div>
+                            <span>بیشتر</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weakness Analysis -->
+                <div class="weakness-section">
+                    <div class="section-title" style="margin-bottom: 16px;">
+                        <span>📉</span> کلمات نیازمند تمرین بیشتر
+                    </div>
+                    <div class="weakness-card" id="weaknessCard">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Learning Progress Chart -->
+                <div class="section-title" style="margin: 24px 0 16px;">
+                    <span>📈</span> روند یادگیری ۷ روز اخیر
+                </div>
+                <div class="weakness-card">
+                    <div id="progressChart" style="height: 200px; display: flex; align-items: flex-end; justify-content: space-around; gap: 8px; padding: 20px 0;">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- TAG MANAGER MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="tagManagerModal" class="dictionary-modal">
+        <div class="dictionary-container">
+            <div class="deck-manager-header">
+                <h2>🏷️ مدیریت تگ‌ها</h2>
+                <button class="modal-close" onclick="TagSystem.close()">✕</button>
+            </div>
+            <div class="dictionary-body" style="padding: 20px;">
+                <!-- Quick Filters -->
+                <div class="section-title" style="margin-bottom: 16px;">
+                    <span>🔍</span> فیلتر سریع
+                </div>
+                <div class="tags-filter" id="tagsFilter">
+                    <button class="tag-filter-btn active" data-tag="all" onclick="TagSystem.filter('all')">
+                        همه <span class="tag-count" id="tagCountAll">۰</span>
+                    </button>
+                    <button class="tag-filter-btn" data-tag="starred" onclick="TagSystem.filter('starred')">
+                        ⭐ ستاره‌دار <span class="tag-count" id="tagCountStarred">۰</span>
+                    </button>
+                    <button class="tag-filter-btn" data-tag="difficult" onclick="TagSystem.filter('difficult')">
+                        🔴 سخت <span class="tag-count" id="tagCountDifficult">۰</span>
+                    </button>
+                    <button class="tag-filter-btn" data-tag="new" onclick="TagSystem.filter('new')">
+                        🆕 جدید <span class="tag-count" id="tagCountNew">۰</span>
+                    </button>
+                    <button class="tag-filter-btn" data-tag="mastered" onclick="TagSystem.filter('mastered')">
+                        ✅ تسلط <span class="tag-count" id="tagCountMastered">۰</span>
+                    </button>
+                </div>
+
+                <!-- Part of Speech Tags -->
+                <div class="section-title" style="margin: 24px 0 16px;">
+                    <span>📝</span> نوع کلمه
+                </div>
+                <div class="tags-filter" id="posTagsFilter">
+                    <button class="tag-filter-btn" data-tag="noun" onclick="TagSystem.filter('noun')">
+                        اسم <span class="tag-count" id="tagCountNoun">۰</span>
+                    </button>
+                    <button class="tag-filter-btn" data-tag="verb" onclick="TagSystem.filter('verb')">
+                        فعل <span class="tag-count" id="tagCountVerb">۰</span>
+                    </button>
+                    <button class="tag-filter-btn" data-tag="adjective" onclick="TagSystem.filter('adjective')">
+                        صفت <span class="tag-count" id="tagCountAdjective">۰</span>
+                    </button>
+                    <button class="tag-filter-btn" data-tag="adverb" onclick="TagSystem.filter('adverb')">
+                        قید <span class="tag-count" id="tagCountAdverb">۰</span>
+                    </button>
+                </div>
+
+                <!-- Filtered Cards List -->
+                <div class="section-title" style="margin: 24px 0 16px;">
+                    <span>🃏</span> کارت‌ها (<span id="filteredCount">۰</span>)
+                </div>
+                <div id="filteredCardsList" style="max-height: 400px; overflow-y: auto;">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ADD TAG TO CARD MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="addTagModal" class="confirm-overlay">
+        <div class="confirm-modal" style="max-width: 360px;">
+            <div class="confirm-header">🏷️ افزودن تگ</div>
+            <div class="confirm-body">
+                <div class="form-group">
+                    <label class="form-label">انتخاب تگ:</label>
+                    <div class="tags-filter" style="margin-top: 8px;" id="tagSelectOptions">
+                        <!-- Tags will be populated by JS -->
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label class="form-label">یا تگ جدید بسازید:</label>
+                    <input type="text" class="form-input" id="newTagInput" placeholder="نام تگ جدید...">
+                </div>
+            </div>
+            <div class="confirm-actions">
+                <button class="confirm-cancel" onclick="TagSystem.closeAddTag()">انصراف</button>
+                <button class="confirm-delete" style="background: var(--primary);" onclick="TagSystem.confirmAddTag()">
+                    افزودن
+                </button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
