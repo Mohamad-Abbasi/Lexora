@@ -3528,97 +3528,1364 @@
                 opacity: 0;
             }
         }
+		/* ═══════════════════════════════════════════════════════════════ */
+        /* REDESIGNED HOME PAGE - PROFESSIONAL LAYOUT */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        /* Hero Section - Completely Redesigned */
+        .hero-section-new {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, #7c3aed 100%);
+            border-radius: 0 0 32px 32px;
+            padding: 20px 20px 28px;
+            margin: -20px -20px 24px -20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section-new::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: heroGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20%, 20%) scale(1.2); }
+        }
+
+        .hero-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-greeting {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .hero-title {
+            color: white;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .hero-streak-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 16px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* Level Card in Hero */
+        .level-card-hero {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .level-card-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .level-badge-large {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+            flex-shrink: 0;
+        }
+
+        .level-info-hero {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .level-title-hero {
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-title-hero .level-name {
+            color: #fde68a;
+        }
+
+        .xp-bar-hero {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .xp-bar-fill-hero {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #fde68a);
+            border-radius: 4px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .xp-text-hero {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Quick Stats Row */
+        .quick-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .quick-stat-item {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .quick-stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Daily Reward - Redesigned */
+        .daily-reward-card {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border-radius: 20px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .daily-reward-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .daily-reward-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.4);
+        }
+
+        .daily-reward-card.claimed {
+            background: var(--bg-secondary);
+            cursor: default;
+        }
+
+        .daily-reward-card.claimed::before {
+            display: none;
+        }
+
+        .daily-reward-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .daily-reward-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .daily-reward-text h4 {
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .daily-reward-text p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+        }
+
+        .daily-reward-card.claimed .daily-reward-text h4,
+        .daily-reward-card.claimed .daily-reward-text p {
+            color: var(--text-secondary);
+        }
+
+        .daily-reward-btn-mini {
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Action Buttons Grid */
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .action-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .action-btn-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .action-btn-icon.challenges { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+        .action-btn-icon.stats { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .action-btn-icon.tags { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+        .action-btn-icon.voice { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
+
+        .action-btn-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Badges Section - Redesigned */
+        .badges-section-new {
+            margin-bottom: 24px;
+        }
+
+        .badges-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 4px 0 12px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .badges-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .badge-card {
+            flex-shrink: 0;
+            width: 72px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .badge-card.earned {
+            background: linear-gradient(135deg, #fef9c3, #fef08a);
+            border-color: #eab308;
+        }
+
+        .badge-card.locked {
+            opacity: 0.5;
+            filter: grayscale(0.8);
+        }
+
+        .badge-card-icon {
+            font-size: 28px;
+        }
+
+        .badge-card-name {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .badge-card.earned .badge-card-name {
+            color: #92400e;
+        }
+
+        /* Widget Cards */
+        .widgets-section {
+            margin-bottom: 24px;
+        }
+
+        .widget-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .widget-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .widget-action {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Today's Progress Widget */
+        .progress-ring-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .progress-ring {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: var(--bg-tertiary);
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 251.2;
+            stroke-dashoffset: 251.2;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .progress-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-ring-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .progress-ring-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .progress-details {
+            flex: 1;
+        }
+
+        .progress-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .progress-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .progress-detail-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .progress-detail-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* ENHANCED ANIMATIONS */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        /* Page Transitions */
+        .screen {
+            animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card Hover Effects */
+        .deck-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .deck-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Button Press Effect */
+        .btn-primary, .action-btn, .daily-reward-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after, .action-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:active::after, .action-btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Success Celebration */
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.2) rotate(-5deg); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-3deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        .celebrate {
+            animation: celebrate 0.6s ease;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* VOICE RECOGNITION */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        .voice-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .voice-btn.listening {
+            animation: voicePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes voicePulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .voice-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .voice-btn.listening::before {
+            animation: voiceRing 1s ease-out infinite;
+        }
+
+        @keyframes voiceRing {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .voice-status {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            min-height: 24px;
+        }
+
+        .voice-result {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .voice-result-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* ADVANCED AUDIO PLAYER */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        .audio-player {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .audio-word-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .audio-word {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .audio-pronunciation {
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .audio-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .audio-btn.play {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 28px;
+        }
+
+        .audio-btn.play:hover {
+            transform: scale(1.15);
+        }
+
+        .audio-speed-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .speed-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speed-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .audio-waveform {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 40px;
+            margin: 16px 0;
+        }
+
+        .waveform-bar {
+            width: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+            animation: waveform 1s ease-in-out infinite;
+        }
+
+        .waveform-bar:nth-child(1) { animation-delay: 0s; height: 20px; }
+        .waveform-bar:nth-child(2) { animation-delay: 0.1s; height: 30px; }
+        .waveform-bar:nth-child(3) { animation-delay: 0.2s; height: 40px; }
+        .waveform-bar:nth-child(4) { animation-delay: 0.3s; height: 25px; }
+        .waveform-bar:nth-child(5) { animation-delay: 0.4s; height: 35px; }
+        .waveform-bar:nth-child(6) { animation-delay: 0.5s; height: 20px; }
+        .waveform-bar:nth-child(7) { animation-delay: 0.6s; height: 30px; }
+
+        @keyframes waveform {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+
+        .audio-waveform.paused .waveform-bar {
+            animation-play-state: paused;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* MINI WIDGETS */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        .mini-widget {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .mini-widget-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .mini-widget-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .mini-widget-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Streak Widget */
+        .streak-widget {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+
+        .streak-days {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .streak-day {
+            flex: 1;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: rgba(146, 64, 14, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .streak-day.completed {
+            background: #f59e0b;
+        }
+
+        .streak-day.today {
+            border: 2px dashed #92400e;
+        }
+
+        /* Words of Day Widget */
+        .word-of-day {
+            text-align: center;
+            padding: 8px 0;
+        }
+
+        .word-of-day-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .word-of-day-meaning {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+		/* ═══════════════════════════════════════════════════════════════ */
+        /* ADDITIONAL ANIMATIONS */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
+
+        .ripple-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: inherit;
+            animation: rippleAnim 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Voice Mode Styles */
+        .voice-mode-content {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Floating Audio Player */
+        .floating-audio-player {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border-radius: 30px;
+            padding: 8px 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            z-index: 1500;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .floating-audio-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .floating-audio-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .floating-audio-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .floating-audio-btn.play {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            font-size: 22px;
+        }
+
+        /* Card Audio Button */
+        .card-audio-btn:hover {
+            background: var(--primary) !important;
+            transform: scale(1.1);
+        }
+
+        .card-audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Voice Result Animations */
+        .voice-result {
+            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Enhanced Deck Card Animations */
+        .deck-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deck-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .deck-card:hover::before {
+            left: 100%;
+        }
+
+        /* Stats Number Animation */
+        .quick-stat-value, .mini-stat-value {
+            transition: transform 0.3s ease;
+        }
+
+        .quick-stat-item:hover .quick-stat-value,
+        .mini-stat-card:hover .mini-stat-value {
+            transform: scale(1.1);
+        }
+
+        /* Badge Hover Effects */
+        .badge-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .badge-card:hover {
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        .badge-card.earned:hover {
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Progress Ring Animation */
+        .progress-ring-fill {
+            animation: progressFill 1.5s ease-out forwards;
+        }
+
+        @keyframes progressFill {
+            from { stroke-dashoffset: 251.2; }
+        }
+
+        /* Widget Card Hover */
+        .widget-card {
+            transition: all 0.3s ease;
+        }
+
+        .widget-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Action Button Press Effect */
+        .action-btn:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        .action-btn:active .action-btn-icon {
+            transform: scale(0.9);
+        }
+
+        /* Streak Day Animation */
+        .streak-day {
+            transition: all 0.3s ease;
+        }
+
+        .streak-day:hover {
+            transform: scale(1.1);
+        }
+
+        .streak-day.completed {
+            animation: streakPop 0.5s ease;
+        }
+
+        @keyframes streakPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Daily Reward Claimed State */
+        .daily-reward-card.claimed {
+            opacity: 0.7;
+        }
+
+        .daily-reward-card.claimed:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Smooth Scroll for Badges */
+        .badges-scroll {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Hero Section Responsive */
+        @media (max-width: 360px) {
+            .hero-section-new {
+                padding: 16px 16px 24px;
+            }
+
+            .level-card-hero {
+                padding: 14px 16px;
+            }
+
+            .level-badge-large {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .quick-stat-item {
+                padding: 12px 8px;
+            }
+
+            .quick-stat-value {
+                font-size: 18px;
+            }
+
+            .action-buttons-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+
+            .action-btn {
+                padding: 12px 4px;
+            }
+
+            .action-btn-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .action-btn-text {
+                font-size: 10px;
+            }
+        }
+
+        /* Safe Area for iPhone */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .hero-section-new {
+                padding-top: calc(20px + env(safe-area-inset-top));
+            }
+        }
+
+        /* Glassmorphism Enhancement */
+        .level-card-hero,
+        .quick-stat-item,
+        .hero-streak-badge {
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Dark Mode Adjustments */
+        [data-theme="dark"] .hero-section-new {
+            background: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #7c3aed 100%);
+        }
+
+        [data-theme="dark"] .streak-widget {
+            background: linear-gradient(135deg, #78350f, #92400e);
+        }
+
+        [data-theme="dark"] .streak-widget .widget-title {
+            color: #fef3c7;
+        }
+
+        [data-theme="dark"] .badge-card.earned {
+            background: linear-gradient(135deg, #78350f, #92400e);
+        }
+
+        [data-theme="dark"] .daily-reward-card.claimed {
+            background: var(--bg-tertiary);
+        }
+
+        /* Loading States */
+        .loading-skeleton {
+            background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+            background-size: 200% 100%;
+            animation: shimmerSkeleton 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmerSkeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
 <body>
 	<!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- HOME SCREEN -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div id="homeScreen" class="screen active">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <div class="settings-icon" onclick="Settings.open()">⚙️</div>
-            <div class="hero-content">
-                <div class="hero-logo">📚</div>
-                <h1 class="hero-title">LEXORA</h1>
-                <p class="hero-subtitle">یادگیری هوشمند زبان انگلیسی</p>
-                <div class="hero-stats">
-				<!-- XP Display -->
-                <div class="xp-display" id="xpDisplay">
-                    <div class="level-badge" id="levelBadge">۱</div>
-                    <div class="xp-info">
-                        <div class="xp-level-text">سطح <span id="currentLevel">۱</span> - تازه‌کار</div>
-                        <div class="xp-bar-container">
-                            <div class="xp-bar-fill" id="xpBarFill" style="width: 0%"></div>
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- REDESIGNED HOME SCREEN -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            
+            <!-- Hero Section -->
+            <div class="hero-section-new">
+                <div class="hero-header">
+                    <div>
+                        <div class="hero-greeting" id="heroGreeting">سلام! 👋</div>
+                        <div class="hero-title">به LEXORA خوش آمدید</div>
+                    </div>
+                    <div class="hero-streak-badge">
+                        <span>🔥</span>
+                        <span id="heroStreak">۰</span>
+                    </div>
+                </div>
+
+                <!-- Level Card -->
+                <div class="level-card-hero">
+                    <div class="level-card-content">
+                        <div class="level-badge-large" id="heroBadge">۱</div>
+                        <div class="level-info-hero">
+                            <div class="level-title-hero">
+                                سطح <span id="heroLevel">۱</span> - <span class="level-name" id="heroLevelName">تازه‌کار</span>
+                            </div>
+                            <div class="xp-bar-hero">
+                                <div class="xp-bar-fill-hero" id="heroXpBar" style="width: 0%"></div>
+                            </div>
+                            <div class="xp-text-hero">
+                                <span><span id="heroXpCurrent">۰</span> XP</span>
+                                <span><span id="heroXpNext">۱۰۰</span> XP تا سطح بعد</span>
+                            </div>
                         </div>
-                        <div class="xp-text"><span id="currentXp">۰</span> / <span id="nextLevelXp">۱۰۰</span> XP</div>
                     </div>
                 </div>
 
-                <!-- Daily Reward Button -->
-                <button class="daily-reward-btn" id="dailyRewardBtn" onclick="Gamification.claimDailyReward()">
-                    🎁 دریافت پاداش روزانه
-                </button>
-
-                <!-- Quick Action Buttons -->
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <button class="btn-block btn-secondary" onclick="Challenges.open()" style="padding: 14px 8px;">
-                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">🏆</span>
-                        <span style="font-size: 12px;">چالش‌ها</span>
-                    </button>
-                    <button class="btn-block btn-secondary" onclick="AdvancedStats.open()" style="padding: 14px 8px;">
-                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">📊</span>
-                        <span style="font-size: 12px;">آمار</span>
-                    </button>
-                    <button class="btn-block btn-secondary" onclick="TagSystem.open()" style="padding: 14px 8px;">
-                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">🏷️</span>
-                        <span style="font-size: 12px;">تگ‌ها</span>
-                    </button>
-                </div>
-
-                <!-- Badges Preview -->
-                <div class="badges-section">
-                    <div class="section-title">
-                        <span>🏅</span> مدال‌های شما
-                        <span class="section-badge" id="earnedBadgesCount">۰/۱۲</span>
+                <!-- Quick Stats -->
+                <div class="quick-stats-row">
+                    <div class="quick-stat-item">
+                        <div class="quick-stat-value" id="statTodayReviews">۰</div>
+                        <div class="quick-stat-label">امروز</div>
                     </div>
-                    <div class="badges-grid" id="badgesGrid">
-                        <!-- Will be populated by JS -->
+                    <div class="quick-stat-item">
+                        <div class="quick-stat-value" id="statTotalCards">۰</div>
+                        <div class="quick-stat-label">کل کارت‌ها</div>
                     </div>
-                </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value" id="totalCards">0</span>
-                        <span class="hero-stat-label">کل کارت‌ها</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value" id="dueCards">0</span>
-                        <span class="hero-stat-label">آماده مرور</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-value" id="masteredCards">0</span>
-                        <span class="hero-stat-label">تسلط یافته</span>
+                    <div class="quick-stat-item">
+                        <div class="quick-stat-value" id="statMastered">۰</div>
+                        <div class="quick-stat-label">تسلط</div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Daily Progress -->
-        <div class="daily-progress-section">
-            <div class="daily-progress-header">
-                <span class="daily-progress-title">🎯 پیشرفت امروز</span>
-                <span class="daily-progress-text" id="dailyProgressText">0 / 20</span>
+            <!-- Daily Reward Card -->
+            <div class="daily-reward-card" id="dailyRewardCard" onclick="Gamification.claimDailyReward()">
+                <div class="daily-reward-info">
+                    <div class="daily-reward-icon">🎁</div>
+                    <div class="daily-reward-text">
+                        <h4>پاداش روزانه</h4>
+                        <p id="dailyRewardDesc">برای دریافت XP کلیک کنید!</p>
+                    </div>
+                </div>
+                <div class="daily-reward-btn-mini" id="dailyRewardBtnText">دریافت</div>
             </div>
-            <div class="daily-progress-bar">
-                <div class="daily-progress-fill" id="dailyProgressFill" style="width: 0%"></div>
-            </div>
-        </div>
 
-        <!-- Decks Section -->
-        <h2 class="section-title">📖 دسته‌های کلمات</h2>
-        <div class="decks-container" id="decksContainer">
-            <!-- Decks will be rendered by JavaScript -->
-        </div>
-    </div>
+            <!-- Action Buttons -->
+            <div class="action-buttons-grid">
+                <div class="action-btn" onclick="Challenges.open()">
+                    <div class="action-btn-icon challenges">🏆</div>
+                    <div class="action-btn-text">چالش‌ها</div>
+                </div>
+                <div class="action-btn" onclick="AdvancedStats.open()">
+                    <div class="action-btn-icon stats">📊</div>
+                    <div class="action-btn-text">آمار</div>
+                </div>
+                <div class="action-btn" onclick="TagSystem.open()">
+                    <div class="action-btn-icon tags">🏷️</div>
+                    <div class="action-btn-text">تگ‌ها</div>
+                </div>
+                <div class="action-btn" onclick="VoiceMode.open()">
+                    <div class="action-btn-icon voice">🎤</div>
+                    <div class="action-btn-text">صوتی</div>
+                </div>
+            </div>
+
+            <!-- Today's Progress Widget -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-title">
+                        <span>📈</span> پیشرفت امروز
+                    </div>
+                    <div class="widget-action" onclick="AdvancedStats.open()">جزئیات</div>
+                </div>
+                <div class="progress-ring-container">
+                    <div class="progress-ring">
+                        <svg width="100" height="100">
+                            <defs>
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#6366f1"/>
+                                    <stop offset="100%" style="stop-color:#8b5cf6"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-bg" cx="50" cy="50" r="40"/>
+                            <circle class="progress-ring-fill" id="progressRingFill" cx="50" cy="50" r="40"/>
+                        </svg>
+                        <div class="progress-ring-text">
+                            <div class="progress-ring-value" id="progressPercent">۰٪</div>
+                            <div class="progress-ring-label">هدف روزانه</div>
+                        </div>
+                    </div>
+                    <div class="progress-details">
+                        <div class="progress-detail-item">
+                            <span class="progress-detail-label">مرور شده</span>
+                            <span class="progress-detail-value" id="detailReviewed">۰ کارت</span>
+                        </div>
+                        <div class="progress-detail-item">
+                            <span class="progress-detail-label">هدف روزانه</span>
+                            <span class="progress-detail-value" id="detailGoal">۲۰ کارت</span>
+                        </div>
+                        <div class="progress-detail-item">
+                            <span class="progress-detail-label">دقت</span>
+                            <span class="progress-detail-value" id="detailAccuracy">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badges Horizontal Scroll -->
+            <div class="badges-section-new">
+                <div class="section-title">
+                    <span>🏅</span> مدال‌ها
+                    <span class="section-badge" id="badgeCount">۰/۱۲</span>
+                </div>
+                <div class="badges-scroll" id="badgesScrollContainer">
+                    <!-- Badges will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Streak Widget -->
+            <div class="widgets-section">
+                <div class="widget-card streak-widget">
+                    <div class="widget-header">
+                        <div class="widget-title" style="color: #92400e;">
+                            <span>🔥</span> روند این هفته
+                        </div>
+                    </div>
+                    <div class="streak-days" id="streakDays">
+                        <!-- Days will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Word of the Day -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-title">
+                        <span>💡</span> کلمه روز
+                    </div>
+                    <div class="widget-action" onclick="WordOfDay.refresh()">🔄</div>
+                </div>
+                <div class="word-of-day" id="wordOfDayContainer">
+                    <div class="word-of-day-text" id="wodWord">Loading...</div>
+                    <div class="word-of-day-meaning" id="wodMeaning"></div>
+                    <button class="btn-secondary" style="margin-top: 12px; padding: 10px 24px;" onclick="WordOfDay.play()">
+                        🔊 تلفظ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Start Section -->
+            <div class="section-title" style="margin-top: 24px;">
+                <span>📚</span> شروع سریع
+            </div>
+            <div id="quickStartDecks">
+                <!-- Top decks will be populated by JS -->
+            </div>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- LIBRARY SCREEN -->
@@ -8121,6 +9388,1062 @@ thank,/θæŋk/,تشکر کردن,Thank you so much,تِنک مثل تانک ق�
             Gamification.init();
             setTimeout(addStarToFlashcard, 100);
         }
+		// ═══════════════════════════════════════════════════════════════
+        // VOICE MODE - Speech Recognition & Audio
+        // ═══════════════════════════════════════════════════════════════
+        const VoiceMode = {
+            currentMode: 'listen', // 'listen' or 'speak'
+            currentIndex: 0,
+            words: [],
+            isPlaying: false,
+            isRecording: false,
+            recognition: null,
+            speechSpeed: 0.75,
+            autoPlay: false,
+
+            // Initialize
+            init() {
+                // Check for Speech Recognition support
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = true;
+                    this.recognition.lang = 'en-US';
+
+                    this.recognition.onresult = (event) => {
+                        const result = event.results[event.results.length - 1];
+                        const transcript = result[0].transcript.toLowerCase().trim();
+                        this.handleRecognitionResult(transcript, result.isFinal);
+                    };
+
+                    this.recognition.onend = () => {
+                        this.isRecording = false;
+                        this.updateRecordingUI();
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        this.isRecording = false;
+                        this.updateRecordingUI();
+                        
+                        if (event.error === 'not-allowed') {
+                            Toast.warning('لطفاً دسترسی میکروفون را فعال کنید');
+                        }
+                    };
+                }
+            },
+
+            // Open modal
+            open() {
+                this.loadWords();
+                document.getElementById('voiceModeModal').classList.add('active');
+                this.render();
+            },
+
+            close() {
+                document.getElementById('voiceModeModal').classList.remove('active');
+                this.stopPlay();
+                if (this.isRecording) {
+                    this.stopRecording();
+                }
+            },
+
+            // Load words from cards
+            loadWords() {
+                const cards = Object.values(CardManager.getAll());
+                this.words = cards.slice(0, 50).map(card => ({
+                    id: card.id,
+                    word: card.word,
+                    meaning: card.meaning,
+                    pronunciation: card.pronunciation || '',
+                    example: card.example || ''
+                }));
+
+                if (this.words.length === 0) {
+                    this.words = [
+                        { word: 'Hello', meaning: 'سلام', pronunciation: '/həˈloʊ/' },
+                        { word: 'World', meaning: 'جهان', pronunciation: '/wɜːrld/' },
+                        { word: 'Learn', meaning: 'یاد گرفتن', pronunciation: '/lɜːrn/' }
+                    ];
+                }
+            },
+
+            // Set mode (listen/speak)
+            setMode(mode) {
+                this.currentMode = mode;
+                
+                document.querySelectorAll('#voiceModeModal .mode-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+
+                document.getElementById('voiceListenMode').style.display = mode === 'listen' ? 'block' : 'none';
+                document.getElementById('voiceSpeakMode').style.display = mode === 'speak' ? 'block' : 'none';
+
+                this.render();
+            },
+
+            // Render current word
+            render() {
+                if (this.words.length === 0) return;
+                
+                const word = this.words[this.currentIndex];
+
+                // Listen mode
+                document.getElementById('audioWord').textContent = word.word;
+                document.getElementById('audioPronunciation').textContent = word.pronunciation || '';
+                document.getElementById('audioMeaning').textContent = word.meaning;
+                document.getElementById('audioExample').textContent = word.example || '';
+                document.getElementById('audioMeaningReveal').style.display = 'none';
+
+                // Speak mode
+                document.getElementById('speakTargetWord').textContent = word.word;
+                document.getElementById('speakTargetPron').textContent = word.pronunciation || '';
+                document.getElementById('voiceResult').style.display = 'none';
+                document.getElementById('voiceStatus').textContent = 'برای شروع ضبط کلیک کنید';
+
+                this.renderWordList();
+            },
+
+            // Render word list
+            renderWordList() {
+                const container = document.getElementById('voiceWordList');
+                if (!container) return;
+
+                container.innerHTML = this.words.map((word, index) => `
+                    <div class="weakness-item" style="cursor: pointer; ${index === this.currentIndex ? 'background: var(--primary-light);' : ''}" 
+                         onclick="VoiceMode.goToWord(${index})">
+                        <div style="font-size: 18px; margin-left: 12px;">
+                            ${index === this.currentIndex ? '🔊' : '📝'}
+                        </div>
+                        <div class="weakness-info">
+                            <div class="weakness-word">${word.word}</div>
+                            <div class="weakness-meaning">${word.meaning}</div>
+                        </div>
+                        <button class="weakness-practice-btn" onclick="event.stopPropagation(); VoiceMode.playWord(${index})">
+                            🔊
+                        </button>
+                    </div>
+                `).join('');
+            },
+
+            // Navigation
+            goToWord(index) {
+                this.currentIndex = index;
+                this.render();
+            },
+
+            prevWord() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.render();
+                    if (this.autoPlay) this.playCurrentWord();
+                }
+            },
+
+            nextWord() {
+                if (this.currentIndex < this.words.length - 1) {
+                    this.currentIndex++;
+                    this.render();
+                    if (this.autoPlay) this.playCurrentWord();
+                }
+            },
+
+            nextSpeakWord() {
+                this.nextWord();
+            },
+
+            // Audio Controls
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.stopPlay();
+                } else {
+                    this.playCurrentWord();
+                }
+            },
+
+            playCurrentWord() {
+                if (this.words.length === 0) return;
+                this.playWord(this.currentIndex);
+            },
+
+            playWord(index) {
+                const word = this.words[index];
+                if (!word) return;
+
+                this.stopPlay();
+                this.isPlaying = true;
+                this.updatePlayUI();
+
+                AudioPlayer.speak(word.word, this.speechSpeed, () => {
+                    this.isPlaying = false;
+                    this.updatePlayUI();
+                });
+            },
+
+            stopPlay() {
+                this.isPlaying = false;
+                speechSynthesis.cancel();
+                this.updatePlayUI();
+            },
+
+            updatePlayUI() {
+                const btn = document.getElementById('audioPlayBtn');
+                const waveform = document.getElementById('audioWaveform');
+                
+                if (btn) {
+                    btn.textContent = this.isPlaying ? '⏸️' : '▶️';
+                }
+                if (waveform) {
+                    waveform.classList.toggle('paused', !this.isPlaying);
+                }
+            },
+
+            // Speed control
+            setSpeed(speed) {
+                this.speechSpeed = speed;
+                
+                document.querySelectorAll('.speed-btn').forEach(btn => {
+                    btn.classList.toggle('active', parseFloat(btn.dataset.speed) === speed);
+                });
+
+                Toast.info(`سرعت: ${speed}x`);
+            },
+
+            showMeaning() {
+                document.getElementById('audioMeaningReveal').style.display = 'block';
+            },
+
+            // ═══════════════════════════════════════════════════════════════
+            // VOICE RECOGNITION (Speak Mode)
+            // ═══════════════════════════════════════════════════════════════
+            
+            toggleRecording() {
+                if (this.isRecording) {
+                    this.stopRecording();
+                } else {
+                    this.startRecording();
+                }
+            },
+
+            startRecording() {
+                if (!this.recognition) {
+                    Toast.warning('مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند');
+                    return;
+                }
+
+                try {
+                    this.recognition.start();
+                    this.isRecording = true;
+                    this.updateRecordingUI();
+                    document.getElementById('voiceResult').style.display = 'none';
+                    document.getElementById('voiceStatus').textContent = '🎤 در حال گوش دادن...';
+                } catch (e) {
+                    console.error('Error starting recognition:', e);
+                }
+            },
+
+            stopRecording() {
+                if (this.recognition && this.isRecording) {
+                    this.recognition.stop();
+                    this.isRecording = false;
+                    this.updateRecordingUI();
+                }
+            },
+
+            updateRecordingUI() {
+                const btn = document.getElementById('voiceRecordBtn');
+                if (btn) {
+                    btn.classList.toggle('listening', this.isRecording);
+                }
+            },
+
+            handleRecognitionResult(transcript, isFinal) {
+                const statusEl = document.getElementById('voiceStatus');
+                
+                if (!isFinal) {
+                    statusEl.textContent = `🎤 "${transcript}"`;
+                    return;
+                }
+
+                // Final result
+                const targetWord = this.words[this.currentIndex]?.word.toLowerCase();
+                const spokenWord = transcript.toLowerCase().trim();
+                
+                const resultContainer = document.getElementById('voiceResult');
+                const resultText = document.getElementById('voiceResultText');
+                const resultFeedback = document.getElementById('voiceResultFeedback');
+                
+                resultContainer.style.display = 'block';
+                resultText.textContent = `"${transcript}"`;
+
+                // Check similarity
+                const similarity = this.calculateSimilarity(spokenWord, targetWord);
+                
+                if (similarity >= 0.8) {
+                    resultFeedback.innerHTML = `
+                        <div style="color: var(--success); font-size: 48px; margin: 12px 0;">🎉</div>
+                        <div style="color: var(--success); font-weight: 700; font-size: 18px;">عالی! تلفظ صحیح</div>
+                        <div style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                            تطابق: ${Math.round(similarity * 100)}٪
+                        </div>
+                    `;
+                    Gamification.addXP(5, '🎤 تلفظ صحیح');
+                    
+                    // Auto advance after success
+                    setTimeout(() => {
+                        this.nextSpeakWord();
+                    }, 2000);
+                } else if (similarity >= 0.5) {
+                    resultFeedback.innerHTML = `
+                        <div style="color: var(--warning); font-size: 48px; margin: 12px 0;">🤔</div>
+                        <div style="color: var(--warning); font-weight: 700; font-size: 18px;">نزدیک بود!</div>
+                        <div style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                            تطابق: ${Math.round(similarity * 100)}٪ - دوباره تلاش کنید
+                        </div>
+                    `;
+                } else {
+                    resultFeedback.innerHTML = `
+                        <div style="color: var(--danger); font-size: 48px; margin: 12px 0;">😅</div>
+                        <div style="color: var(--danger); font-weight: 700; font-size: 18px;">دوباره تلاش کنید</div>
+                        <div style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                            به تلفظ صحیح گوش دهید و تکرار کنید
+                        </div>
+                    `;
+                }
+
+                statusEl.textContent = 'برای تلاش مجدد کلیک کنید';
+            },
+
+            // Calculate string similarity (Levenshtein distance based)
+            calculateSimilarity(str1, str2) {
+                if (str1 === str2) return 1;
+                if (!str1 || !str2) return 0;
+
+                const len1 = str1.length;
+                const len2 = str2.length;
+                const matrix = [];
+
+                for (let i = 0; i <= len1; i++) {
+                    matrix[i] = [i];
+                }
+                for (let j = 0; j <= len2; j++) {
+                    matrix[0][j] = j;
+                }
+
+                for (let i = 1; i <= len1; i++) {
+                    for (let j = 1; j <= len2; j++) {
+                        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j - 1] + cost
+                        );
+                    }
+                }
+
+                const maxLen = Math.max(len1, len2);
+                return (maxLen - matrix[len1][len2]) / maxLen;
+            },
+
+            hearCorrect() {
+                this.playCurrentWord();
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // ADVANCED AUDIO PLAYER
+        // ═══════════════════════════════════════════════════════════════
+        const AudioPlayer = {
+            currentSpeed: 1,
+            isPlaying: false,
+            repeatMode: false,
+            currentWord: null,
+
+            // Speak word using Web Speech API
+            speak(text, speed = 1, onEnd = null) {
+                if (!text) return;
+
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = speed;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+
+                // Try to get a good English voice
+                const voices = speechSynthesis.getVoices();
+                const englishVoice = voices.find(v => 
+                    v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Alex'))
+                ) || voices.find(v => v.lang.startsWith('en'));
+                
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+
+                utterance.onend = () => {
+                    this.isPlaying = false;
+                    if (this.repeatMode) {
+                        setTimeout(() => this.speak(text, speed, onEnd), 500);
+                    } else if (onEnd) {
+                        onEnd();
+                    }
+                };
+
+                utterance.onerror = (e) => {
+                    console.error('Speech error:', e);
+                    this.isPlaying = false;
+                };
+
+                this.isPlaying = true;
+                this.currentWord = text;
+                speechSynthesis.speak(utterance);
+            },
+
+            // Speak with pronunciation guide
+            speakWithPronunciation(word, pronunciation) {
+                this.speak(word);
+            },
+
+            // Control methods
+            toggle() {
+                if (this.isPlaying) {
+                    this.stop();
+                } else if (this.currentWord) {
+                    this.speak(this.currentWord, this.currentSpeed);
+                }
+            },
+
+            stop() {
+                speechSynthesis.cancel();
+                this.isPlaying = false;
+            },
+
+            toggleRepeat() {
+                this.repeatMode = !this.repeatMode;
+                Toast.info(this.repeatMode ? '🔁 تکرار فعال' : '🔁 تکرار غیرفعال');
+            },
+
+            slower() {
+                this.currentSpeed = Math.max(0.25, this.currentSpeed - 0.25);
+                Toast.info(`سرعت: ${this.currentSpeed}x`);
+                if (this.currentWord) {
+                    this.speak(this.currentWord, this.currentSpeed);
+                }
+            },
+
+            faster() {
+                this.currentSpeed = Math.min(2, this.currentSpeed + 0.25);
+                Toast.info(`سرعت: ${this.currentSpeed}x`);
+                if (this.currentWord) {
+                    this.speak(this.currentWord, this.currentSpeed);
+                }
+            },
+
+            // Play word from flashcard
+            playFlashcardWord(word) {
+                this.currentWord = word;
+                this.speak(word, this.currentSpeed);
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // WORD OF THE DAY
+        // ═══════════════════════════════════════════════════════════════
+        const WordOfDay = {
+            word: null,
+
+            init() {
+                this.load();
+            },
+
+            load() {
+                const cards = Object.values(CardManager.getAll());
+                
+                if (cards.length === 0) {
+                    this.word = {
+                        word: 'Serendipity',
+                        meaning: 'خوش‌شانسی غیرمنتظره',
+                        pronunciation: '/ˌserənˈdɪpɪti/'
+                    };
+                } else {
+                    // Get a word based on today's date (consistent for the day)
+                    const today = new Date().toDateString();
+                    const savedWod = DB.get('wordOfDay', {});
+                    
+                    if (savedWod.date === today && savedWod.word) {
+                        this.word = savedWod.word;
+                    } else {
+                        // Pick a new word
+                        const seed = today.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+                        const index = seed % cards.length;
+                        this.word = cards[index];
+                        
+                        DB.set('wordOfDay', {
+                            date: today,
+                            word: this.word
+                        });
+                    }
+                }
+
+                this.render();
+            },
+
+            refresh() {
+                const cards = Object.values(CardManager.getAll());
+                if (cards.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * cards.length);
+                    this.word = cards[randomIndex];
+                    this.render();
+                    Toast.success('کلمه جدید انتخاب شد');
+                }
+            },
+
+            render() {
+                if (!this.word) return;
+
+                const wordEl = document.getElementById('wodWord');
+                const meaningEl = document.getElementById('wodMeaning');
+
+                if (wordEl) wordEl.textContent = this.word.word;
+                if (meaningEl) meaningEl.textContent = this.word.meaning;
+            },
+
+            play() {
+                if (this.word) {
+                    AudioPlayer.speak(this.word.word);
+                }
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // HOME PAGE UPDATES
+        // ═══════════════════════════════════════════════════════════════
+        const HomePage = {
+            init() {
+                this.updateGreeting();
+                this.updateStats();
+                this.updateProgress();
+                this.updateStreak();
+                this.updateBadges();
+                this.updateQuickStart();
+                this.updateDailyReward();
+            },
+
+            updateGreeting() {
+                const hour = new Date().getHours();
+                let greeting = 'سلام! 👋';
+                
+                if (hour >= 5 && hour < 12) {
+                    greeting = 'صبح بخیر! ☀️';
+                } else if (hour >= 12 && hour < 17) {
+                    greeting = 'ظهر بخیر! 🌤️';
+                } else if (hour >= 17 && hour < 21) {
+                    greeting = 'عصر بخیر! 🌅';
+                } else {
+                    greeting = 'شب بخیر! 🌙';
+                }
+
+                const el = document.getElementById('heroGreeting');
+                if (el) el.textContent = greeting;
+            },
+
+            updateStats() {
+                const gamificationData = Gamification.getData();
+                const settings = Settings.get();
+                const cards = Object.values(CardManager.getAll());
+                const reviews = DB.get('reviews', []);
+
+                // Today's reviews
+                const today = new Date().toDateString();
+                const todayReviews = reviews.filter(r => 
+                    new Date(r.timestamp).toDateString() === today
+                ).length;
+
+                // Mastered cards
+                const mastered = cards.filter(c => c.stability >= 30).length;
+
+                // Update hero section
+                const streakEl = document.getElementById('heroStreak');
+                if (streakEl) streakEl.textContent = Utils.toPersian(settings.streak || 0);
+
+                const levelEl = document.getElementById('heroLevel');
+                const badgeEl = document.getElementById('heroBadge');
+                const levelNameEl = document.getElementById('heroLevelName');
+                
+                if (levelEl) levelEl.textContent = Utils.toPersian(gamificationData.level);
+                if (badgeEl) badgeEl.textContent = Utils.toPersian(gamificationData.level);
+                if (levelNameEl) levelNameEl.textContent = Gamification.getLevelTitle(gamificationData.level);
+
+                // XP Bar
+                const currentLevelXP = Gamification.getXPForCurrentLevel(gamificationData.level);
+                const nextLevelXP = Gamification.getXPForNextLevel(gamificationData.level);
+                const progressXP = gamificationData.xp - currentLevelXP;
+                const neededXP = nextLevelXP - currentLevelXP;
+                const progress = Math.min((progressXP / neededXP) * 100, 100);
+
+                const xpBarEl = document.getElementById('heroXpBar');
+                const xpCurrentEl = document.getElementById('heroXpCurrent');
+                const xpNextEl = document.getElementById('heroXpNext');
+
+                if (xpBarEl) xpBarEl.style.width = `${progress}%`;
+                if (xpCurrentEl) xpCurrentEl.textContent = Utils.toPersian(progressXP);
+                if (xpNextEl) xpNextEl.textContent = Utils.toPersian(neededXP);
+
+                // Quick stats
+                const statToday = document.getElementById('statTodayReviews');
+                const statTotal = document.getElementById('statTotalCards');
+                const statMastered = document.getElementById('statMastered');
+
+                if (statToday) statToday.textContent = Utils.toPersian(todayReviews);
+                if (statTotal) statTotal.textContent = Utils.toPersian(cards.length);
+                if (statMastered) statMastered.textContent = Utils.toPersian(mastered);
+            },
+
+            updateProgress() {
+                const settings = Settings.get();
+                const reviews = DB.get('reviews', []);
+                const today = new Date().toDateString();
+                
+                const todayReviews = reviews.filter(r => 
+                    new Date(r.timestamp).toDateString() === today
+                );
+                
+                const goal = settings.dailyGoal || 20;
+                const reviewed = todayReviews.length;
+                const percent = Math.min(Math.round((reviewed / goal) * 100), 100);
+
+                // Update ring
+                const ringFill = document.getElementById('progressRingFill');
+                if (ringFill) {
+                    const circumference = 2 * Math.PI * 40; // radius = 40
+                    const offset = circumference - (percent / 100) * circumference;
+                    ringFill.style.strokeDashoffset = offset;
+                }
+
+                // Update text
+                const percentEl = document.getElementById('progressPercent');
+                if (percentEl) percentEl.textContent = `${Utils.toPersian(percent)}٪`;
+
+                // Update details
+                const detailReviewed = document.getElementById('detailReviewed');
+                const detailGoal = document.getElementById('detailGoal');
+                const detailAccuracy = document.getElementById('detailAccuracy');
+
+                if (detailReviewed) detailReviewed.textContent = `${Utils.toPersian(reviewed)} کارت`;
+                if (detailGoal) detailGoal.textContent = `${Utils.toPersian(goal)} کارت`;
+                
+                if (detailAccuracy && todayReviews.length > 0) {
+                    const correct = todayReviews.filter(r => r.rating >= 3).length;
+                    const accuracy = Math.round((correct / todayReviews.length) * 100);
+                    detailAccuracy.textContent = `${Utils.toPersian(accuracy)}٪`;
+                }
+            },
+
+            updateStreak() {
+                const container = document.getElementById('streakDays');
+                if (!container) return;
+
+                const settings = Settings.get();
+                const reviews = DB.get('reviews', []);
+                const today = new Date();
+                
+                let html = '';
+                const dayNames = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
+
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toDateString();
+                    
+                    const hasReview = reviews.some(r => 
+                        new Date(r.timestamp).toDateString() === dateStr
+                    );
+                    
+                    const isToday = i === 0;
+                    const dayIndex = date.getDay();
+
+                    html += `
+                        <div class="streak-day ${hasReview ? 'completed' : ''} ${isToday ? 'today' : ''}">
+                            ${hasReview ? '🔥' : (isToday ? '?' : '')}
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+            },
+
+            updateBadges() {
+                const container = document.getElementById('badgesScrollContainer');
+                const countEl = document.getElementById('badgeCount');
+                if (!container) return;
+
+                const gamificationData = Gamification.getData();
+                
+                container.innerHTML = Gamification.badges.map(badge => {
+                    const isEarned = gamificationData.earnedBadges.includes(badge.id);
+                    return `
+                        <div class="badge-card ${isEarned ? 'earned' : 'locked'}" 
+                             onclick="Gamification.showBadgeDetail('${badge.id}')">
+                            <div class="badge-card-icon">${badge.icon}</div>
+                            <div class="badge-card-name">${badge.name}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (countEl) {
+                    countEl.textContent = `${Utils.toPersian(gamificationData.earnedBadges.length)}/${Utils.toPersian(Gamification.badges.length)}`;
+                }
+            },
+
+            updateQuickStart() {
+                const container = document.getElementById('quickStartDecks');
+                if (!container) return;
+
+                const decks = DeckManager.getAll();
+                const topDecks = decks.slice(0, 3);
+
+                if (topDecks.length === 0) {
+                    container.innerHTML = `
+                        <div class="deck-card" onclick="Navigation.go('library')" style="text-align: center; padding: 30px;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">📚</div>
+                            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary);">
+                                اولین Deck خود را بسازید
+                            </div>
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
+                                به کتابخانه بروید و شروع کنید
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = topDecks.map(deck => {
+                    const cards = Object.values(CardManager.getAll()).filter(c => c.deckId === deck.id);
+                    const dueCards = cards.filter(c => !c.nextReview || new Date(c.nextReview) <= new Date()).length;
+                    
+                    return `
+                        <div class="deck-card" onclick="Library.selectDeck('${deck.id}')" style="margin-bottom: 12px;">
+                            <div class="deck-icon">${deck.icon || '📚'}</div>
+                            <div class="deck-info">
+                                <div class="deck-name">${deck.name}</div>
+                                <div class="deck-meta">${Utils.toPersian(cards.length)} کارت</div>
+                            </div>
+                            ${dueCards > 0 ? `
+                                <div class="deck-badge">${Utils.toPersian(dueCards)}</div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            updateDailyReward() {
+                const gamificationData = Gamification.getData();
+                const today = new Date().toDateString();
+                const claimed = gamificationData.dailyRewardClaimed === today;
+
+                const card = document.getElementById('dailyRewardCard');
+                const desc = document.getElementById('dailyRewardDesc');
+                const btnText = document.getElementById('dailyRewardBtnText');
+
+                if (card) card.classList.toggle('claimed', claimed);
+                if (desc) desc.textContent = claimed ? 'فردا دوباره بیایید!' : 'برای دریافت XP کلیک کنید!';
+                if (btnText) btnText.textContent = claimed ? '✓' : 'دریافت';
+            }
+        };
+		// ═══════════════════════════════════════════════════════════════
+        // ENHANCED ANIMATIONS HELPER
+        // ═══════════════════════════════════════════════════════════════
+        const Animations = {
+            // Add celebration effect to element
+            celebrate(element) {
+                if (!element) return;
+                element.classList.add('celebrate');
+                setTimeout(() => element.classList.remove('celebrate'), 600);
+            },
+
+            // Add float effect
+            float(element) {
+                if (!element) return;
+                element.classList.add('floating');
+            },
+
+            // Pulse effect
+            pulse(element) {
+                if (!element) return;
+                element.classList.add('pulse');
+                setTimeout(() => element.classList.remove('pulse'), 2000);
+            },
+
+            // Shake effect for wrong answers
+            shake(element) {
+                if (!element) return;
+                element.style.animation = 'shake 0.5s ease';
+                setTimeout(() => element.style.animation = '', 500);
+            },
+
+            // Success ripple
+            ripple(element) {
+                if (!element) return;
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple-effect';
+                element.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            },
+
+            // Counter animation
+            animateCounter(element, start, end, duration = 1000) {
+                if (!element) return;
+                const range = end - start;
+                const startTime = performance.now();
+                
+                const updateCounter = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Easing function
+                    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                    const current = Math.round(start + (range * easeOutQuart));
+                    
+                    element.textContent = Utils.toPersian(current);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    }
+                };
+                
+                requestAnimationFrame(updateCounter);
+            },
+
+            // Progress bar animation
+            animateProgress(element, targetPercent, duration = 1000) {
+                if (!element) return;
+                element.style.transition = `width ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+                element.style.width = `${targetPercent}%`;
+            },
+
+            // Stagger children animation
+            staggerChildren(container, selector, delay = 100) {
+                if (!container) return;
+                const children = container.querySelectorAll(selector);
+                children.forEach((child, index) => {
+                    child.style.opacity = '0';
+                    child.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        child.style.transition = 'all 0.4s ease';
+                        child.style.opacity = '1';
+                        child.style.transform = 'translateY(0)';
+                    }, index * delay);
+                });
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // WIDGET MANAGER
+        // ═══════════════════════════════════════════════════════════════
+        const Widgets = {
+            // Motivational quotes
+            quotes: [
+                { text: 'هر روز یک قدم جلوتر', author: 'LEXORA' },
+                { text: 'یادگیری پایان ندارد', author: 'LEXORA' },
+                { text: 'امروز بهتر از دیروز', author: 'LEXORA' },
+                { text: 'تکرار مادر مهارت است', author: 'ضرب‌المثل' },
+                { text: 'ذهن مثل چتر است، وقتی باز باشد کار می‌کند', author: 'آلبرت انیشتین' }
+            ],
+
+            // Get random quote
+            getQuote() {
+                const index = Math.floor(Math.random() * this.quotes.length);
+                return this.quotes[index];
+            },
+
+            // Create notification widget
+            createNotification(title, message, type = 'info') {
+                const colors = {
+                    info: 'var(--primary)',
+                    success: 'var(--success)',
+                    warning: 'var(--warning)',
+                    error: 'var(--danger)'
+                };
+
+                const icons = {
+                    info: 'ℹ️',
+                    success: '✅',
+                    warning: '⚠️',
+                    error: '❌'
+                };
+
+                return `
+                    <div class="mini-widget" style="border-right: 4px solid ${colors[type]};">
+                        <div class="mini-widget-header">
+                            <div class="mini-widget-icon" style="background: ${colors[type]}20;">
+                                ${icons[type]}
+                            </div>
+                            <div class="mini-widget-title">${title}</div>
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-secondary);">${message}</div>
+                    </div>
+                `;
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // FINAL APP INITIALIZATION - UPDATED
+        // ═══════════════════════════════════════════════════════════════
+        const AppInit = {
+            run() {
+                // Initialize all systems
+                VoiceMode.init();
+                WordOfDay.init();
+                
+                // Load voices for speech synthesis
+                if ('speechSynthesis' in window) {
+                    speechSynthesis.getVoices();
+                    speechSynthesis.onvoiceschanged = () => {
+                        speechSynthesis.getVoices();
+                    };
+                }
+
+                // Update home page
+                HomePage.init();
+
+                // Add animation to page transitions
+                this.setupPageTransitions();
+
+                // Setup periodic updates
+                this.setupPeriodicUpdates();
+
+                console.log('✅ LEXORA v3.0 - All features initialized');
+            },
+
+            setupPageTransitions() {
+                // Add smooth transitions when navigating
+                const originalGo = Navigation.go;
+                Navigation.go = function(screenId) {
+                    const currentScreen = document.querySelector('.screen.active');
+                    if (currentScreen) {
+                        currentScreen.style.opacity = '0';
+                        currentScreen.style.transform = 'translateY(-10px)';
+                    }
+                    
+                    setTimeout(() => {
+                        originalGo.call(Navigation, screenId);
+                        
+                        const newScreen = document.querySelector('.screen.active');
+                        if (newScreen) {
+                            newScreen.style.opacity = '0';
+                            newScreen.style.transform = 'translateY(20px)';
+                            
+                            requestAnimationFrame(() => {
+                                newScreen.style.transition = 'all 0.4s ease';
+                                newScreen.style.opacity = '1';
+                                newScreen.style.transform = 'translateY(0)';
+                            });
+                        }
+
+                        // Update home page when navigating to home
+                        if (screenId === 'home') {
+                            HomePage.init();
+                        }
+                    }, 150);
+                };
+            },
+
+            setupPeriodicUpdates() {
+                // Update home page every minute
+                setInterval(() => {
+                    if (document.querySelector('#home.active')) {
+                        HomePage.updateStats();
+                        HomePage.updateProgress();
+                    }
+                }, 60000);
+
+                // Check for midnight reset
+                setInterval(() => {
+                    const now = new Date();
+                    if (now.getHours() === 0 && now.getMinutes() === 0) {
+                        HomePage.updateDailyReward();
+                        WordOfDay.load();
+                    }
+                }, 60000);
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // OVERRIDE ORIGINAL INIT
+        // ═══════════════════════════════════════════════════════════════
+        const originalAppInit2 = App.init;
+        App.init = function() {
+            originalAppInit2.call(this);
+            
+            // Run new initializations
+            setTimeout(() => {
+                AppInit.run();
+            }, 100);
+        };
+
+        // Re-run if already loaded
+        if (document.readyState === 'complete') {
+            setTimeout(() => {
+                AppInit.run();
+            }, 100);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // ENHANCED FLASHCARD WITH AUDIO
+        // ═══════════════════════════════════════════════════════════════
+        const originalShowCard2 = Review.showCard;
+        Review.showCard = function() {
+            originalShowCard2.call(this);
+            
+            // Add audio button to flashcard if not exists
+            const flashcardFront = document.querySelector('.flashcard-front');
+            if (flashcardFront && this.currentCard && !flashcardFront.querySelector('.card-audio-btn')) {
+                const audioBtn = document.createElement('button');
+                audioBtn.className = 'card-audio-btn';
+                audioBtn.innerHTML = '🔊';
+                audioBtn.style.cssText = `
+                    position: absolute;
+                    top: 12px;
+                    right: 12px;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    border: none;
+                    background: var(--bg-secondary);
+                    font-size: 20px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    z-index: 10;
+                `;
+                audioBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (this.currentCard) {
+                        AudioPlayer.playFlashcardWord(this.currentCard.word);
+                        audioBtn.style.transform = 'scale(1.2)';
+                        setTimeout(() => audioBtn.style.transform = 'scale(1)', 200);
+                    }
+                };
+                flashcardFront.style.position = 'relative';
+                flashcardFront.appendChild(audioBtn);
+            }
+
+            // Update existing audio button
+            const existingBtn = flashcardFront?.querySelector('.card-audio-btn');
+            if (existingBtn) {
+                existingBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (this.currentCard) {
+                        AudioPlayer.playFlashcardWord(this.currentCard.word);
+                        existingBtn.style.transform = 'scale(1.2)';
+                        setTimeout(() => existingBtn.style.transform = 'scale(1)', 200);
+                    }
+                };
+            }
+        };
     </script>
 	<!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- MODE SELECTOR MODAL -->
@@ -8712,6 +11035,114 @@ goodbye,/ɡʊdˈbaɪ/,خداحافظ,Goodbye friend,گود بای = خدای خ�
                     افزودن
                 </button>
             </div>
+        </div>
+    </div>
+	<!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- VOICE MODE MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="voiceModeModal" class="dictionary-modal">
+        <div class="dictionary-container">
+            <div class="deck-manager-header">
+                <h2>🎤 حالت صوتی</h2>
+                <button class="modal-close" onclick="VoiceMode.close()">✕</button>
+            </div>
+            <div class="dictionary-body" style="padding: 20px;">
+                <!-- Mode Selection -->
+                <div class="mode-toggle" style="margin-bottom: 24px;">
+                    <button class="mode-btn active" onclick="VoiceMode.setMode('listen')">🎧 گوش دادن</button>
+                    <button class="mode-btn" onclick="VoiceMode.setMode('speak')">🎤 صحبت کردن</button>
+                </div>
+
+                <!-- Listen Mode -->
+                <div id="voiceListenMode" class="voice-mode-content active">
+                    <div class="audio-player">
+                        <div class="audio-word-display">
+                            <div class="audio-word" id="audioWord">Hello</div>
+                            <div class="audio-pronunciation" id="audioPronunciation">/həˈloʊ/</div>
+                        </div>
+                        
+                        <div class="audio-waveform" id="audioWaveform">
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                        </div>
+
+                        <div class="audio-controls">
+                            <button class="audio-btn" onclick="VoiceMode.prevWord()">⏮️</button>
+                            <button class="audio-btn play" id="audioPlayBtn" onclick="VoiceMode.togglePlay()">▶️</button>
+                            <button class="audio-btn" onclick="VoiceMode.nextWord()">⏭️</button>
+                        </div>
+
+                        <div class="audio-speed-control">
+                            <span style="font-size: 12px; color: var(--text-secondary);">سرعت:</span>
+                            <button class="speed-btn" data-speed="0.5" onclick="VoiceMode.setSpeed(0.5)">۰.۵x</button>
+                            <button class="speed-btn active" data-speed="0.75" onclick="VoiceMode.setSpeed(0.75)">۰.۷۵x</button>
+                            <button class="speed-btn" data-speed="1" onclick="VoiceMode.setSpeed(1)">۱x</button>
+                            <button class="speed-btn" data-speed="1.25" onclick="VoiceMode.setSpeed(1.25)">۱.۲۵x</button>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn-primary" onclick="VoiceMode.showMeaning()" style="padding: 12px 32px;">
+                                👁️ نمایش معنی
+                            </button>
+                        </div>
+
+                        <div id="audioMeaningReveal" style="display: none; margin-top: 16px; text-align: center;">
+                            <div style="font-size: 20px; font-weight: 700; color: var(--text-primary);" id="audioMeaning">سلام</div>
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;" id="audioExample"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Speak Mode (Voice Recognition) -->
+                <div id="voiceSpeakMode" class="voice-mode-content" style="display: none;">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 18px; color: var(--text-secondary); margin-bottom: 8px;">این کلمه را بخوانید:</div>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;" id="speakTargetWord">Hello</div>
+                        <div style="font-size: 16px; color: var(--primary); margin-bottom: 32px;" id="speakTargetPron">/həˈloʊ/</div>
+                        
+                        <button class="voice-btn" id="voiceRecordBtn" onclick="VoiceMode.toggleRecording()">
+                            🎤
+                        </button>
+                        
+                        <div class="voice-status" id="voiceStatus">برای شروع ضبط کلیک کنید</div>
+                        
+                        <div class="voice-result" id="voiceResult" style="display: none;">
+                            <div class="voice-result-text" id="voiceResultText"></div>
+                            <div id="voiceResultFeedback"></div>
+                        </div>
+
+                        <div style="margin-top: 24px; display: flex; gap: 12px; justify-content: center;">
+                            <button class="btn-secondary" onclick="VoiceMode.hearCorrect()">🔊 تلفظ صحیح</button>
+                            <button class="btn-primary" onclick="VoiceMode.nextSpeakWord()">بعدی ➡️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Word List for Practice -->
+                <div class="section-title" style="margin-top: 24px;">
+                    <span>📝</span> لیست کلمات
+                </div>
+                <div id="voiceWordList" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Words will be populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- AUDIO PLAYER FLOATING (for cards) -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="floatingAudioPlayer" class="floating-audio-player" style="display: none;">
+        <div class="floating-audio-content">
+            <button class="floating-audio-btn" onclick="AudioPlayer.toggleRepeat()">🔁</button>
+            <button class="floating-audio-btn play" onclick="AudioPlayer.toggle()">▶️</button>
+            <button class="floating-audio-btn" onclick="AudioPlayer.slower()">🐢</button>
+            <button class="floating-audio-btn" onclick="AudioPlayer.faster()">🐇</button>
         </div>
     </div>
 </body>
