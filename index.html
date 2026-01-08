@@ -3368,6 +3368,438 @@
             color: var(--primary);
             text-decoration: none;
         }
+		/* ═══════════════════════════════════════════════════════════
+           ANKI IMPORT STYLES
+           ═══════════════════════════════════════════════════════════ */
+        
+        .modal-large {
+            max-width: 600px;
+            max-height: 85vh;
+        }
+        
+        /* Upload Area */
+        .anki-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-secondary);
+        }
+        
+        .anki-upload-area:hover,
+        .anki-upload-area.drag-over {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .upload-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .upload-hint {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+        
+        .upload-formats {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        /* Info Box */
+        .anki-info-box {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .anki-info-box .info-icon {
+            font-size: 24px;
+        }
+        
+        .anki-info-box .info-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        .anki-info-box a {
+            color: var(--primary);
+        }
+        
+        /* File Info */
+        .anki-file-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .anki-file-info .file-icon {
+            font-size: 40px;
+        }
+        
+        .anki-file-info .file-details {
+            flex: 1;
+        }
+        
+        .anki-file-info .file-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+        
+        .anki-file-info .file-size {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .anki-file-info .file-remove {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        /* Processing */
+        .anki-processing {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .processing-spinner {
+            margin-bottom: 24px;
+        }
+        
+        .processing-spinner .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--bg-tertiary);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+        }
+        
+        .processing-stage {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .processing-progress .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .processing-progress .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+        
+        /* Preview */
+        .anki-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .preview-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .preview-stat {
+            text-align: center;
+        }
+        
+        .preview-stat .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .preview-stat .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .preview-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        /* Preview Decks List */
+        .anki-preview-decks {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .anki-preview-deck {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .preview-deck-checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+        
+        .preview-deck-info {
+            flex: 1;
+        }
+        
+        .preview-deck-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .preview-deck-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .preview-deck-expand {
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* Preview Footer */
+        .anki-preview-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .selected-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Importing */
+        .anki-importing {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .importing-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: bounce 1s ease infinite;
+        }
+        
+        .importing-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        
+        .importing-progress .progress-bar.large {
+            height: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .importing-progress .progress-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Success */
+        .anki-success {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+        
+        .success-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: var(--success);
+        }
+        
+        .success-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 32px;
+        }
+        
+        .success-stat {
+            text-align: center;
+        }
+        
+        .success-stat .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+        }
+        
+        .success-stat .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Error */
+        .anki-error {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+        
+        .error-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--danger);
+            margin-bottom: 12px;
+        }
+        
+        .error-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        /* Card Preview */
+        .anki-card-preview-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .anki-card-preview {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .card-preview-front {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--border);
+        }
+        
+        .card-preview-image {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .card-preview-word {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .card-preview-pron {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+        
+        .card-preview-meaning {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .card-preview-example {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .card-preview-audio {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .more-cards-notice {
+            text-align: center;
+            padding: 16px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Large button */
+        .btn-large {
+            padding: 16px 24px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -3552,7 +3984,11 @@
                 <div class="library-actions">
                     <button class="library-btn" onclick="DeckManager.openCreate()">➕</button>
                     <button class="library-btn" onclick="ReadyDecks.open()">📦</button>
-                </div>
+				</div>
+				                <!-- در صفحه Library -->
+<button class="btn btn-secondary" onclick="AnkiImporter.open()">
+    📦 واردسازی از Anki
+</button>
             </div>
 
             <div class="library-search">
@@ -3572,6 +4008,7 @@
                     ⭐ ستاره‌دار
                 </button>
             </div>
+			
 
             <!-- Decks View -->
             <div id="decksView" class="library-view active">
@@ -3604,7 +4041,8 @@
                     <!-- Generated by JS -->
                 </div>
             </div>
-        </div>
+        
+		</div>
 
         <!-- ═══════════════════════════════════════════════════════════════
              STATS SCREEN
@@ -4507,7 +4945,185 @@
             </div>
         </div>
     </div>
-
+<!-- ═══════════════════════════════════════════════════════════════
+         ANKI IMPORT MODAL
+         ═══════════════════════════════════════════════════════════════ -->
+    <div id="ankiImportModal" class="modal-overlay">
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h2>📦 واردسازی از Anki</h2>
+                <button class="modal-close" onclick="AnkiImporter.close()">✕</button>
+            </div>
+            <div class="modal-body">
+                
+                <!-- State: Idle - File Selection -->
+                <div id="ankiState_idle">
+                    <div class="anki-upload-area" 
+                         onclick="AnkiImporter.triggerFileSelect()"
+                         ondragover="AnkiImporter.handleDragOver(event)"
+                         ondragleave="AnkiImporter.handleDragLeave(event)"
+                         ondrop="AnkiImporter.handleDrop(event)">
+                        <input type="file" 
+                               id="apkgFileInput" 
+                               accept=".apkg" 
+                               style="display: none;"
+                               onchange="AnkiImporter.handleFileSelect(event)">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-title">فایل APKG را انتخاب کنید</div>
+                        <div class="upload-hint">یا فایل را اینجا بکشید و رها کنید</div>
+                        <div class="upload-formats">فرمت‌های پشتیبانی: .apkg</div>
+                    </div>
+                    
+                    <div class="anki-info-box">
+                        <div class="info-icon">💡</div>
+                        <div class="info-text">
+                            <strong>فایل APKG چیست؟</strong><br>
+                            فایل‌های APKG فرمت استاندارد خروجی برنامه Anki هستند. 
+                            می‌توانید دک‌های Anki را از <a href="https://ankiweb.net/shared/decks" target="_blank">AnkiWeb</a> دانلود کنید.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- State: Selected - File Selected -->
+                <div id="ankiState_selected" style="display: none;">
+                    <div class="anki-file-info">
+                        <div class="file-icon">📄</div>
+                        <div class="file-details">
+                            <div class="file-name" id="ankiFileName">filename.apkg</div>
+                            <div class="file-size" id="ankiFileSize">0 MB</div>
+                        </div>
+                        <button class="file-remove" onclick="AnkiImporter.resetState()">✕</button>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block btn-large" onclick="AnkiImporter.startImport()">
+                        🚀 شروع واردسازی
+                    </button>
+                    
+                    <button class="btn btn-secondary btn-block" onclick="AnkiImporter.triggerFileSelect()">
+                        📁 انتخاب فایل دیگر
+                    </button>
+                </div>
+                
+                <!-- State: Processing -->
+                <div id="ankiState_processing" style="display: none;">
+                    <div class="anki-processing">
+                        <div class="processing-spinner">
+                            <div class="spinner"></div>
+                        </div>
+                        <div class="processing-stage" id="ankiProcessStage">در حال پردازش...</div>
+                        <div class="processing-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="ankiProcessProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- State: Preview -->
+                <div id="ankiState_preview" style="display: none;">
+                    <div class="anki-preview-header">
+                        <div class="preview-stats">
+                            <div class="preview-stat">
+                                <div class="stat-value" id="ankiTotalDecks">0</div>
+                                <div class="stat-label">دک</div>
+                            </div>
+                            <div class="preview-stat">
+                                <div class="stat-value" id="ankiTotalCards">0</div>
+                                <div class="stat-label">کارت</div>
+                            </div>
+                        </div>
+                        <div class="preview-actions">
+                            <button class="btn btn-sm" onclick="AnkiImporter.toggleAllDecks(true)">انتخاب همه</button>
+                            <button class="btn btn-sm" onclick="AnkiImporter.toggleAllDecks(false)">لغو انتخاب</button>
+                        </div>
+                    </div>
+                    
+                    <div class="anki-preview-decks" id="ankiPreviewDecks">
+                        <!-- Decks will be rendered here -->
+                    </div>
+                    
+                    <div class="anki-preview-footer">
+                        <div class="selected-info">
+                            <span>انتخاب شده: </span>
+                            <span id="ankiSelectedDecks">0</span> دک، 
+                            <span id="ankiSelectedCards">0</span> کارت
+                        </div>
+                        <button class="btn btn-primary btn-large" onclick="AnkiImporter.confirmImport()">
+                            ✅ تأیید و واردسازی
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- State: Importing -->
+                <div id="ankiState_importing" style="display: none;">
+                    <div class="anki-importing">
+                        <div class="importing-icon">📥</div>
+                        <div class="importing-title">در حال واردسازی...</div>
+                        <div class="importing-progress">
+                            <div class="progress-bar large">
+                                <div class="progress-fill" id="ankiImportProgress" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span id="ankiImportCurrent">0</span> از <span id="ankiImportTotal">0</span> کارت
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- State: Success -->
+                <div id="ankiState_success" style="display: none;">
+                    <div class="anki-success">
+                        <div class="success-icon">🎉</div>
+                        <div class="success-title">واردسازی موفق!</div>
+                        <div class="success-stats">
+                            <div class="success-stat">
+                                <span class="stat-value" id="ankiSuccessDecks">0</span>
+                                <span class="stat-label">دک</span>
+                            </div>
+                            <div class="success-stat">
+                                <span class="stat-value" id="ankiSuccessCards">0</span>
+                                <span class="stat-label">کارت</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block btn-large" onclick="AnkiImporter.close(); Navigation.go('library');">
+                            📚 رفتن به کتابخانه
+                        </button>
+                        <button class="btn btn-secondary btn-block" onclick="AnkiImporter.resetState()">
+                            📁 واردسازی فایل دیگر
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- State: Error -->
+                <div id="ankiState_error" style="display: none;">
+                    <div class="anki-error">
+                        <div class="error-icon">❌</div>
+                        <div class="error-title">خطا در واردسازی</div>
+                        <div class="error-message" id="ankiErrorMessage">خطای ناشناخته</div>
+                        <button class="btn btn-primary btn-block" onclick="AnkiImporter.resetState()">
+                            🔄 تلاش مجدد
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Card Preview Modal -->
+    <div id="ankiCardPreviewModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>👁️ پیش‌نمایش: <span id="ankiPreviewDeckName"></span></h2>
+                <button class="modal-close" onclick="AnkiImporter.closeCardPreview()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="anki-card-preview-list" id="ankiCardPreviewList">
+                    <!-- Cards will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- ═══════════════════════════════════════════════════════════════
          ADD TO DECK MODAL
          ═══════════════════════════════════════════════════════════════ -->
@@ -8639,6 +9255,780 @@
         window.addEventListener('offline', () => {
             Toast.warning('حالت آفلاین 📴');
         });
+		// ═══════════════════════════════════════════════════════════════
+        // ANKI IMPORTER - APKG FILE SUPPORT
+        // ═══════════════════════════════════════════════════════════════
+        const AnkiImporter = {
+            // State
+            isProcessing: false,
+            currentFile: null,
+            importedDecks: [],
+            importedCards: [],
+            mediaFiles: {},
+            
+            // SQLite Database instance
+            db: null,
+            
+            // ═══════════════════════════════════════════════════════════
+            // INITIALIZE
+            // ═══════════════════════════════════════════════════════════
+            async init() {
+                // Load SQL.js library dynamically
+                if (typeof initSqlJs === 'undefined') {
+                    await this.loadSqlJs();
+                }
+            },
+            
+            // Load SQL.js library
+            async loadSqlJs() {
+                return new Promise((resolve, reject) => {
+                    if (typeof initSqlJs !== 'undefined') {
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.min.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // OPEN IMPORT MODAL
+            // ═══════════════════════════════════════════════════════════
+            open() {
+                this.resetState();
+                document.getElementById('ankiImportModal').classList.add('active');
+            },
+            
+            close() {
+                this.resetState();
+                document.getElementById('ankiImportModal').classList.remove('active');
+            },
+            
+            resetState() {
+                this.isProcessing = false;
+                this.currentFile = null;
+                this.importedDecks = [];
+                this.importedCards = [];
+                this.mediaFiles = {};
+                this.db = null;
+                
+                // Reset UI
+                const fileInput = document.getElementById('apkgFileInput');
+                if (fileInput) fileInput.value = '';
+                
+                this.updateUI('idle');
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // FILE SELECTION
+            // ═══════════════════════════════════════════════════════════
+            triggerFileSelect() {
+                document.getElementById('apkgFileInput').click();
+            },
+            
+            async handleFileSelect(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                // Validate file
+                if (!file.name.toLowerCase().endsWith('.apkg')) {
+                    Toast.error('لطفاً یک فایل APKG انتخاب کنید');
+                    return;
+                }
+                
+                // Check file size (max 100MB)
+                if (file.size > 100 * 1024 * 1024) {
+                    Toast.error('حجم فایل نباید بیشتر از 100MB باشد');
+                    return;
+                }
+                
+                this.currentFile = file;
+                this.updateUI('selected', {
+                    fileName: file.name,
+                    fileSize: this.formatFileSize(file.size)
+                });
+            },
+            
+            // Handle drag and drop
+            handleDragOver(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.currentTarget.classList.add('drag-over');
+            },
+            
+            handleDragLeave(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.currentTarget.classList.remove('drag-over');
+            },
+            
+            handleDrop(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.currentTarget.classList.remove('drag-over');
+                
+                const files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    const fakeEvent = { target: { files: files } };
+                    this.handleFileSelect(fakeEvent);
+                }
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // MAIN IMPORT PROCESS
+            // ═══════════════════════════════════════════════════════════
+            async startImport() {
+                if (!this.currentFile || this.isProcessing) return;
+                
+                this.isProcessing = true;
+                this.updateUI('processing', { stage: 'شروع پردازش...' });
+                
+                try {
+                    // Step 1: Extract ZIP
+                    this.updateUI('processing', { stage: 'استخراج فایل ZIP...', progress: 10 });
+                    const zipContents = await this.extractZip(this.currentFile);
+                    
+                    // Step 2: Find and load database
+                    this.updateUI('processing', { stage: 'خواندن دیتابیس...', progress: 30 });
+                    await this.loadDatabase(zipContents);
+                    
+                    // Step 3: Extract media files
+                    this.updateUI('processing', { stage: 'استخراج فایل‌های مدیا...', progress: 50 });
+                    await this.extractMedia(zipContents);
+                    
+                    // Step 4: Parse decks and cards
+                    this.updateUI('processing', { stage: 'پردازش دک‌ها و کارت‌ها...', progress: 70 });
+                    await this.parseAnkiData();
+                    
+                    // Step 5: Show preview
+                    this.updateUI('processing', { stage: 'آماده‌سازی پیش‌نمایش...', progress: 90 });
+                    this.showPreview();
+                    
+                } catch (error) {
+                    console.error('Import error:', error);
+                    this.updateUI('error', { message: error.message });
+                    Toast.error('خطا در واردسازی: ' + error.message);
+                } finally {
+                    this.isProcessing = false;
+                }
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // ZIP EXTRACTION
+            // ═══════════════════════════════════════════════════════════
+            async extractZip(file) {
+                // Load JSZip library if not loaded
+                if (typeof JSZip === 'undefined') {
+                    await this.loadJSZip();
+                }
+                
+                const arrayBuffer = await file.arrayBuffer();
+                const zip = await JSZip.loadAsync(arrayBuffer);
+                
+                return zip;
+            },
+            
+            async loadJSZip() {
+                return new Promise((resolve, reject) => {
+                    if (typeof JSZip !== 'undefined') {
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                    script.onload = resolve;
+                    script.onerror = () => reject(new Error('Failed to load JSZip library'));
+                    document.head.appendChild(script);
+                });
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // DATABASE LOADING
+            // ═══════════════════════════════════════════════════════════
+            async loadDatabase(zip) {
+                // Look for database file
+                const dbFiles = ['collection.anki21', 'collection.anki2'];
+                let dbData = null;
+                let dbFileName = null;
+                
+                for (const fileName of dbFiles) {
+                    const file = zip.file(fileName);
+                    if (file) {
+                        dbData = await file.async('uint8array');
+                        dbFileName = fileName;
+                        break;
+                    }
+                }
+                
+                if (!dbData) {
+                    throw new Error('فایل دیتابیس Anki یافت نشد');
+                }
+                
+                console.log('Found database:', dbFileName);
+                
+                // Initialize SQL.js
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+                
+                // Open database
+                this.db = new SQL.Database(dbData);
+                
+                console.log('Database loaded successfully');
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // MEDIA EXTRACTION
+            // ═══════════════════════════════════════════════════════════
+            async extractMedia(zip) {
+                // Read media mapping file
+                const mediaFile = zip.file('media');
+                if (!mediaFile) {
+                    console.log('No media file found');
+                    return;
+                }
+                
+                try {
+                    const mediaJson = await mediaFile.async('string');
+                    const mediaMapping = JSON.parse(mediaJson);
+                    
+                    console.log('Media files found:', Object.keys(mediaMapping).length);
+                    
+                    // Extract each media file
+                    for (const [index, fileName] of Object.entries(mediaMapping)) {
+                        const mediaFileData = zip.file(index);
+                        if (mediaFileData) {
+                            const data = await mediaFileData.async('base64');
+                            const mimeType = this.getMimeType(fileName);
+                            this.mediaFiles[fileName] = `data:${mimeType};base64,${data}`;
+                        }
+                    }
+                    
+                    console.log('Media extracted:', Object.keys(this.mediaFiles).length);
+                } catch (e) {
+                    console.warn('Error extracting media:', e);
+                }
+            },
+            
+            getMimeType(fileName) {
+                const ext = fileName.split('.').pop().toLowerCase();
+                const mimeTypes = {
+                    'jpg': 'image/jpeg',
+                    'jpeg': 'image/jpeg',
+                    'png': 'image/png',
+                    'gif': 'image/gif',
+                    'webp': 'image/webp',
+                    'svg': 'image/svg+xml',
+                    'mp3': 'audio/mpeg',
+                    'wav': 'audio/wav',
+                    'ogg': 'audio/ogg',
+                    'm4a': 'audio/mp4',
+                    'mp4': 'video/mp4',
+                    'webm': 'video/webm'
+                };
+                return mimeTypes[ext] || 'application/octet-stream';
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // PARSE ANKI DATA
+            // ═══════════════════════════════════════════════════════════
+            async parseAnkiData() {
+                if (!this.db) {
+                    throw new Error('دیتابیس بارگذاری نشده');
+                }
+                
+                // Get collection info
+                const colResult = this.db.exec('SELECT * FROM col');
+                if (colResult.length === 0) {
+                    throw new Error('اطلاعات کالکشن یافت نشد');
+                }
+                
+                const colData = colResult[0].values[0];
+                const colColumns = colResult[0].columns;
+                
+                // Find column indices
+                const getColumnIndex = (name) => colColumns.indexOf(name);
+                
+                // Parse decks
+                const decksJson = colData[getColumnIndex('decks')];
+                const decks = JSON.parse(decksJson);
+                
+                // Parse models (note types)
+                const modelsJson = colData[getColumnIndex('models')];
+                const models = JSON.parse(modelsJson);
+                
+                console.log('Decks found:', Object.keys(decks).length);
+                console.log('Models found:', Object.keys(models).length);
+                
+                // Parse notes
+                const notesResult = this.db.exec('SELECT * FROM notes');
+                const notes = this.parseResultToObjects(notesResult);
+                
+                console.log('Notes found:', notes.length);
+                
+                // Parse cards
+                const cardsResult = this.db.exec('SELECT * FROM cards');
+                const cards = this.parseResultToObjects(cardsResult);
+                
+                console.log('Cards found:', cards.length);
+                
+                // Build deck structure
+                this.importedDecks = [];
+                this.importedCards = [];
+                
+                // Process each deck
+                for (const [deckId, deckInfo] of Object.entries(decks)) {
+                    // Skip default deck if empty
+                    if (deckId === '1' && deckInfo.name === 'Default') {
+                        const deckCards = cards.filter(c => String(c.did) === deckId);
+                        if (deckCards.length === 0) continue;
+                    }
+                    
+                    const processedDeck = {
+                        id: deckId,
+                        name: this.cleanDeckName(deckInfo.name),
+                        description: deckInfo.desc || '',
+                        cards: []
+                    };
+                    
+                    // Find cards for this deck
+                    const deckCards = cards.filter(c => String(c.did) === deckId);
+                    
+                    for (const card of deckCards) {
+                        // Find the note for this card
+                        const note = notes.find(n => n.id === card.nid);
+                        if (!note) continue;
+                        
+                        // Find the model (note type)
+                        const model = models[note.mid];
+                        if (!model) continue;
+                        
+                        // Parse fields
+                        const fields = note.flds.split('\x1f');
+                        const fieldNames = model.flds.map(f => f.name);
+                        
+                        // Create card object
+                        const processedCard = this.processCard(fields, fieldNames, model, card, note);
+                        if (processedCard) {
+                            processedDeck.cards.push(processedCard);
+                            this.importedCards.push({
+                                ...processedCard,
+                                deckId: deckId,
+                                deckName: processedDeck.name
+                            });
+                        }
+                    }
+                    
+                    if (processedDeck.cards.length > 0) {
+                        this.importedDecks.push(processedDeck);
+                    }
+                }
+                
+                console.log('Processed decks:', this.importedDecks.length);
+                console.log('Processed cards:', this.importedCards.length);
+            },
+            
+            parseResultToObjects(result) {
+                if (result.length === 0) return [];
+                
+                const columns = result[0].columns;
+                const values = result[0].values;
+                
+                return values.map(row => {
+                    const obj = {};
+                    columns.forEach((col, i) => {
+                        obj[col] = row[i];
+                    });
+                    return obj;
+                });
+            },
+            
+            cleanDeckName(name) {
+                // Remove hierarchy separator for nested decks
+                return name.split('::').pop().trim();
+            },
+            
+            processCard(fields, fieldNames, model, card, note) {
+                // Common field patterns
+                const frontPatterns = ['Front', 'Question', 'Word', 'English', 'Expression', 'Vocabulary', 'کلمه', 'سوال'];
+                const backPatterns = ['Back', 'Answer', 'Meaning', 'Persian', 'Farsi', 'Definition', 'Translation', 'معنی', 'جواب', 'ترجمه'];
+                const pronunciationPatterns = ['Pronunciation', 'IPA', 'Phonetic', 'Reading', 'تلفظ'];
+                const examplePatterns = ['Example', 'Sentence', 'Usage', 'مثال', 'جمله'];
+                const audioPatterns = ['Audio', 'Sound', 'صدا'];
+                const imagePatterns = ['Image', 'Picture', 'Photo', 'تصویر'];
+                
+                // Find field indices
+                const findFieldIndex = (patterns) => {
+                    for (const pattern of patterns) {
+                        const index = fieldNames.findIndex(name => 
+                            name.toLowerCase().includes(pattern.toLowerCase())
+                        );
+                        if (index !== -1) return index;
+                    }
+                    return -1;
+                };
+                
+                // Get field values
+                const frontIndex = findFieldIndex(frontPatterns);
+                const backIndex = findFieldIndex(backPatterns);
+                
+                // If can't find specific fields, use first two
+                const front = frontIndex !== -1 ? fields[frontIndex] : fields[0];
+                const back = backIndex !== -1 ? fields[backIndex] : (fields[1] || '');
+                
+                if (!front || !back) return null;
+                
+                // Clean HTML and extract content
+                const word = this.cleanHtml(front);
+                const meaning = this.cleanHtml(back);
+                
+                if (!word.trim() || !meaning.trim()) return null;
+                
+                // Get optional fields
+                const pronIndex = findFieldIndex(pronunciationPatterns);
+                const exampleIndex = findFieldIndex(examplePatterns);
+                const audioIndex = findFieldIndex(audioPatterns);
+                const imageIndex = findFieldIndex(imagePatterns);
+                
+                const pronunciation = pronIndex !== -1 ? this.cleanHtml(fields[pronIndex]) : '';
+                const example = exampleIndex !== -1 ? this.cleanHtml(fields[exampleIndex]) : '';
+                
+                // Extract media references
+                let audio = null;
+                let image = null;
+                
+                // Check for audio in fields
+                const audioField = audioIndex !== -1 ? fields[audioIndex] : front + back;
+                const audioMatch = audioField.match(/\[sound:([^\]]+)\]/);
+                if (audioMatch && this.mediaFiles[audioMatch[1]]) {
+                    audio = this.mediaFiles[audioMatch[1]];
+                }
+                
+                // Check for image in fields
+                const imageField = imageIndex !== -1 ? fields[imageIndex] : front + back;
+                const imageMatch = imageField.match(/<img[^>]+src="([^"]+)"/);
+                if (imageMatch) {
+                    const imgName = imageMatch[1];
+                    if (this.mediaFiles[imgName]) {
+                        image = this.mediaFiles[imgName];
+                    }
+                }
+                
+                return {
+                    word: word,
+                    meaning: meaning,
+                    pronunciation: pronunciation,
+                    example: example,
+                    audio: audio,
+                    image: image,
+                    tags: note.tags ? note.tags.split(' ').filter(t => t) : [],
+                    ankiNoteId: note.id,
+                    ankiCardId: card.id,
+                    ankiInterval: card.ivl || 0,
+                    ankiReps: card.reps || 0,
+                    ankiLapses: card.lapses || 0
+                };
+            },
+            
+            cleanHtml(html) {
+                if (!html) return '';
+                
+                // Remove sound references
+                let text = html.replace(/\[sound:[^\]]+\]/g, '');
+                
+                // Remove image tags but keep alt text
+                text = text.replace(/<img[^>]*alt="([^"]*)"[^>]*>/gi, '$1');
+                text = text.replace(/<img[^>]*>/gi, '');
+                
+                // Remove HTML tags
+                text = text.replace(/<[^>]+>/g, ' ');
+                
+                // Decode HTML entities
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = text;
+                text = textarea.value;
+                
+                // Clean up whitespace
+                text = text.replace(/\s+/g, ' ').trim();
+                
+                return text;
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // PREVIEW
+            // ═══════════════════════════════════════════════════════════
+            showPreview() {
+                this.updateUI('preview');
+                this.renderPreviewDecks();
+            },
+            
+            renderPreviewDecks() {
+                const container = document.getElementById('ankiPreviewDecks');
+                if (!container) return;
+                
+                if (this.importedDecks.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📭</div>
+                            <div>هیچ دکی برای واردسازی یافت نشد</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = this.importedDecks.map((deck, index) => `
+                    <div class="anki-preview-deck" data-index="${index}">
+                        <div class="preview-deck-checkbox">
+                            <input type="checkbox" id="deck_${index}" checked onchange="AnkiImporter.toggleDeck(${index})">
+                        </div>
+                        <div class="preview-deck-info">
+                            <div class="preview-deck-name">${deck.name}</div>
+                            <div class="preview-deck-stats">
+                                <span>📚 ${Utils.toPersian(deck.cards.length)} کارت</span>
+                                ${deck.cards.some(c => c.image) ? '<span>🖼️ تصویر</span>' : ''}
+                                ${deck.cards.some(c => c.audio) ? '<span>🔊 صدا</span>' : ''}
+                            </div>
+                        </div>
+                        <button class="preview-deck-expand" onclick="AnkiImporter.previewDeckCards(${index})">
+                            👁️ پیش‌نمایش
+                        </button>
+                    </div>
+                `).join('');
+                
+                // Update total stats
+                document.getElementById('ankiTotalDecks').textContent = Utils.toPersian(this.importedDecks.length);
+                document.getElementById('ankiTotalCards').textContent = Utils.toPersian(this.importedCards.length);
+            },
+            
+            toggleDeck(index) {
+                const checkbox = document.getElementById(`deck_${index}`);
+                this.importedDecks[index].selected = checkbox.checked;
+                this.updateSelectedCount();
+            },
+            
+            toggleAllDecks(selectAll) {
+                this.importedDecks.forEach((deck, index) => {
+                    deck.selected = selectAll;
+                    const checkbox = document.getElementById(`deck_${index}`);
+                    if (checkbox) checkbox.checked = selectAll;
+                });
+                this.updateSelectedCount();
+            },
+            
+            updateSelectedCount() {
+                const selected = this.importedDecks.filter(d => d.selected !== false);
+                const cards = selected.reduce((sum, d) => sum + d.cards.length, 0);
+                
+                document.getElementById('ankiSelectedDecks').textContent = Utils.toPersian(selected.length);
+                document.getElementById('ankiSelectedCards').textContent = Utils.toPersian(cards);
+            },
+            
+            previewDeckCards(deckIndex) {
+                const deck = this.importedDecks[deckIndex];
+                if (!deck) return;
+                
+                const modal = document.getElementById('ankiCardPreviewModal');
+                const container = document.getElementById('ankiCardPreviewList');
+                
+                document.getElementById('ankiPreviewDeckName').textContent = deck.name;
+                
+                container.innerHTML = deck.cards.slice(0, 50).map((card, i) => `
+                    <div class="anki-card-preview">
+                        <div class="card-preview-front">
+                            ${card.image ? `<img src="${card.image}" class="card-preview-image">` : ''}
+                            <div class="card-preview-word">${card.word}</div>
+                            ${card.pronunciation ? `<div class="card-preview-pron">${card.pronunciation}</div>` : ''}
+                        </div>
+                        <div class="card-preview-back">
+                            <div class="card-preview-meaning">${card.meaning}</div>
+                            ${card.example ? `<div class="card-preview-example">"${card.example}"</div>` : ''}
+                        </div>
+                        ${card.audio ? `
+                            <button class="card-preview-audio" onclick="AnkiImporter.playPreviewAudio('${card.audio}')">
+                                🔊
+                            </button>
+                        ` : ''}
+                    </div>
+                `).join('');
+                
+                if (deck.cards.length > 50) {
+                    container.innerHTML += `
+                        <div class="more-cards-notice">
+                            و ${Utils.toPersian(deck.cards.length - 50)} کارت دیگر...
+                        </div>
+                    `;
+                }
+                
+                modal.classList.add('active');
+            },
+            
+            closeCardPreview() {
+                document.getElementById('ankiCardPreviewModal').classList.remove('active');
+            },
+            
+            playPreviewAudio(audioData) {
+                const audio = new Audio(audioData);
+                audio.play();
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // FINAL IMPORT
+            // ═══════════════════════════════════════════════════════════
+            async confirmImport() {
+                const selectedDecks = this.importedDecks.filter(d => d.selected !== false);
+                
+                if (selectedDecks.length === 0) {
+                    Toast.warning('لطفاً حداقل یک دک را انتخاب کنید');
+                    return;
+                }
+                
+                this.updateUI('importing', { progress: 0 });
+                
+                try {
+                    let totalImported = 0;
+                    const totalCards = selectedDecks.reduce((sum, d) => sum + d.cards.length, 0);
+                    
+                    for (let i = 0; i < selectedDecks.length; i++) {
+                        const deck = selectedDecks[i];
+                        
+                        // Create deck in LEXORA
+                        const newDeck = DeckManager.create(
+                            deck.name,
+                            deck.description || `واردشده از Anki - ${deck.cards.length} کارت`,
+                            this.getDeckEmoji(deck.name)
+                        );
+                        
+                        // Import cards
+                        for (let j = 0; j < deck.cards.length; j++) {
+                            const card = deck.cards[j];
+                            
+                            CardManager.create({
+                                deckId: newDeck.id,
+                                word: card.word,
+                                meaning: card.meaning,
+                                pronunciation: card.pronunciation || '',
+                                example: card.example || '',
+                                image: card.image || null,
+                                tags: card.tags || [],
+                                // Preserve some Anki progress
+                                reps: Math.min(card.ankiReps || 0, 5),
+                                lapses: card.ankiLapses || 0
+                            });
+                            
+                            totalImported++;
+                            
+                            // Update progress
+                            const progress = Math.round((totalImported / totalCards) * 100);
+                            this.updateUI('importing', { 
+                                progress: progress,
+                                current: totalImported,
+                                total: totalCards
+                            });
+                        }
+                    }
+                    
+                    // Success!
+                    this.updateUI('success', {
+                        decks: selectedDecks.length,
+                        cards: totalImported
+                    });
+                    
+                    // Award XP
+                    Gamification.addXP(selectedDecks.length * 20 + Math.floor(totalImported / 10), '📦 واردسازی از Anki');
+                    
+                    // Refresh library
+                    Library.render();
+                    HomePage.refresh();
+                    
+                    Toast.success(`${Utils.toPersian(totalImported)} کارت با موفقیت وارد شد! 🎉`);
+                    
+                } catch (error) {
+                    console.error('Import error:', error);
+                    this.updateUI('error', { message: error.message });
+                    Toast.error('خطا در واردسازی');
+                }
+            },
+            
+            getDeckEmoji(deckName) {
+                const name = deckName.toLowerCase();
+                
+                if (name.includes('ielts')) return '🎓';
+                if (name.includes('toefl')) return '📝';
+                if (name.includes('gre')) return '🎯';
+                if (name.includes('vocab') || name.includes('لغت')) return '📚';
+                if (name.includes('grammar') || name.includes('گرامر')) return '📖';
+                if (name.includes('idiom') || name.includes('اصطلاح')) return '🎭';
+                if (name.includes('business') || name.includes('تجاری')) return '💼';
+                if (name.includes('medical') || name.includes('پزشکی')) return '⚕️';
+                if (name.includes('science') || name.includes('علم')) return '🔬';
+                if (name.includes('movie') || name.includes('فیلم')) return '🎬';
+                if (name.includes('music') || name.includes('موسیقی')) return '🎵';
+                
+                return '📦';
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // UI UPDATE
+            // ═══════════════════════════════════════════════════════════
+            updateUI(state, data = {}) {
+                const states = ['idle', 'selected', 'processing', 'preview', 'importing', 'success', 'error'];
+                
+                // Hide all state views
+                states.forEach(s => {
+                    const el = document.getElementById(`ankiState_${s}`);
+                    if (el) el.style.display = 'none';
+                });
+                
+                // Show current state
+                const currentEl = document.getElementById(`ankiState_${state}`);
+                if (currentEl) currentEl.style.display = 'block';
+                
+                // Update state-specific content
+                switch (state) {
+                    case 'selected':
+                        document.getElementById('ankiFileName').textContent = data.fileName;
+                        document.getElementById('ankiFileSize').textContent = data.fileSize;
+                        break;
+                        
+                    case 'processing':
+                        document.getElementById('ankiProcessStage').textContent = data.stage || '';
+                        if (data.progress !== undefined) {
+                            document.getElementById('ankiProcessProgress').style.width = data.progress + '%';
+                        }
+                        break;
+                        
+                    case 'importing':
+                        document.getElementById('ankiImportProgress').style.width = data.progress + '%';
+                        document.getElementById('ankiImportCurrent').textContent = Utils.toPersian(data.current || 0);
+                        document.getElementById('ankiImportTotal').textContent = Utils.toPersian(data.total || 0);
+                        break;
+                        
+                    case 'success':
+                        document.getElementById('ankiSuccessDecks').textContent = Utils.toPersian(data.decks);
+                        document.getElementById('ankiSuccessCards').textContent = Utils.toPersian(data.cards);
+                        break;
+                        
+                    case 'error':
+                        document.getElementById('ankiErrorMessage').textContent = data.message;
+                        break;
+                }
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // UTILITIES
+            // ═══════════════════════════════════════════════════════════
+            formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            }
+        };
     </script>
 </body>
 </html>
+
