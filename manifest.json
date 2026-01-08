@@ -247,6 +247,11 @@
     
     "file_handlers": [
         {
+            "action": "/?action=import-anki",
+        "accept": {
+            "application/x-anki": [".apkg"],
+            "application/zip": [".apkg"]
+            }
             "action": "/?action=import",
             "accept": {
                 "application/json": [".json"],
@@ -355,3 +360,4 @@
         "web-share": ["self"]
     }
 }
+
