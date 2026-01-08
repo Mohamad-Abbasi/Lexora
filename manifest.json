@@ -1,32 +1,357 @@
 {
-  "name": "LEXORA - لکسورا",
-  "short_name": "LEXORA",
-  "description": "هوشمندترین اپلیکیشن یادگیری لغات انگلیسی",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#050505",
-  "theme_color": "#050505",
-  "orientation": "portrait",
-  "lang": "fa",
-  "dir": "rtl",
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+    "name": "LEXORA - هوشمندترین اپلیکیشن یادگیری لغات انگلیسی",
+    "short_name": "LEXORA",
+    "description": "یادگیری لغات انگلیسی با الگوریتم هوشمند FSRS-4.5 | فلش‌کارت | تکرار فاصله‌دار | چالش‌های روزانه",
+    "version": "3.5.0",
+    "start_url": "/",
+    "scope": "/",
+    "id": "/",
+    "display": "standalone",
+    "display_override": ["standalone", "minimal-ui", "window-controls-overlay"],
+    "background_color": "#050505",
+    "theme_color": "#6366f1",
+    "orientation": "portrait-primary",
+    "lang": "fa-IR",
+    "dir": "rtl",
+    
+    "icons": [
+        {
+            "src": "icon-48.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-167.png",
+            "sizes": "167x167",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-180.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-256.png",
+            "sizes": "256x256",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-1024.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icon-monochrome-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "monochrome"
+        }
+    ],
+    
+    "shortcuts": [
+        {
+            "name": "شروع مرور",
+            "short_name": "مرور",
+            "description": "شروع مرور کارت‌های امروز",
+            "url": "/?action=review",
+            "icons": [
+                {
+                    "src": "shortcut-review.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "افزودن کارت",
+            "short_name": "افزودن",
+            "description": "افزودن کارت جدید",
+            "url": "/?action=add",
+            "icons": [
+                {
+                    "src": "shortcut-add.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "دیکشنری",
+            "short_name": "دیکشنری",
+            "description": "جستجوی کلمه در دیکشنری",
+            "url": "/?action=dictionary",
+            "icons": [
+                {
+                    "src": "shortcut-dictionary.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "آمار پیشرفت",
+            "short_name": "آمار",
+            "description": "مشاهده آمار یادگیری",
+            "url": "/?action=stats",
+            "icons": [
+                {
+                    "src": "shortcut-stats.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ],
+    
+    "screenshots": [
+        {
+            "src": "screenshot-home.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "صفحه اصلی LEXORA"
+        },
+        {
+            "src": "screenshot-review.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "مرور فلش‌کارت‌ها"
+        },
+        {
+            "src": "screenshot-stats.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "آمار و پیشرفت"
+        },
+        {
+            "src": "screenshot-library.png",
+            "sizes": "1080x1920",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "کتابخانه دک‌ها"
+        },
+        {
+            "src": "screenshot-wide-home.png",
+            "sizes": "1920x1080",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "صفحه اصلی - نمای گسترده"
+        }
+    ],
+    
+    "categories": [
+        "education",
+        "productivity",
+        "utilities",
+        "books"
+    ],
+    
+    "iarc_rating_id": "",
+    
+    "prefer_related_applications": false,
+    "related_applications": [
+        {
+            "platform": "play",
+            "url": "https://play.google.com/store/apps/details?id=com.lexora.app",
+            "id": "com.lexora.app"
+        },
+        {
+            "platform": "itunes",
+            "url": "https://apps.apple.com/app/lexora/id123456789"
+        }
+    ],
+    
+    "share_target": {
+        "action": "/?action=share",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url",
+            "files": [
+                {
+                    "name": "file",
+                    "accept": ["text/plain", "application/json", ".txt", ".json", ".csv"]
+                }
+            ]
+        }
     },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+    
+    "file_handlers": [
+        {
+            "action": "/?action=import",
+            "accept": {
+                "application/json": [".json"],
+                "text/plain": [".txt"],
+                "text/csv": [".csv"]
+            }
+        }
+    ],
+    
+    "protocol_handlers": [
+        {
+            "protocol": "web+lexora",
+            "url": "/?action=protocol&data=%s"
+        }
+    ],
+    
+    "launch_handler": {
+        "client_mode": ["navigate-existing", "auto"]
     },
-    {
-      "src": "apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
+    
+    "handle_links": "preferred",
+    
+    "edge_side_panel": {
+        "preferred_width": 400
+    },
+    
+    "widgets": [
+        {
+            "name": "LEXORA Daily",
+            "short_name": "مرور روزانه",
+            "description": "پیشرفت روزانه و یادآوری مرور",
+            "tag": "daily-widget",
+            "ms_ac_template": "widget-template.json",
+            "data": "widget-data.json",
+            "type": "application/json",
+            "screenshots": [
+                {
+                    "src": "widget-screenshot.png",
+                    "sizes": "600x400",
+                    "label": "ویجت پیشرفت روزانه"
+                }
+            ],
+            "icons": [
+                {
+                    "src": "widget-icon.png",
+                    "sizes": "48x48"
+                }
+            ],
+            "backgrounds": [
+                {
+                    "src": "widget-bg-light.png",
+                    "sizes": "600x400"
+                },
+                {
+                    "src": "widget-bg-dark.png",
+                    "sizes": "600x400"
+                }
+            ]
+        }
+    ],
+    
+    "serviceworker": {
+        "src": "sw.js",
+        "scope": "/",
+        "update_via_cache": "none"
+    },
+    
+    "features": [
+        "FSRS-4.5 Algorithm",
+        "Spaced Repetition",
+        "Active Recall",
+        "Gamification",
+        "Daily Challenges",
+        "Voice Recognition",
+        "Dictionary API",
+        "Offline Support",
+        "Push Notifications",
+        "Progress Tracking"
+    ],
+    
+    "author": {
+        "name": "محمد عباسی",
+        "email": "contact@lexora.app",
+        "url": "https://lexora.app"
+    },
+    
+    "developer": {
+        "name": "محمد عباسی",
+        "url": "https://github.com/mohammadabbasi"
+    },
+    
+    "permissions_policy": {
+        "accelerometer": [],
+        "ambient-light-sensor": [],
+        "autoplay": ["self"],
+        "camera": [],
+        "display-capture": [],
+        "geolocation": [],
+        "gyroscope": [],
+        "magnetometer": [],
+        "microphone": ["self"],
+        "midi": [],
+        "payment": [],
+        "speaker-selection": ["self"],
+        "usb": [],
+        "web-share": ["self"]
     }
-  ]
 }
