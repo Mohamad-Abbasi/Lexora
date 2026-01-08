@@ -8052,3 +8052,593 @@
             }
         };
 		
+// ═══════════════════════════════════════════════════════════════
+        // SMART NOTIFICATIONS
+        // ═══════════════════════════════════════════════════════════════
+        const SmartNotifications = {
+            permission: 'default',
+
+            init() {
+                if ('Notification' in window) {
+                    this.permission = Notification.permission;
+                }
+            },
+
+            showModal() {
+                document.getElementById('notificationModal').classList.add('active');
+            },
+
+            closeModal() {
+                document.getElementById('notificationModal').classList.remove('active');
+            },
+
+            async requestPermission() {
+                if (!('Notification' in window)) {
+                    Toast.error('مرورگر شما از اعلان پشتیبانی نمی‌کند');
+                    this.closeModal();
+                    return;
+                }
+
+                try {
+                    const permission = await Notification.requestPermission();
+                    this.permission = permission;
+
+                    if (permission === 'granted') {
+                        Toast.success('اعلان‌ها فعال شدند! 🔔');
+                        this.scheduleReminders();
+                        
+                        // Update settings page
+                        const notifStatus = document.getElementById('notifStatus');
+                        if (notifStatus) notifStatus.textContent = '✅ فعال';
+                    } else {
+                        Toast.warning('دسترسی اعلان داده نشد');
+                    }
+                } catch (e) {
+                    Toast.error('خطا در درخواست اعلان');
+                }
+
+                this.closeModal();
+            },
+
+            scheduleReminders() {
+                // Check every hour for reminders
+                setInterval(() => {
+                    this.checkAndNotify();
+                }, 60 * 60 * 1000);
+
+                // Also check on init
+                setTimeout(() => this.checkAndNotify(), 5000);
+            },
+
+            checkAndNotify() {
+                if (this.permission !== 'granted') return;
+
+                const settings = Settings.get();
+                const now = new Date();
+                const hour = now.getHours();
+
+                // Evening reminder (if not reviewed today)
+                if (hour >= 19 && hour <= 21) {
+                    const reviews = DB.get('reviews', []);
+                    const todayReviews = reviews.filter(r => Utils.isSameDay(r.timestamp, Date.now()));
+
+                    if (todayReviews.length === 0) {
+                        this.send('یادآوری مرور 📚', 'امروز هنوز مرور نکردی! Streak خودت رو حفظ کن 🔥');
+                    }
+                }
+            },
+
+            send(title, body, icon = '📚') {
+                if (this.permission !== 'granted') return;
+
+                try {
+                    new Notification(title, {
+                        body: body,
+                        icon: '/icon-192.png',
+                        badge: '/icon-192.png',
+                        tag: 'lexora-notification',
+                        renotify: true
+                    });
+                } catch (e) {
+                    console.error('Notification error:', e);
+                }
+            },
+
+            onStreakMilestone(streak) {
+                this.send(
+                    `🔥 ${Utils.toPersian(streak)} روز متوالی!`,
+                    'آفرین! به پیشرفت خودت ادامه بده!'
+                );
+            },
+
+            onLevelUp(level) {
+                this.send(
+                    '🎉 سطح بالا رفت!',
+                    `تبریک! به سطح ${Utils.toPersian(level)} رسیدی!`
+                );
+            },
+
+            onBadgeEarned(badgeName) {
+                this.send(
+                    '🏅 مدال جدید!',
+                    `مدال "${badgeName}" رو به دست آوردی!`
+                );
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // INSTALL MANAGER (PWA)
+        // ═══════════════════════════════════════════════════════════════
+        const InstallManager = {
+            deferredPrompt: null,
+            isIOS: false,
+            isStandalone: false,
+
+            init() {
+                // Check if iOS
+                this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+                // Check if already installed
+                this.isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                                    window.navigator.standalone === true;
+
+                // Listen for install prompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                });
+
+                // Show install hint for first-time users
+                if (!this.isStandalone && !DB.get('installHintShown')) {
+                    setTimeout(() => {
+                        this.showHint();
+                    }, 30000); // Show after 30 seconds
+                }
+            },
+
+            showHint() {
+                if (this.isStandalone) return;
+                
+                Toast.info('💡 برای تجربه بهتر، برنامه را نصب کنید!');
+                DB.set('installHintShown', true);
+            },
+
+            showPrompt() {
+                this.renderSteps();
+                document.getElementById('installModal').classList.add('active');
+            },
+
+            close() {
+                document.getElementById('installModal').classList.remove('active');
+            },
+
+            renderSteps() {
+                const stepsContainer = document.getElementById('installSteps');
+                const installBtn = document.getElementById('installBtn');
+
+                if (this.isStandalone) {
+                    stepsContainer.innerHTML = `
+                        <div class="install-step">
+                            <span class="step-number">✓</span>
+                            <span>برنامه قبلاً نصب شده است!</span>
+                        </div>
+                    `;
+                    installBtn.style.display = 'none';
+                    return;
+                }
+
+                if (this.isIOS) {
+                    stepsContainer.innerHTML = `
+                        <div class="install-step">
+                            <span class="step-number">1</span>
+                            <span>روی دکمه Share (اشتراک‌گذاری) کلیک کنید</span>
+                        </div>
+                        <div class="install-step">
+                            <span class="step-number">2</span>
+                            <span>گزینه "Add to Home Screen" را انتخاب کنید</span>
+                        </div>
+                        <div class="install-step">
+                            <span class="step-number">3</span>
+                            <span>روی "Add" کلیک کنید</span>
+                        </div>
+                    `;
+                    installBtn.textContent = 'متوجه شدم';
+                    installBtn.onclick = () => this.close();
+                } else if (this.deferredPrompt) {
+                    stepsContainer.innerHTML = `
+                        <div class="install-step">
+                            <span class="step-number">1</span>
+                            <span>روی دکمه "نصب برنامه" کلیک کنید</span>
+                        </div>
+                        <div class="install-step">
+                            <span class="step-number">2</span>
+                            <span>در پنجره باز شده "Install" را بزنید</span>
+                        </div>
+                    `;
+                    installBtn.textContent = '📲 نصب برنامه';
+                    installBtn.onclick = () => this.install();
+                } else {
+                    stepsContainer.innerHTML = `
+                        <div class="install-step">
+                            <span class="step-number">1</span>
+                            <span>منوی مرورگر را باز کنید (⋮)</span>
+                        </div>
+                        <div class="install-step">
+                            <span class="step-number">2</span>
+                            <span>گزینه "Install app" یا "Add to Home screen" را انتخاب کنید</span>
+                        </div>
+                    `;
+                    installBtn.textContent = 'متوجه شدم';
+                    installBtn.onclick = () => this.close();
+                }
+            },
+
+            async install() {
+                if (!this.deferredPrompt) {
+                    Toast.warning('نصب از طریق منوی مرورگر امکان‌پذیر است');
+                    return;
+                }
+
+                try {
+                    this.deferredPrompt.prompt();
+                    const { outcome } = await this.deferredPrompt.userChoice;
+
+                    if (outcome === 'accepted') {
+                        Toast.success('برنامه نصب شد! 🎉');
+                        Gamification.addXP(50, '📲 نصب برنامه');
+                    }
+
+                    this.deferredPrompt = null;
+                    this.close();
+                } catch (e) {
+                    console.error('Install error:', e);
+                    Toast.error('خطا در نصب');
+                }
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // ONBOARDING
+        // ═══════════════════════════════════════════════════════════════
+        const Onboarding = {
+            steps: [
+                {
+                    title: 'به LEXORA خوش آمدید! 🎉',
+                    description: 'بهترین برنامه یادگیری لغات انگلیسی با الگوریتم هوشمند FSRS',
+                    icon: '👋'
+                },
+                {
+                    title: 'دک‌های آماده 📦',
+                    description: 'از دک‌های آماده IELTS، TOEFL و موضوعات مختلف استفاده کنید',
+                    icon: '📚'
+                },
+                {
+                    title: 'مرور هوشمند 🧠',
+                    description: 'الگوریتم FSRS بهترین زمان مرور را برای شما تعیین می‌کند',
+                    icon: '⚡'
+                },
+                {
+                    title: 'چالش‌ها و جوایز 🏆',
+                    description: 'با تکمیل چالش‌ها XP کسب کنید و سطح خود را بالا ببرید',
+                    icon: '🎮'
+                },
+                {
+                    title: 'آماده‌اید؟ 🚀',
+                    description: 'همین الان شروع کنید و هر روز پیشرفت کنید!',
+                    icon: '✨'
+                }
+            ],
+            currentStep: 0,
+
+            shouldShow() {
+                return !DB.get('onboardingComplete');
+            },
+
+            show() {
+                if (!this.shouldShow()) return;
+
+                // Create onboarding modal
+                const modal = document.createElement('div');
+                modal.id = 'onboardingModal';
+                modal.className = 'modal-overlay active';
+                modal.innerHTML = this.renderStep();
+                document.body.appendChild(modal);
+            },
+
+            renderStep() {
+                const step = this.steps[this.currentStep];
+                const isLast = this.currentStep === this.steps.length - 1;
+                const isFirst = this.currentStep === 0;
+
+                return `
+                    <div class="modal-container" style="text-align: center;">
+                        <div style="padding: 40px 20px;">
+                            <div style="font-size: 64px; margin-bottom: 24px;">${step.icon}</div>
+                            <h2 style="font-size: 24px; margin-bottom: 16px;">${step.title}</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 32px; line-height: 1.8;">${step.description}</p>
+                            
+                            <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 24px;">
+                                ${this.steps.map((_, i) => `
+                                    <div style="width: 8px; height: 8px; border-radius: 50%; background: ${i === this.currentStep ? 'var(--primary)' : 'var(--bg-tertiary)'};"></div>
+                                `).join('')}
+                            </div>
+
+                            <div style="display: flex; gap: 12px; justify-content: center;">
+                                ${!isFirst ? `
+                                    <button class="btn btn-secondary" onclick="Onboarding.prev()">قبلی</button>
+                                ` : ''}
+                                ${isLast ? `
+                                    <button class="btn btn-primary" onclick="Onboarding.complete()">شروع کنید! 🚀</button>
+                                ` : `
+                                    <button class="btn btn-primary" onclick="Onboarding.next()">بعدی</button>
+                                `}
+                            </div>
+
+                            ${isFirst ? `
+                                <button style="margin-top: 16px; background: none; border: none; color: var(--text-tertiary); cursor: pointer;" onclick="Onboarding.skip()">
+                                    رد شدن
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            },
+
+            next() {
+                if (this.currentStep < this.steps.length - 1) {
+                    this.currentStep++;
+                    document.getElementById('onboardingModal').innerHTML = this.renderStep();
+                }
+            },
+
+            prev() {
+                if (this.currentStep > 0) {
+                    this.currentStep--;
+                    document.getElementById('onboardingModal').innerHTML = this.renderStep();
+                }
+            },
+
+            skip() {
+                this.complete();
+            },
+
+            complete() {
+                DB.set('onboardingComplete', true);
+                document.getElementById('onboardingModal').remove();
+                
+                // Show ready decks for new users
+                if (DeckManager.getAll().length === 0) {
+                    setTimeout(() => {
+                        ReadyDecks.open();
+                    }, 500);
+                }
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // DAILY STATS TRACKER
+        // ═══════════════════════════════════════════════════════════════
+        const DailyStats = {
+            record(type, value = 1) {
+                const today = Utils.getTodayString();
+                const stats = DB.get('dailyStats', {});
+
+                if (!stats[today]) {
+                    stats[today] = {
+                        reviews: 0,
+                        correct: 0,
+                        xp: 0,
+                        time: 0,
+                        newCards: 0
+                    };
+                }
+
+                stats[today][type] = (stats[today][type] || 0) + value;
+                DB.set('dailyStats', stats);
+            },
+
+            getToday() {
+                const today = Utils.getTodayString();
+                const stats = DB.get('dailyStats', {});
+                return stats[today] || { reviews: 0, correct: 0, xp: 0, time: 0, newCards: 0 };
+            },
+
+            getWeek() {
+                const stats = DB.get('dailyStats', {});
+                const weekData = [];
+                
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toDateString();
+                    weekData.push(stats[dateStr] || { reviews: 0, correct: 0, xp: 0 });
+                }
+
+                return weekData;
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // KEYBOARD SHORTCUTS
+        // ═══════════════════════════════════════════════════════════════
+        const KeyboardShortcuts = {
+            init() {
+                document.addEventListener('keydown', (e) => {
+                    // Only when flashcard modal is open
+                    if (!document.getElementById('flashcardModal').classList.contains('active')) {
+                        return;
+                    }
+
+                    // Prevent in input fields
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                        return;
+                    }
+
+                    switch (e.key) {
+                        case ' ':
+                        case 'Enter':
+                            e.preventDefault();
+                            if (!Review.isFlipped) {
+                                Review.flip();
+                            }
+                            break;
+                        case '1':
+                            if (Review.isFlipped) Review.rate(1);
+                            break;
+                        case '2':
+                            if (Review.isFlipped) Review.rate(2);
+                            break;
+                        case '3':
+                            if (Review.isFlipped) Review.rate(3);
+                            break;
+                        case '4':
+                            if (Review.isFlipped) Review.rate(4);
+                            break;
+                        case 'Escape':
+                            Review.close();
+                            break;
+                        case 's':
+                            Review.speak();
+                            break;
+                    }
+                });
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // APP INITIALIZATION
+        // ═══════════════════════════════════════════════════════════════
+        const App = {
+            async init() {
+                console.log('🚀 LEXORA v3.5 - Initializing...');
+
+                // Initialize theme
+                const settings = Settings.get();
+                document.documentElement.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
+
+                // Initialize modules
+                Toast.init();
+                AudioPlayer.init();
+                Navigation.init();
+                SmartNotifications.init();
+                InstallManager.init();
+                KeyboardShortcuts.init();
+
+                // Initialize pages
+                HomePage.init();
+                StatsPage.refresh();
+                SettingsPage.refresh();
+                Library.render();
+
+                // Show onboarding for new users
+                if (Onboarding.shouldShow()) {
+                    setTimeout(() => Onboarding.show(), 500);
+                }
+
+                // Register service worker
+                this.registerServiceWorker();
+
+                // Check for app updates
+                this.checkForUpdates();
+
+                console.log('✅ LEXORA initialized successfully!');
+            },
+
+            async registerServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.register('/sw.js');
+                        console.log('📦 Service Worker registered:', registration.scope);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    Toast.info('🔄 نسخه جدید موجود است. صفحه را رفرش کنید.');
+                                }
+                            });
+                        });
+                    } catch (error) {
+                        console.error('Service Worker registration failed:', error);
+                    }
+                }
+            },
+
+            checkForUpdates() {
+                // Check version
+                const currentVersion = '3.5';
+                const savedVersion = DB.get('appVersion');
+
+                if (savedVersion && savedVersion !== currentVersion) {
+                    Toast.info(`🎉 به نسخه ${currentVersion} خوش آمدید!`);
+                }
+
+                DB.set('appVersion', currentVersion);
+            }
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        // EDIT CARD MODAL (Add to HTML if missing)
+        // ═══════════════════════════════════════════════════════════════
+        // This creates the edit modal dynamically if not in HTML
+        function createEditCardModal() {
+            if (document.getElementById('editCardModal')) return;
+
+            const modal = document.createElement('div');
+            modal.id = 'editCardModal';
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h2>✏️ ویرایش کارت</h2>
+                        <button class="modal-close" onclick="document.getElementById('editCardModal').classList.remove('active')">✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editCardId">
+                        <div class="form-group">
+                            <label class="form-label">کلمه انگلیسی</label>
+                            <input type="text" class="form-input" id="editCardWord" dir="ltr">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">معنی فارسی</label>
+                            <input type="text" class="form-input" id="editCardMeaning">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">مثال</label>
+                            <textarea class="form-input form-textarea" id="editCardExample" dir="ltr"></textarea>
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="Library.saveEditCard()">💾 ذخیره تغییرات</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // START APPLICATION
+        // ═══════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+            createEditCardModal();
+            App.init();
+        });
+
+        // Handle visibility change (for streak tracking)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                HomePage.updateDailyProgress();
+                HomePage.updateStreakDays();
+            }
+        });
+
+        // Handle online/offline
+        window.addEventListener('online', () => {
+            Toast.success('اتصال برقرار شد ✅');
+        });
+
+        window.addEventListener('offline', () => {
+            Toast.warning('حالت آفلاین 📴');
+        });
+    </script>
+</body>
+</html>
