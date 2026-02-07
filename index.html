@@ -10008,97 +10008,130 @@
             },
             
             // ═══════════════════════════════════════════════════════════
-            // PARSE ANKI DATA
+            // PARSE ANKI DATA - COMPLETE REWRITE
             // ═══════════════════════════════════════════════════════════
             async parseAnkiData() {
                 if (!this.db) throw new Error('دیتابیس بارگذاری نشده');
                 
-                // Get collection info
                 let decks = {};
                 let models = {};
                 
+                // ── Step 1: Get Collection Info ──
                 try {
                     const colResult = this.db.exec('SELECT * FROM col');
-                    if (colResult.length === 0) throw new Error('اطلاعات کالکشن یافت نشد');
-                    
-                    const colData = colResult[0].values[0];
-                    const colColumns = colResult[0].columns;
-                    
-                    const getCol = (name) => {
-                        const idx = colColumns.indexOf(name);
-                        return idx !== -1 ? colData[idx] : null;
-                    };
-                    
-                    // Parse decks
-                    const decksRaw = getCol('decks');
-                    decks = decksRaw ? JSON.parse(decksRaw) : {};
-                    
-                    // Parse models
-                    const modelsRaw = getCol('models');
-                    models = modelsRaw ? JSON.parse(modelsRaw) : {};
-                    
-                } catch (e) {
-                    // Try newer Anki format (separate tables)
-                    console.log('⚠️ Old format failed, trying newer format...');
-                    try {
-                        const deckResult = this.db.exec('SELECT * FROM decks');
-                        const notetypesResult = this.db.exec('SELECT * FROM notetypes');
+                    if (colResult.length > 0) {
+                        const colData = colResult[0].values[0];
+                        const colColumns = colResult[0].columns;
                         
+                        const getCol = (name) => {
+                            const idx = colColumns.indexOf(name);
+                            return idx !== -1 ? colData[idx] : null;
+                        };
+                        
+                        const decksRaw = getCol('decks');
+                        if (decksRaw) decks = JSON.parse(decksRaw);
+                        
+                        const modelsRaw = getCol('models');
+                        if (modelsRaw) models = JSON.parse(modelsRaw);
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Old col format failed:', e.message);
+                    
+                    // Try newer Anki format
+                    try {
+                        const deckResult = this.db.exec('SELECT id, name FROM decks');
                         if (deckResult.length > 0) {
                             deckResult[0].values.forEach(row => {
-                                const id = row[0];
-                                const name = row[1];
-                                decks[id] = { name: name, desc: '' };
-                            });
-                        }
-                        
-                        if (notetypesResult.length > 0) {
-                            notetypesResult[0].values.forEach(row => {
-                                const id = row[0];
-                                const name = row[1];
-                                const config = row[2] ? JSON.parse(row[2]) : {};
-                                models[id] = { name: name, flds: config.flds || [] };
+                                decks[row[0]] = { name: row[1], desc: '' };
                             });
                         }
                     } catch (e2) {
-                        throw new Error('فرمت دیتابیس قابل شناسایی نیست: ' + e.message);
+                        console.warn('⚠️ New deck format also failed');
                     }
                 }
                 
-                console.log('📚 Decks:', Object.keys(decks).length);
+                // If no decks found, create a default one
+                if (Object.keys(decks).length === 0) {
+                    decks['1'] = { name: 'Imported Deck', desc: '' };
+                }
+                
+                console.log('📚 Decks:', Object.entries(decks).map(([id, d]) => `${id}: ${d.name}`));
                 console.log('📋 Models:', Object.keys(models).length);
                 
-                // Get notes
+                // ── Step 2: Get All Notes ──
                 let notes = [];
                 try {
                     const notesResult = this.db.exec('SELECT * FROM notes');
                     notes = this.resultToObjects(notesResult);
+                    console.log('📝 Notes found:', notes.length);
+                    
+                    // Log first note for debugging
+                    if (notes.length > 0) {
+                        const sample = notes[0];
+                        const sampleFields = String(sample.flds || '').split('\x1f');
+                        console.log('📝 Sample note fields count:', sampleFields.length);
+                        console.log('📝 Sample note fields:', sampleFields.map((f, i) => `[${i}]: ${f.substring(0, 50)}...`));
+                    }
                 } catch (e) {
-                    throw new Error('خطا در خواندن یادداشت‌ها');
+                    throw new Error('خطا در خواندن یادداشت‌ها: ' + e.message);
                 }
                 
-                // Get cards
+                // ── Step 3: Get All Cards ──
                 let cards = [];
                 try {
                     const cardsResult = this.db.exec('SELECT * FROM cards');
                     cards = this.resultToObjects(cardsResult);
+                    console.log('🎴 Cards found:', cards.length);
                 } catch (e) {
-                    throw new Error('خطا در خواندن کارت‌ها');
+                    throw new Error('خطا در خواندن کارت‌ها: ' + e.message);
                 }
                 
-                console.log('📝 Notes:', notes.length, '| Cards:', cards.length);
+                // ── Step 4: Build Notes Map ──
+                const notesMap = new Map();
+                notes.forEach(n => notesMap.set(n.id, n));
                 
-                // Build deck structure
+                // ── Step 5: Build Models Map with field names ──
+                const modelsFieldNames = {};
+                for (const [modelId, model] of Object.entries(models)) {
+                    if (model.flds && Array.isArray(model.flds)) {
+                        modelsFieldNames[modelId] = model.flds.map(f => {
+                            if (typeof f === 'string') return f;
+                            if (f && f.name) return f.name;
+                            return 'Unknown';
+                        });
+                    }
+                    
+                    // Log model templates for debugging
+                    console.log(`📋 Model "${model.name || modelId}": fields =`, modelsFieldNames[modelId]);
+                    
+                    if (model.tmpls && Array.isArray(model.tmpls)) {
+                        console.log(`   Templates:`, model.tmpls.map(t => t.name));
+                    }
+                }
+                
+                // ── Step 6: Process Each Card ──
                 this.importedDecks = [];
                 this.importedCards = [];
                 
-                const notesMap = new Map(notes.map(n => [n.id, n]));
+                // Group cards by deck
+                const cardsByDeck = {};
+                cards.forEach(card => {
+                    const deckId = String(card.did);
+                    if (!cardsByDeck[deckId]) cardsByDeck[deckId] = [];
+                    cardsByDeck[deckId].push(card);
+                });
+                
+                let skippedCount = 0;
+                let processedCount = 0;
                 
                 for (const [deckId, deckInfo] of Object.entries(decks)) {
                     // Skip empty default deck
-                    if (deckId === '1' && deckInfo.name === 'Default') {
-                        if (!cards.some(c => String(c.did) === deckId)) continue;
+                    if (deckId === '1' && deckInfo.name === 'Default' && !cardsByDeck[deckId]) {
+                        continue;
                     }
+                    
+                    const deckCards = cardsByDeck[deckId] || [];
+                    if (deckCards.length === 0) continue;
                     
                     const processedDeck = {
                         id: deckId,
@@ -10108,29 +10141,44 @@
                         cards: []
                     };
                     
-                    const deckCards = cards.filter(c => String(c.did) === deckId);
+                    // Track unique notes to avoid duplicate cards
+                    const processedNotes = new Set();
                     
                     for (const card of deckCards) {
                         const note = notesMap.get(card.nid);
-                        if (!note) continue;
-                        
-                        const model = models[note.mid];
-                        
-                        const fields = String(note.flds || '').split('\x1f');
-                        let fieldNames = [];
-                        
-                        if (model && model.flds) {
-                            if (Array.isArray(model.flds)) {
-                                fieldNames = model.flds.map(f => f.name || f);
-                            }
+                        if (!note) {
+                            skippedCount++;
+                            continue;
                         }
                         
-                        // If no field names, create generic ones
-                        if (fieldNames.length === 0) {
-                            fieldNames = fields.map((_, i) => i === 0 ? 'Front' : i === 1 ? 'Back' : `Field${i}`);
+                        // Skip duplicate notes (multiple cards from same note)
+                        // But keep first one
+                        if (processedNotes.has(note.id)) {
+                            continue;
                         }
+                        processedNotes.add(note.id);
                         
-                        const processedCard = this.processCard(fields, fieldNames, card, note);
+                        // Get all fields from note
+                        const allFields = String(note.flds || '').split('\x1f');
+                        
+                        // Get field names from model
+                        const fieldNames = modelsFieldNames[note.mid] || 
+                                          allFields.map((_, i) => `Field_${i + 1}`);
+                        
+                        // Get model info
+                        const model = models[note.mid] || {};
+                        const modelType = model.type; // 0 = standard, 1 = cloze
+                        
+                        // Process the card
+                        const processedCard = this.processCardComplete(
+                            allFields, 
+                            fieldNames, 
+                            card, 
+                            note, 
+                            modelType,
+                            card.ord || 0
+                        );
+                        
                         if (processedCard) {
                             processedDeck.cards.push(processedCard);
                             this.importedCards.push({
@@ -10138,104 +10186,376 @@
                                 deckId: deckId,
                                 deckName: processedDeck.name
                             });
+                            processedCount++;
+                        } else {
+                            skippedCount++;
+                        }
+                        
+                        // Progress update
+                        if (processedCount % 100 === 0) {
+                            this.updateUI('processing', {
+                                stage: `پردازش کارت‌ها... ${processedCount} کارت`,
+                                progress: 75 + Math.min(15, Math.round((processedCount / cards.length) * 15))
+                            });
+                            await new Promise(r => setTimeout(r, 0));
                         }
                     }
                     
                     if (processedDeck.cards.length > 0) {
                         this.importedDecks.push(processedDeck);
                     }
-                    
-                    // Update progress for large files
-                    this.updateUI('processing', {
-                        stage: `پردازش دک: ${processedDeck.name}...`,
-                        progress: 75 + Math.round((this.importedDecks.length / Object.keys(decks).length) * 15)
-                    });
-                    await new Promise(r => setTimeout(r, 0));
                 }
                 
-                console.log('✅ Processed decks:', this.importedDecks.length);
-                console.log('✅ Processed cards:', this.importedCards.length);
+                console.log('═══════════════════════════════════════');
+                console.log(`✅ Processed: ${processedCount} cards`);
+                console.log(`⚠️ Skipped: ${skippedCount} cards`);
+                console.log(`📚 Decks with cards: ${this.importedDecks.length}`);
+                console.log('═══════════════════════════════════════');
                 
                 if (this.importedCards.length === 0) {
-                    throw new Error('هیچ کارت قابل واردسازی یافت نشد');
+                    throw new Error(`هیچ کارت قابل واردسازی یافت نشد. (${cards.length} کارت در فایل، ${skippedCount} رد شده)`);
                 }
             },
             
-            resultToObjects(result) {
-                if (!result || result.length === 0) return [];
-                const columns = result[0].columns;
-                return result[0].values.map(row => {
-                    const obj = {};
-                    columns.forEach((col, i) => obj[col] = row[i]);
-                    return obj;
-                });
-            },
-            
-            cleanDeckName(name) {
-                if (!name) return 'دک بدون نام';
-                return name.split('::').pop().trim() || name;
-            },
-            
-            processCard(fields, fieldNames, card, note) {
-                const frontPatterns = ['Front', 'Question', 'Word', 'English', 'Expression', 'Vocabulary', 'Term', 'کلمه', 'سوال', 'جلو'];
-                const backPatterns = ['Back', 'Answer', 'Meaning', 'Persian', 'Farsi', 'Definition', 'Translation', 'Description', 'معنی', 'جواب', 'ترجمه', 'پشت'];
-                const pronPatterns = ['Pronunciation', 'IPA', 'Phonetic', 'Reading', 'تلفظ'];
-                const examplePatterns = ['Example', 'Sentence', 'Usage', 'Context', 'مثال', 'جمله'];
+            // ═══════════════════════════════════════════════════════════
+            // PROCESS CARD - COMPLETE VERSION
+            // ═══════════════════════════════════════════════════════════
+            processCardComplete(fields, fieldNames, card, note, modelType, cardOrd) {
                 
-                const findIdx = (patterns) => {
-                    for (const p of patterns) {
-                        const idx = fieldNames.findIndex(n => 
-                            n.toLowerCase().includes(p.toLowerCase())
-                        );
-                        if (idx !== -1 && idx < fields.length) return idx;
+                if (!fields || fields.length === 0) return null;
+                
+                // ── Handle Cloze Deletions ──
+                if (modelType === 1) {
+                    return this.processClozeCard(fields, fieldNames, card, note, cardOrd);
+                }
+                
+                // ── Map all fields by name ──
+                const fieldMap = {};
+                fieldNames.forEach((name, i) => {
+                    if (i < fields.length) {
+                        fieldMap[name.toLowerCase().trim()] = fields[i] || '';
                     }
-                    return -1;
+                });
+                
+                // ── Smart Field Detection ──
+                let front = '';
+                let back = '';
+                let pronunciation = '';
+                let example = '';
+                
+                // Priority patterns for front (word/question)
+                const frontKeys = [
+                    'front', 'word', 'english', 'expression', 'vocabulary', 'term',
+                    'question', 'prompt', 'target', 'headword', 'entry', 
+                    'کلمه', 'سوال', 'جلو', 'انگلیسی',
+                    'text', 'source', 'original'
+                ];
+                
+                // Priority patterns for back (meaning/answer)
+                const backKeys = [
+                    'back', 'meaning', 'persian', 'farsi', 'definition', 'translation',
+                    'answer', 'response', 'native', 'target',
+                    'معنی', 'جواب', 'پشت', 'ترجمه', 'فارسی',
+                    'explanation', 'description', 'gloss'
+                ];
+                
+                // Priority patterns for pronunciation
+                const pronKeys = [
+                    'pronunciation', 'ipa', 'phonetic', 'reading', 'phonetics',
+                    'pron', 'phon', 'تلفظ', 'آوا'
+                ];
+                
+                // Priority patterns for example
+                const exampleKeys = [
+                    'example', 'sentence', 'usage', 'context', 'sample',
+                    'مثال', 'جمله', 'نمونه', 'کاربرد'
+                ];
+                
+                // Find front field
+                const findField = (keys) => {
+                    for (const key of keys) {
+                        for (const [fieldName, fieldValue] of Object.entries(fieldMap)) {
+                            if (fieldName.includes(key) && fieldValue.trim()) {
+                                return fieldValue;
+                            }
+                        }
+                    }
+                    return '';
                 };
                 
-                const frontIdx = findIdx(frontPatterns);
-                const backIdx = findIdx(backPatterns);
+                front = findField(frontKeys);
+                back = findField(backKeys);
+                pronunciation = findField(pronKeys);
+                example = findField(exampleKeys);
                 
-                const front = frontIdx !== -1 ? fields[frontIdx] : fields[0];
-                const back = backIdx !== -1 ? fields[backIdx] : (fields[1] || '');
+                // ── Fallback: If smart detection failed, use position ──
+                if (!front && !back) {
+                    // Use first field as front
+                    front = fields[0] || '';
+                    
+                    // Use second field as back
+                    back = fields[1] || '';
+                    
+                    // If there are more fields, try to get additional info
+                    if (fields.length > 2 && !pronunciation) {
+                        // Check if any remaining field looks like pronunciation
+                        for (let i = 2; i < fields.length; i++) {
+                            const clean = this.cleanHtml(fields[i]);
+                            if (clean.match(/^[\[\/].*[\]\/]$/) || clean.match(/^[əɪɑːʊɒɔæʌ]/)) {
+                                pronunciation = fields[i];
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (fields.length > 2 && !example) {
+                        // Check remaining fields for example sentences
+                        for (let i = 2; i < fields.length; i++) {
+                            if (i === fields.indexOf(pronunciation)) continue;
+                            const clean = this.cleanHtml(fields[i]);
+                            if (clean.length > 20 && clean.includes(' ')) {
+                                example = fields[i];
+                                break;
+                            }
+                        }
+                    }
+                    
+                } else if (!front) {
+                    // Have back but not front - use first field
+                    front = fields[0] || '';
+                } else if (!back) {
+                    // Have front but not back - use second field or remaining
+                    for (let i = 0; i < fields.length; i++) {
+                        if (fields[i] !== front && this.cleanHtml(fields[i]).trim()) {
+                            back = fields[i];
+                            break;
+                        }
+                    }
+                }
                 
-                if (!front && !back) return null;
+                // ── Collect ALL extra content ──
+                let extraContent = '';
+                const usedFields = new Set([front, back, pronunciation, example]);
                 
-                const word = this.cleanHtml(front);
-                const meaning = this.cleanHtml(back);
+                for (let i = 0; i < fields.length; i++) {
+                    if (!usedFields.has(fields[i]) && fields[i] && fields[i].trim()) {
+                        const cleanField = this.cleanHtml(fields[i]).trim();
+                        if (cleanField.length > 0) {
+                            const label = fieldNames[i] || `Field ${i + 1}`;
+                            extraContent += `\n[${label}]: ${cleanField}`;
+                        }
+                    }
+                }
                 
-                if (!word.trim()) return null;
+                // ── Clean all fields ──
+                const wordClean = this.cleanHtmlSmart(front);
+                let meaningClean = this.cleanHtmlSmart(back);
+                const pronClean = this.cleanHtml(pronunciation);
+                let exampleClean = this.cleanHtml(example);
                 
-                const pronIdx = findIdx(pronPatterns);
-                const exIdx = findIdx(examplePatterns);
+                // ── Don't skip cards! ──
+                // Even if word is empty, try to salvage
+                if (!wordClean.trim() && !meaningClean.trim()) {
+                    // Last resort: join all fields
+                    const allContent = fields.map(f => this.cleanHtml(f)).filter(f => f.trim());
+                    if (allContent.length >= 2) {
+                        return {
+                            word: allContent[0].substring(0, 500),
+                            meaning: allContent.slice(1).join(' | ').substring(0, 2000),
+                            pronunciation: '',
+                            example: '',
+                            audio: this.extractAudio(fields.join(' ')),
+                            image: this.extractImage(fields.join(' ')),
+                            tags: this.extractTags(note),
+                            ankiReps: card.reps || 0,
+                            ankiLapses: card.lapses || 0,
+                            ankiInterval: card.ivl || 0
+                        };
+                    }
+                    return null;
+                }
                 
-                // Extract media
-                let audio = null;
-                let image = null;
+                // If meaning is empty, add extra content
+                if (!meaningClean.trim() && extraContent.trim()) {
+                    meaningClean = extraContent.trim();
+                }
                 
+                // If still no meaning, use a placeholder
+                if (!meaningClean.trim()) {
+                    meaningClean = '(بدون معنی)';
+                }
+                
+                // If word is empty but meaning exists
+                if (!wordClean.trim()) {
+                    if (meaningClean.trim()) {
+                        // Swap
+                        return {
+                            word: meaningClean.substring(0, 500),
+                            meaning: extraContent.trim() || '(بدون معنی)',
+                            pronunciation: pronClean,
+                            example: exampleClean,
+                            audio: this.extractAudio(fields.join(' ')),
+                            image: this.extractImage(fields.join(' ')),
+                            tags: this.extractTags(note),
+                            ankiReps: card.reps || 0,
+                            ankiLapses: card.lapses || 0,
+                            ankiInterval: card.ivl || 0
+                        };
+                    }
+                    return null;
+                }
+                
+                // Add extra content to example if example is empty
+                if (!exampleClean.trim() && extraContent.trim()) {
+                    exampleClean = extraContent.trim().substring(0, 500);
+                }
+                
+                // ── Extract media ──
                 const allFieldsText = fields.join(' ');
-                
-                const audioMatch = allFieldsText.match(/\[sound:([^\]]+)\]/);
-                if (audioMatch && this.mediaFiles[audioMatch[1]]) {
-                    audio = this.mediaFiles[audioMatch[1]];
-                }
-                
-                const imgMatch = allFieldsText.match(/<img[^>]+src="([^"]+)"/);
-                if (imgMatch && this.mediaFiles[imgMatch[1]]) {
-                    image = this.mediaFiles[imgMatch[1]];
-                }
+                const audio = this.extractAudio(allFieldsText);
+                const image = this.extractImage(allFieldsText);
                 
                 return {
-                    word: word.substring(0, 500),
-                    meaning: (meaning || 'بدون معنی').substring(0, 1000),
-                    pronunciation: pronIdx !== -1 ? this.cleanHtml(fields[pronIdx]).substring(0, 200) : '',
-                    example: exIdx !== -1 ? this.cleanHtml(fields[exIdx]).substring(0, 500) : '',
+                    word: wordClean.substring(0, 500),
+                    meaning: meaningClean.substring(0, 2000),
+                    pronunciation: pronClean.substring(0, 300),
+                    example: exampleClean.substring(0, 1000),
                     audio: audio,
                     image: image,
-                    tags: note.tags ? String(note.tags).split(' ').filter(t => t.trim()) : [],
+                    tags: this.extractTags(note),
                     ankiReps: card.reps || 0,
                     ankiLapses: card.lapses || 0,
                     ankiInterval: card.ivl || 0
                 };
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // CLOZE CARD HANDLER
+            // ═══════════════════════════════════════════════════════════
+            processClozeCard(fields, fieldNames, card, note, cardOrd) {
+                const text = fields[0] || '';
+                if (!text.trim()) return null;
+                
+                // Extract cloze content: {{c1::word::hint}}
+                const clozeRegex = /\{\{c(\d+)::([^}]*?)(?:::([^}]*?))?\}\}/g;
+                let allClozes = [];
+                let match;
+                
+                while ((match = clozeRegex.exec(text)) !== null) {
+                    allClozes.push({
+                        num: parseInt(match[1]),
+                        answer: match[2],
+                        hint: match[3] || ''
+                    });
+                }
+                
+                if (allClozes.length === 0) {
+                    // No cloze found, treat as regular card
+                    const word = this.cleanHtml(text);
+                    const back = fields[1] ? this.cleanHtml(fields[1]) : '';
+                    
+                    if (!word.trim()) return null;
+                    
+                    return {
+                        word: word.substring(0, 500),
+                        meaning: back || '(کارت Cloze)',
+                        pronunciation: '',
+                        example: '',
+                        audio: this.extractAudio(fields.join(' ')),
+                        image: this.extractImage(fields.join(' ')),
+                        tags: this.extractTags(note),
+                        ankiReps: card.reps || 0,
+                        ankiLapses: card.lapses || 0,
+                        ankiInterval: card.ivl || 0
+                    };
+                }
+                
+                // Get the cloze for this card ordinal
+                const targetNum = cardOrd + 1;
+                const targetCloze = allClozes.find(c => c.num === targetNum) || allClozes[0];
+                
+                // Create the question (replace target cloze with blank)
+                let question = text;
+                question = question.replace(
+                    new RegExp(`\\{\\{c${targetCloze.num}::([^}]*?)(?:::[^}]*?)?\\}\\}`, 'g'),
+                    targetCloze.hint ? `[${targetCloze.hint}]` : '[...]'
+                );
+                
+                // Clean other clozes - show their answers
+                question = question.replace(/\{\{c\d+::([^}]*?)(?:::[^}]*?)?\}\}/g, '$1');
+                
+                const cleanQuestion = this.cleanHtml(question);
+                const answer = targetCloze.answer;
+                
+                // Extra info from other fields
+                let extra = '';
+                for (let i = 1; i < fields.length; i++) {
+                    const clean = this.cleanHtml(fields[i]);
+                    if (clean.trim()) {
+                        extra += (extra ? ' | ' : '') + clean;
+                    }
+                }
+                
+                return {
+                    word: answer.substring(0, 500),
+                    meaning: cleanQuestion.substring(0, 2000),
+                    pronunciation: '',
+                    example: extra.substring(0, 1000),
+                    audio: this.extractAudio(fields.join(' ')),
+                    image: this.extractImage(fields.join(' ')),
+                    tags: [...this.extractTags(note), 'cloze'],
+                    ankiReps: card.reps || 0,
+                    ankiLapses: card.lapses || 0,
+                    ankiInterval: card.ivl || 0
+                };
+            },
+            
+            // ═══════════════════════════════════════════════════════════
+            // SMART HTML CLEANER (preserves more content)
+            // ═══════════════════════════════════════════════════════════
+            cleanHtmlSmart(html) {
+                if (!html) return '';
+                let text = String(html);
+                
+                // Remove sound references
+                text = text.replace(/\[sound:[^\]]+\]/g, '');
+                
+                // Convert <br> to newline
+                text = text.replace(/<br\s*\/?>/gi, '\n');
+                
+                // Convert <li> to bullet points
+                text = text.replace(/<li[^>]*>/gi, '• ');
+                text = text.replace(/<\/li>/gi, '\n');
+                
+                // Convert <p> to newline
+                text = text.replace(/<\/p>/gi, '\n');
+                text = text.replace(/<p[^>]*>/gi, '');
+                
+                // Keep bold/italic text content
+                text = text.replace(/<b[^>]*>(.*?)<\/b>/gi, '$1');
+                text = text.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '$1');
+                text = text.replace(/<i[^>]*>(.*?)<\/i>/gi, '$1');
+                text = text.replace(/<em[^>]*>(.*?)<\/em>/gi, '$1');
+                text = text.replace(/<u[^>]*>(.*?)<\/u>/gi, '$1');
+                
+                // Remove images but keep alt text
+                text = text.replace(/<img[^>]*alt="([^"]*)"[^>]*>/gi, '[$1]');
+                text = text.replace(/<img[^>]*>/gi, '');
+                
+                // Remove remaining HTML tags
+                text = text.replace(/<[^>]+>/g, ' ');
+                
+                // Decode HTML entities
+                const el = document.createElement('textarea');
+                el.innerHTML = text;
+                text = el.value;
+                
+                // Clean whitespace but keep newlines
+                text = text.replace(/[ \t]+/g, ' ');
+                text = text.replace(/\n\s*\n/g, '\n');
+                text = text.trim();
+                
+                return text;
             },
             
             cleanHtml(html) {
@@ -10253,6 +10573,48 @@
                 return text;
             },
             
+            // ═══════════════════════════════════════════════════════════
+            // MEDIA EXTRACTION HELPERS
+            // ═══════════════════════════════════════════════════════════
+            extractAudio(text) {
+                if (!text) return null;
+                
+                // Find all sound references
+                const matches = text.match(/\[sound:([^\]]+)\]/g);
+                if (!matches) return null;
+                
+                for (const match of matches) {
+                    const fileName = match.replace('[sound:', '').replace(']', '');
+                    if (this.mediaFiles[fileName]) {
+                        return this.mediaFiles[fileName];
+                    }
+                }
+                return null;
+            },
+            
+            extractImage(text) {
+                if (!text) return null;
+                
+                // Find all image references
+                const imgRegex = /<img[^>]+src="([^"]+)"[^>]*>/gi;
+                let match;
+                
+                while ((match = imgRegex.exec(text)) !== null) {
+                    const imgName = match[1];
+                    if (this.mediaFiles[imgName]) {
+                        return this.mediaFiles[imgName];
+                    }
+                }
+                return null;
+            },
+            
+            extractTags(note) {
+                if (!note || !note.tags) return [];
+                return String(note.tags)
+                    .split(' ')
+                    .filter(t => t.trim())
+                    .map(t => t.trim());
+            },
             // ═══════════════════════════════════════════════════════════
             // PREVIEW
             // ═══════════════════════════════════════════════════════════
