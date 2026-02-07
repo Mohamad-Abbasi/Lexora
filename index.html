@@ -5632,220 +5632,289 @@
             }
         };
 		// ═══════════════════════════════════════════════════════════════
-        // DECK MANAGER
+        // DECK MANAGER - FIXED VERSION
         // ═══════════════════════════════════════════════════════════════
         const DeckManager = {
-            selectedEmoji: '📚',
-
+            
             getAll() {
-                return DB.get('decks', []);
+                const data = DB.get('decks', []);
+                if (Array.isArray(data)) return data;
+                if (typeof data === 'object' && data !== null) return Object.values(data);
+                return [];
             },
-
-            get(id) {
-                return this.getAll().find(d => d.id === id);
+            
+            getById(deckId) {
+                return this.getAll().find(d => d.id === deckId);
             },
-
+            
+            save(decks) {
+                if (!Array.isArray(decks)) {
+                    decks = Object.values(decks || {});
+                }
+                DB.set('decks', decks);
+            },
+            
             create(name, description = '', emoji = '📚') {
-                const decks = this.getAll();
+                let decks = this.getAll();
+                
+                if (!Array.isArray(decks)) {
+                    console.warn('⚠️ Decks data was not array, converting...');
+                    decks = [];
+                }
+                
                 const newDeck = {
-                    id: Utils.generateId(),
+                    id: 'deck_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                     name: name,
                     description: description,
                     emoji: emoji,
                     createdAt: Date.now(),
-                    isCustom: true
+                    updatedAt: Date.now()
                 };
+                
                 decks.push(newDeck);
-                DB.set('decks', decks);
+                this.save(decks);
+                
                 return newDeck;
             },
-
-            update(id, updates) {
-                const decks = this.getAll();
-                const index = decks.findIndex(d => d.id === id);
+            
+            update(deckId, updates) {
+                let decks = this.getAll();
+                const index = decks.findIndex(d => d.id === deckId);
+                
                 if (index !== -1) {
-                    decks[index] = { ...decks[index], ...updates };
-                    DB.set('decks', decks);
+                    decks[index] = {
+                        ...decks[index],
+                        ...updates,
+                        updatedAt: Date.now()
+                    };
+                    this.save(decks);
                     return decks[index];
                 }
+                
                 return null;
             },
-
-            delete(id) {
-                // Delete deck
+            
+            delete(deckId) {
                 let decks = this.getAll();
-                decks = decks.filter(d => d.id !== id);
-                DB.set('decks', decks);
-
+                decks = decks.filter(d => d.id !== deckId);
+                this.save(decks);
+                
                 // Delete associated cards
-                let cards = CardManager.getAll();
-                cards = cards.filter(c => c.deckId !== id);
-                DB.set('cards', cards);
-
-                return true;
+                CardManager.deleteByDeck(deckId);
             },
-
-            getCardCount(deckId) {
-                const cards = CardManager.getAll();
-                return cards.filter(c => c.deckId === deckId).length;
-            },
-
-            getDueCount(deckId) {
-                const cards = CardManager.getAll();
+            
+            getDeckStats(deckId) {
+                const cards = CardManager.getByDeck(deckId);
                 const now = Date.now();
-                return cards.filter(c => c.deckId === deckId && c.nextReview <= now).length;
+                
+                return {
+                    total: cards.length,
+                    new: cards.filter(c => !c.reps || c.reps === 0).length,
+                    due: cards.filter(c => c.nextReview && new Date(c.nextReview).getTime() <= now).length,
+                    mastered: cards.filter(c => c.stability >= 30).length,
+                    learning: cards.filter(c => c.state === 1 || c.state === 3).length
+                };
             },
-
-            getNewCount(deckId) {
-                const cards = CardManager.getAll();
-                return cards.filter(c => c.deckId === deckId && c.state === 'new').length;
-            },
-
-            // UI Methods
+            
             openCreate() {
-                this.selectedEmoji = '📚';
-                document.getElementById('newDeckName').value = '';
-                document.getElementById('newDeckDesc').value = '';
-                document.querySelectorAll('.emoji-option').forEach(e => {
-                    e.classList.toggle('selected', e.dataset.emoji === '📚');
-                });
                 document.getElementById('createDeckModal').classList.add('active');
             },
-
+            
             closeCreate() {
                 document.getElementById('createDeckModal').classList.remove('active');
-            },
-
-            selectEmoji(emoji, el) {
-                this.selectedEmoji = emoji;
-                document.querySelectorAll('.emoji-option').forEach(e => e.classList.remove('selected'));
-                el.classList.add('selected');
-            },
-
-            createFromUI() {
-                const name = document.getElementById('newDeckName').value.trim();
-                const desc = document.getElementById('newDeckDesc').value.trim();
-
-                if (!name) {
-                    Toast.warning('لطفاً نام دک را وارد کنید');
-                    return;
-                }
-
-                this.create(name, desc, this.selectedEmoji);
-                this.closeCreate();
-                Toast.success('دک جدید ساخته شد');
-                Gamification.addXP(10, '📦 ساخت دک جدید');
-                Library.render();
             }
         };
 
         // ═══════════════════════════════════════════════════════════════
-        // CARD MANAGER
+        // CARD MANAGER - FIXED VERSION
         // ═══════════════════════════════════════════════════════════════
         const CardManager = {
+            
             getAll() {
-                return DB.get('cards', []);
+                const data = DB.get('cards', []);
+                // Ensure it's always an array
+                if (Array.isArray(data)) return data;
+                if (typeof data === 'object' && data !== null) return Object.values(data);
+                return [];
             },
-
-            get(id) {
-                return this.getAll().find(c => c.id === id);
-            },
-
-            create(cardData) {
-                const cards = this.getAll();
-                const newCard = {
-                    id: Utils.generateId(),
-                    deckId: cardData.deckId,
-                    word: cardData.word,
-                    meaning: cardData.meaning,
-                    pronunciation: cardData.pronunciation || '',
-                    example: cardData.example || '',
-                    mnemonic: cardData.mnemonic || '',
-                    image: cardData.image || null,
-                    tags: cardData.tags || [],
-                    starred: false,
-                    // FSRS Parameters
-                    state: 'new', // new, learning, review, relearning
-                    stability: 0,
-                    difficulty: 0,
-                    elapsedDays: 0,
-                    scheduledDays: 0,
-                    reps: 0,
-                    lapses: 0,
-                    lastReview: null,
-                    nextReview: Date.now(),
-                    createdAt: Date.now()
-                };
-                cards.push(newCard);
-                DB.set('cards', cards);
-                return newCard;
-            },
-
-            update(id, updates) {
-                const cards = this.getAll();
-                const index = cards.findIndex(c => c.id === id);
-                if (index !== -1) {
-                    cards[index] = { ...cards[index], ...updates };
-                    DB.set('cards', cards);
-                    return cards[index];
-                }
-                return null;
-            },
-
-            delete(id) {
-                let cards = this.getAll();
-                cards = cards.filter(c => c.id !== id);
-                DB.set('cards', cards);
-                return true;
-            },
-
+            
             getByDeck(deckId) {
                 return this.getAll().filter(c => c.deckId === deckId);
             },
-
+            
+            getById(cardId) {
+                return this.getAll().find(c => c.id === cardId);
+            },
+            
             getDueCards(deckId = null) {
                 const now = Date.now();
-                let cards = this.getAll().filter(c => c.nextReview <= now);
+                let cards = this.getAll();
+                
                 if (deckId) {
                     cards = cards.filter(c => c.deckId === deckId);
                 }
-                return cards;
+                
+                return cards.filter(c => {
+                    if (!c.nextReview) return true;
+                    return new Date(c.nextReview).getTime() <= now;
+                });
             },
-
-            getNewCards(deckId = null, limit = null) {
-                let cards = this.getAll().filter(c => c.state === 'new');
-                if (deckId) {
-                    cards = cards.filter(c => c.deckId === deckId);
-                }
-                if (limit) {
-                    cards = cards.slice(0, limit);
-                }
-                return cards;
+            
+            getNewCards(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => !c.reps || c.reps === 0);
             },
-
-            toggleStar(id) {
-                const card = this.get(id);
+            
+            save(cards) {
+                // Ensure we're saving an array
+                if (!Array.isArray(cards)) {
+                    cards = Object.values(cards || {});
+                }
+                DB.set('cards', cards);
+            },
+            
+            create(cardData) {
+                // Get existing cards as array
+                let cards = this.getAll();
+                
+                // Double-check it's an array
+                if (!Array.isArray(cards)) {
+                    console.warn('⚠️ Cards data was not array, converting...');
+                    cards = Array.isArray(cards) ? cards : Object.values(cards || {});
+                }
+                
+                const newCard = {
+                    id: Utils.generateId ? Utils.generateId() : ('card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)),
+                    deckId: cardData.deckId,
+                    word: cardData.word || '',
+                    meaning: cardData.meaning || '',
+                    pronunciation: cardData.pronunciation || '',
+                    example: cardData.example || '',
+                    image: cardData.image || null,
+                    audio: cardData.audio || null,
+                    tags: cardData.tags || [],
+                    
+                    // FSRS parameters
+                    difficulty: 0.3,
+                    stability: 0,
+                    reps: cardData.reps || 0,
+                    lapses: cardData.lapses || 0,
+                    state: 0, // 0=new, 1=learning, 2=review, 3=relearning
+                    
+                    // Scheduling
+                    nextReview: null,
+                    lastReview: null,
+                    
+                    // Meta
+                    starred: false,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                };
+                
+                cards.push(newCard);
+                this.save(cards);
+                
+                return newCard;
+            },
+            
+            update(cardId, updates) {
+                let cards = this.getAll();
+                const index = cards.findIndex(c => c.id === cardId);
+                
+                if (index !== -1) {
+                    cards[index] = {
+                        ...cards[index],
+                        ...updates,
+                        updatedAt: Date.now()
+                    };
+                    this.save(cards);
+                    return cards[index];
+                }
+                
+                return null;
+            },
+            
+            delete(cardId) {
+                let cards = this.getAll();
+                cards = cards.filter(c => c.id !== cardId);
+                this.save(cards);
+            },
+            
+            deleteByDeck(deckId) {
+                let cards = this.getAll();
+                cards = cards.filter(c => c.deckId !== deckId);
+                this.save(cards);
+            },
+            
+            toggleStar(cardId) {
+                const card = this.getById(cardId);
                 if (card) {
-                    this.update(id, { starred: !card.starred });
-                    return !card.starred;
+                    return this.update(cardId, { starred: !card.starred });
                 }
-                return false;
+                return null;
             },
-
-            getStarred() {
-                return this.getAll().filter(c => c.starred);
-            },
-
-            getMastered() {
-                return this.getAll().filter(c => c.stability >= 30 && c.reps >= 5);
-            },
-
+            
             search(query) {
+                if (!query) return this.getAll();
                 const q = query.toLowerCase();
                 return this.getAll().filter(c => 
-                    c.word.toLowerCase().includes(q) ||
-                    c.meaning.toLowerCase().includes(q)
+                    (c.word && c.word.toLowerCase().includes(q)) ||
+                    (c.meaning && c.meaning.toLowerCase().includes(q)) ||
+                    (c.example && c.example.toLowerCase().includes(q)) ||
+                    (c.tags && c.tags.some(t => t.toLowerCase().includes(q)))
                 );
+            },
+            
+            getStats() {
+                const cards = this.getAll();
+                const now = Date.now();
+                
+                return {
+                    total: cards.length,
+                    new: cards.filter(c => !c.reps || c.reps === 0).length,
+                    learning: cards.filter(c => c.state === 1).length,
+                    review: cards.filter(c => c.state === 2).length,
+                    due: cards.filter(c => c.nextReview && new Date(c.nextReview).getTime() <= now).length,
+                    mastered: cards.filter(c => c.stability >= 30).length,
+                    starred: cards.filter(c => c.starred).length
+                };
+            },
+            
+            // Bulk import for Anki
+            bulkCreate(deckId, cardsData) {
+                let cards = this.getAll();
+                
+                if (!Array.isArray(cards)) {
+                    cards = [];
+                }
+                
+                const newCards = cardsData.map(cardData => ({
+                    id: 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    deckId: deckId,
+                    word: cardData.word || '',
+                    meaning: cardData.meaning || '',
+                    pronunciation: cardData.pronunciation || '',
+                    example: cardData.example || '',
+                    image: cardData.image || null,
+                    audio: cardData.audio || null,
+                    tags: cardData.tags || [],
+                    difficulty: 0.3,
+                    stability: 0,
+                    reps: cardData.reps || 0,
+                    lapses: cardData.lapses || 0,
+                    state: 0,
+                    nextReview: null,
+                    lastReview: null,
+                    starred: false,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                }));
+                
+                cards = cards.concat(newCards);
+                this.save(cards);
+                
+                return newCards;
             }
         };
 
@@ -10091,75 +10160,79 @@
                 this.updateUI('importing', { progress: 0, current: 0, total: totalCards });
                 
                 try {
-                    let imported = 0;
+                    let totalImported = 0;
                     
                     for (const deck of selectedDecks) {
                         // Check for duplicate deck names
                         const existingDecks = DeckManager.getAll();
                         let deckName = deck.name;
-                        const duplicate = existingDecks.find(d => d.name === deckName);
-                        if (duplicate) {
-                            deckName = `${deck.name} (وارد شده)`;
+                        if (existingDecks.find(d => d.name === deckName)) {
+                            deckName = `${deck.name} (Anki)`;
                         }
                         
+                        // Create deck
                         const newDeck = DeckManager.create(
                             deckName,
                             deck.description || `واردشده از Anki - ${deck.cards.length} کارت`,
                             this.getDeckEmoji(deck.name)
                         );
                         
-                        // Import in batches for performance
-                        const batchSize = 50;
+                        // Import cards in batches
+                        const batchSize = 100;
+                        
                         for (let j = 0; j < deck.cards.length; j += batchSize) {
                             const batch = deck.cards.slice(j, j + batchSize);
                             
-                            for (const card of batch) {
-                                CardManager.create({
-                                    deckId: newDeck.id,
-                                    word: card.word,
-                                    meaning: card.meaning,
-                                    pronunciation: card.pronunciation || '',
-                                    example: card.example || '',
-                                    image: card.image || null,
-                                    tags: card.tags || [],
-                                    reps: Math.min(card.ankiReps || 0, 5),
-                                    lapses: card.ankiLapses || 0
-                                });
-                                imported++;
-                            }
+                            // Use bulkCreate for better performance
+                            CardManager.bulkCreate(newDeck.id, batch);
                             
-                            // Update progress
-                            const progress = Math.round((imported / totalCards) * 100);
+                            totalImported += batch.length;
+                            
+                            const progress = Math.round((totalImported / totalCards) * 100);
                             this.updateUI('importing', {
                                 progress: progress,
-                                current: imported,
+                                current: totalImported,
                                 total: totalCards
                             });
                             
-                            // Let UI breathe
-                            await new Promise(r => setTimeout(r, 0));
+                            // Let UI update
+                            await new Promise(r => setTimeout(r, 10));
                         }
                     }
+                    
+                    // Clean up database to free memory
+                    if (this.db) {
+                        try { this.db.close(); } catch(e) {}
+                        this.db = null;
+                    }
+                    
+                    // Free media memory
+                    this.mediaFiles = {};
                     
                     // Success!
                     this.updateUI('success', {
                         decks: selectedDecks.length,
-                        cards: imported
+                        cards: totalImported
                     });
                     
-                    Gamification.addXP(
-                        selectedDecks.length * 20 + Math.floor(imported / 10),
-                        '📦 واردسازی از Anki'
-                    );
+                    // Award XP
+                    if (typeof Gamification !== 'undefined') {
+                        Gamification.addXP(
+                            selectedDecks.length * 20 + Math.floor(totalImported / 10),
+                            '📦 واردسازی از Anki'
+                        );
+                    }
                     
-                    Library.render();
-                    HomePage.refresh();
+                    // Refresh views
+                    if (typeof Library !== 'undefined') Library.render();
+                    if (typeof HomePage !== 'undefined') HomePage.refresh();
                     
-                    Toast.success(`🎉 ${Utils.toPersian(imported)} کارت وارد شد!`);
+                    Toast.success(`🎉 ${Utils.toPersian(totalImported)} کارت وارد شد!`);
                     
                 } catch (error) {
                     console.error('Import error:', error);
                     this.updateUI('error', { message: error.message });
+                    Toast.error('خطا در واردسازی');
                 }
             },
             
