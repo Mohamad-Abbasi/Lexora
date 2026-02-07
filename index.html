@@ -5930,6 +5930,40 @@
             closeCreate() {
                 const modal = document.getElementById('createDeckModal');
                 if (modal) modal.classList.remove('active');
+            },
+
+            createFromUI() {
+                const name = document.getElementById('newDeckName').value.trim();
+                const desc = document.getElementById('newDeckDesc').value.trim();
+                
+                if (!name) {
+                    Toast.warning('نام دک الزامی است');
+                    return;
+                }
+                
+                // Get selected emoji
+                const selectedEmoji = document.querySelector('#emojiPicker .emoji-option.selected');
+                const emoji = selectedEmoji ? selectedEmoji.dataset.emoji : '📚';
+                
+                this.create(name, desc, emoji);
+                this.closeCreate();
+                
+                Toast.success('دک "' + name + '" ساخته شد! 🎉');
+                Gamification.addXP(10, '📚 ساخت دک جدید');
+                
+                Library.render();
+                HomePage.refresh();
+                
+                // Clear form
+                document.getElementById('newDeckName').value = '';
+                document.getElementById('newDeckDesc').value = '';
+            },
+
+            selectEmoji(emoji, element) {
+                document.querySelectorAll('#emojiPicker .emoji-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                element.classList.add('selected');
             }
         };
         // ═══════════════════════════════════════════════════════════════
@@ -6377,6 +6411,18 @@
                 return Math.min(Math.max(interval, 1), this.params.maximumInterval);
             },
 
+            // Normalize card state (handles both numeric and string states)
+            _normalizeState(state) {
+                if (typeof state === 'string') return state;
+                switch(state) {
+                    case 0: return 'new';
+                    case 1: return 'learning';
+                    case 2: return 'review';
+                    case 3: return 'relearning';
+                    default: return 'new';
+                }
+            },
+
             // Main scheduling function
             schedule(card, rating) {
                 const now = Date.now();
@@ -6384,17 +6430,19 @@
                     ? (now - card.lastReview) / (1000 * 60 * 60 * 24) 
                     : 0;
 
-                let newState = card.state;
-                let newStability = card.stability;
-                let newDifficulty = card.difficulty;
-                let newReps = card.reps;
-                let newLapses = card.lapses;
+                const cardState = this._normalizeState(card.state);
+                let newState = cardState;
+                let newStability = card.stability || 0;
+                let newDifficulty = card.difficulty || 0.3;
+                let newReps = card.reps || 0;
+                let newLapses = card.lapses || 0;
                 let interval = 0;
 
                 // Calculate current retrievability
-                const r = card.state === 'new' ? 0 : this.retrievability(elapsedDays, card.stability);
+                const isNew = cardState === 'new' || (!card.reps && !card.lastReview);
+                const r = isNew ? 0 : this.retrievability(elapsedDays, card.stability || 0.1);
 
-                if (card.state === 'new') {
+                if (isNew) {
                     // New card
                     newDifficulty = this.initDifficulty(rating);
                     newStability = this.initStability(rating);
@@ -7390,7 +7438,7 @@
             },
 
             openDeck(deckId) {
-                this.currentDeck = DeckManager.get(deckId);
+                this.currentDeck = DeckManager.getById(deckId);
                 if (!this.currentDeck) return;
 
                 // Show deck detail view
@@ -7471,7 +7519,7 @@
             },
 
             editCard(cardId) {
-                const card = CardManager.get(cardId);
+                const card = CardManager.getById(cardId);
                 if (!card) return;
 
                 document.getElementById('editCardId').value = cardId;
@@ -10607,13 +10655,6 @@
             },
 
             previewDeckCards(deckIndex) {
-                const deck = this.importedDecks[deckIndex];
-                if (!deck) return;
-
-                const nameEl = document.getElementById('ankiPreviewDeckName');
-                if (nameEl) nameEl.textContent = deck.name;
-
-                const container = document.getElementById('ankiCardPreviewListpreviewDeckCards(deckIndex) {
                 const deck = this.importedDecks[deckIndex];
                 if (!deck) return;
 
