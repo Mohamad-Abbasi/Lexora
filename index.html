@@ -5632,7 +5632,7 @@
             }
         };
 		// ═══════════════════════════════════════════════════════════════
-        // DECK MANAGER - FIXED VERSION
+        // DECK MANAGER - COMPLETE FIXED VERSION
         // ═══════════════════════════════════════════════════════════════
         const DeckManager = {
             
@@ -5658,7 +5658,6 @@
                 let decks = this.getAll();
                 
                 if (!Array.isArray(decks)) {
-                    console.warn('⚠️ Decks data was not array, converting...');
                     decks = [];
                 }
                 
@@ -5690,7 +5689,6 @@
                     this.save(decks);
                     return decks[index];
                 }
-                
                 return null;
             },
             
@@ -5698,11 +5696,38 @@
                 let decks = this.getAll();
                 decks = decks.filter(d => d.id !== deckId);
                 this.save(decks);
-                
-                // Delete associated cards
                 CardManager.deleteByDeck(deckId);
             },
             
+            // ✅ تابع جدید - تعداد کارت‌های دک
+            getCardCount(deckId) {
+                return CardManager.getByDeck(deckId).length;
+            },
+            
+            // ✅ تابع جدید - تعداد کارت‌های جدید
+            getNewCount(deckId) {
+                return CardManager.getByDeck(deckId).filter(c => !c.reps || c.reps === 0).length;
+            },
+            
+            // ✅ تابع جدید - تعداد کارت‌های مرور
+            getDueCount(deckId) {
+                const now = Date.now();
+                return CardManager.getByDeck(deckId).filter(c => 
+                    c.nextReview && new Date(c.nextReview).getTime() <= now
+                ).length;
+            },
+            
+            // ✅ تابع جدید - تعداد کارت‌های تسلط یافته
+            getMasteredCount(deckId) {
+                return CardManager.getByDeck(deckId).filter(c => c.stability >= 30).length;
+            },
+            
+            // ✅ تابع جدید - تعداد کارت‌های در حال یادگیری
+            getLearningCount(deckId) {
+                return CardManager.getByDeck(deckId).filter(c => c.state === 1 || c.state === 3).length;
+            },
+            
+            // ✅ تابع جدید - آمار کامل دک
             getDeckStats(deckId) {
                 const cards = CardManager.getByDeck(deckId);
                 const now = Date.now();
@@ -5712,19 +5737,40 @@
                     new: cards.filter(c => !c.reps || c.reps === 0).length,
                     due: cards.filter(c => c.nextReview && new Date(c.nextReview).getTime() <= now).length,
                     mastered: cards.filter(c => c.stability >= 30).length,
-                    learning: cards.filter(c => c.state === 1 || c.state === 3).length
+                    learning: cards.filter(c => c.state === 1 || c.state === 3).length,
+                    review: cards.filter(c => c.state === 2).length,
+                    starred: cards.filter(c => c.starred).length
                 };
             },
             
+            // ✅ تابع جدید - پیشرفت دک به درصد
+            getProgress(deckId) {
+                const cards = CardManager.getByDeck(deckId);
+                if (cards.length === 0) return 0;
+                const mastered = cards.filter(c => c.stability >= 30).length;
+                return Math.round((mastered / cards.length) * 100);
+            },
+            
+            // ✅ تابع جدید - جستجو در دک‌ها
+            search(query) {
+                if (!query) return this.getAll();
+                const q = query.toLowerCase();
+                return this.getAll().filter(d =>
+                    (d.name && d.name.toLowerCase().includes(q)) ||
+                    (d.description && d.description.toLowerCase().includes(q))
+                );
+            },
+            
             openCreate() {
-                document.getElementById('createDeckModal').classList.add('active');
+                const modal = document.getElementById('createDeckModal');
+                if (modal) modal.classList.add('active');
             },
             
             closeCreate() {
-                document.getElementById('createDeckModal').classList.remove('active');
+                const modal = document.getElementById('createDeckModal');
+                if (modal) modal.classList.remove('active');
             }
         };
-
         // ═══════════════════════════════════════════════════════════════
         // CARD MANAGER - FIXED VERSION
         // ═══════════════════════════════════════════════════════════════
