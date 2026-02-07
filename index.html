@@ -9691,116 +9691,62 @@
         };
 
         // ═══════════════════════════════════════════════════════════════
-        // EDIT CARD MODAL (Add to HTML if missing)
-        // ═══════════════════════════════════════════════════════════════
-        // This creates the edit modal dynamically if not in HTML
-        function createEditCardModal() {
-            if (document.getElementById('editCardModal')) return;
-
-            const modal = document.createElement('div');
-            modal.id = 'editCardModal';
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal-container">
-                    <div class="modal-header">
-                        <h2>✏️ ویرایش کارت</h2>
-                        <button class="modal-close" onclick="document.getElementById('editCardModal').classList.remove('active')">✕</button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" id="editCardId">
-                        <div class="form-group">
-                            <label class="form-label">کلمه انگلیسی</label>
-                            <input type="text" class="form-input" id="editCardWord" dir="ltr">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">معنی فارسی</label>
-                            <input type="text" class="form-input" id="editCardMeaning">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">مثال</label>
-                            <textarea class="form-input form-textarea" id="editCardExample" dir="ltr"></textarea>
-                        </div>
-                        <button class="btn btn-primary btn-block" onclick="Library.saveEditCard()">💾 ذخیره تغییرات</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
-        // ═══════════════════════════════════════════════════════════════
-        // START APPLICATION
-        // ═══════════════════════════════════════════════════════════════
-        document.addEventListener('DOMContentLoaded', () => {
-            createEditCardModal();
-            App.init();
-        });
-
-        // Handle visibility change (for streak tracking)
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                HomePage.updateDailyProgress();
-                HomePage.updateStreakDays();
-            }
-        });
-
-        // Handle online/offline
-        window.addEventListener('online', () => {
-            Toast.success('اتصال برقرار شد ✅');
-        });
-
-        window.addEventListener('offline', () => {
-            Toast.warning('حالت آفلاین 📴');
-        });
-		// ═══════════════════════════════════════════════════════════════
-        //  ANKI IMPORTER - COMPLETE FINAL VERSION v3.0
-        //  بدون حذفیات - تمام توابع - تمام خطاهای احتمالی پیش‌بینی شده
-        // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+        // ANKI IMPORTER - COMPLETE & FIXED VERSION
+        // ═══════════════════════════════════════════════════════════
         const AnkiImporter = {
-
-            // ═══════════════ PROPERTIES ═══════════════
+            // State
             isProcessing: false,
             currentFile: null,
             importedDecks: [],
             importedCards: [],
             mediaFiles: {},
+            
+            // Libraries
+            jszip: null,
+            SQL: null,
             db: null,
             sqlReady: false,
-            SQL: null,
 
             // ═══════════════════════════════════════════════════════════
-            // 1. LIBRARY LOADING
+            // 1. LOAD EXTERNAL LIBRARIES
             // ═══════════════════════════════════════════════════════════
 
-            loadJSZip() {
+            async loadJSZip() {
+                if (this.jszip) return this.jszip;
+                if (typeof JSZip !== 'undefined') {
+                    this.jszip = JSZip;
+                    return this.jszip;
+                }
+                
                 return new Promise((resolve, reject) => {
-                    if (typeof JSZip !== 'undefined') {
-                        console.log('✅ JSZip already loaded');
-                        resolve();
-                        return;
-                    }
                     const urls = [
                         'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
                         'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js',
                         'https://unpkg.com/jszip@3.10.1/dist/jszip.min.js'
                     ];
                     this._loadScriptWithFallback(urls, 'JSZip')
-                        .then(resolve)
-                        .catch(() => reject(new Error('خطا در بارگذاری کتابخانه ZIP. اینترنت خود را بررسی کنید.')));
+                        .then(() => {
+                            setTimeout(() => {
+                                this.jszip = typeof JSZip !== 'undefined' ? JSZip : window.JSZip;
+                                if (!this.jszip) {
+                                    reject(new Error('JSZip بارگذاری نشد'));
+                                } else {
+                                    resolve(this.jszip);
+                                }
+                            }, 100);
+                        })
+                        .catch(() => reject(new Error('خطا در بارگذاری کتابخانه فشرده‌سازی')));
                 });
             },
 
-            loadSqlJs() {
+            async loadSQLJS() {
+                if (this.SQL && this.sqlReady) return this.SQL;
+                if (typeof initSqlJs !== 'undefined' && this.sqlReady) {
+                    return this.SQL;
+                }
+                
                 return new Promise((resolve, reject) => {
-                    if (this.SQL) {
-                        console.log('✅ SQL.js already initialized');
-                        resolve(this.SQL);
-                        return;
-                    }
-                    if (typeof initSqlJs !== 'undefined' || typeof window.initSqlJs !== 'undefined') {
-                        console.log('✅ initSqlJs found, initializing...');
-                        this._initializeSQL().then(resolve).catch(reject);
-                        return;
-                    }
                     const urls = [
                         'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js',
                         'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js',
@@ -9864,7 +9810,6 @@
 
                     let lastError = null;
 
-                    // Try each WASM source
                     for (const baseUrl of wasmUrls) {
                         try {
                             this.SQL = await sqlInit({
@@ -9879,7 +9824,6 @@
                         }
                     }
 
-                    // Last resort: try fetching WASM manually
                     try {
                         console.log('🔄 Trying manual WASM fetch...');
                         const resp = await fetch('https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.wasm');
@@ -9917,6 +9861,7 @@
                 this._resetData();
                 const modal = document.getElementById('ankiImportModal');
                 if (modal) modal.classList.remove('active');
+                Library.render();
             },
 
             resetState() {
@@ -9935,7 +9880,7 @@
             },
 
             // ═══════════════════════════════════════════════════════════
-            // 3. FILE SELECTION (NO SIZE LIMIT)
+            // 3. FILE SELECTION (NO SIZE LIMIT!)
             // ═══════════════════════════════════════════════════════════
 
             triggerFileSelect() {
@@ -9952,6 +9897,7 @@
                     return;
                 }
 
+                // NO SIZE LIMIT - just warnings
                 if (file.size > 500 * 1024 * 1024) {
                     if (typeof Toast !== 'undefined') Toast.warning('فایل بسیار بزرگ است. پردازش ممکن است زمان ببرد.');
                 } else if (file.size > 100 * 1024 * 1024) {
@@ -9985,7 +9931,7 @@
             },
 
             // ═══════════════════════════════════════════════════════════
-            // 4. MAIN IMPORT PROCESS
+            // 4. MAIN IMPORT PROCESS (FIXED - NO CARD LIMIT!)
             // ═══════════════════════════════════════════════════════════
 
             async startImport() {
@@ -9997,635 +9943,453 @@
                     // Load libraries
                     this.updateUI('processing', { stage: 'بارگذاری کتابخانه‌ها...', progress: 5 });
                     await this.loadJSZip();
+                    await this.loadSQLJS();
 
-                    this.updateUI('processing', { stage: 'بارگذاری موتور دیتابیس...', progress: 10 });
-                    await this.loadSqlJs();
+                    // Extract APKG
+                    this.updateUI('processing', { stage: 'استخراج فایل APKG...', progress: 15 });
+                    const zip = await this.jszip.loadAsync(this.currentFile);
 
-                    // Extract ZIP
-                    this.updateUI('processing', { stage: 'استخراج فایل APKG...', progress: 20 });
-                    const zip = await this.extractZip(this.currentFile);
+                    // Extract collection database
+                    this.updateUI('processing', { stage: 'استخراج دیتابیس...', progress: 30 });
+                    const dbData = await this._extractDatabase(zip);
 
-                    // Load database
-                    this.updateUI('processing', { stage: 'خواندن دیتابیس Anki...', progress: 40 });
-                    await this.loadDatabase(zip);
+                    // Parse database (NO LIMIT!)
+                    this.updateUI('processing', { stage: 'تجزیه دیتابیس...', progress: 50 });
+                    const parsedData = await this._parseDatabase(dbData);
 
-                    // Extract media
-                    this.updateUI('processing', { stage: 'استخراج فایل‌های مدیا...', progress: 55 });
-                    await this.extractMedia(zip);
+                    // Extract media files
+                    this.updateUI('processing', { stage: 'استخراج رسانه‌ها...', progress: 70 });
+                    await this._extractMedia(zip);
 
-                    // Parse data
-                    this.updateUI('processing', { stage: 'پردازش دک‌ها و کارت‌ها...', progress: 75 });
-                    await this.parseAnkiData();
+                    // Prepare decks
+                    this.updateUI('processing', { stage: 'آماده‌سازی دک‌ها...', progress: 85 });
+                    this.importedDecks = this._prepareDecks(parsedData);
+                    this.importedCards = parsedData.cards;
 
                     // Show preview
-                    this.updateUI('processing', { stage: 'آماده‌سازی پیش‌نمایش...', progress: 95 });
+                    this.updateUI('processing', { stage: 'نمایش پیش‌نمایش...', progress: 100 });
                     await new Promise(r => setTimeout(r, 300));
-                    this.showPreview();
+                    
+                    this.renderPreview();
+                    this.updateUI('preview');
 
                 } catch (error) {
-                    console.error('❌ Import error:', error);
-                    this.updateUI('error', { message: error.message || 'خطای ناشناخته' });
-                    if (typeof Toast !== 'undefined') Toast.error('خطا: ' + (error.message || 'خطای ناشناخته'));
+                    console.error('Import error:', error);
+                    this.showError(error.message || 'خطای ناشناخته در پردازش فایل');
                 } finally {
                     this.isProcessing = false;
                 }
             },
 
-            // ═══════════════════════════════════════════════════════════
-            // 5. ZIP EXTRACTION
-            // ═══════════════════════════════════════════════════════════
-
-            async extractZip(file) {
-                try {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const zip = await JSZip.loadAsync(arrayBuffer);
-                    console.log('📁 ZIP contents:', Object.keys(zip.files));
-                    return zip;
-                } catch (error) {
-                    throw new Error('فایل APKG قابل استخراج نیست. ممکن است فایل خراب باشد.');
+            async _extractDatabase(zip) {
+                const dbFile = zip.file('collection.anki21') || zip.file('collection.anki2') || zip.file('collection.anki21b');
+                if (!dbFile) {
+                    throw new Error('فایل دیتابیس در APKG یافت نشد');
                 }
+                return await dbFile.async('uint8array');
             },
 
-            // ═══════════════════════════════════════════════════════════
-            // 6. DATABASE LOADING
-            // ═══════════════════════════════════════════════════════════
-
-            async loadDatabase(zip) {
-                const possibleNames = ['collection.anki21', 'collection.anki2', 'collection.anki21b'];
-                let dbData = null;
-                let dbFileName = null;
-
-                for (const name of possibleNames) {
-                    const file = zip.file(name);
-                    if (file) {
-                        if (name === 'collection.anki21b') {
-                            throw new Error('این فایل از فرمت جدید Anki (protobuf) استفاده می‌کند. لطفاً در Anki از منوی File > Export با فرمت "Anki Deck Package (.apkg)" خروجی بگیرید و گزینه legacy را انتخاب کنید.');
-                        }
-                        dbData = await file.async('uint8array');
-                        dbFileName = name;
-                        break;
-                    }
-                }
-
-                if (!dbData) {
-                    const found = Object.keys(zip.files).join(', ');
-                    throw new Error('فایل دیتابیس Anki یافت نشد. فایل‌های موجود: ' + found);
-                }
-
-                console.log('📁 Database:', dbFileName, '| Size:', this.formatFileSize(dbData.length));
-
-                if (!this.SQL) {
-                    throw new Error('موتور دیتابیس آماده نیست.');
-                }
-
+            async _parseDatabase(dbData) {
                 try {
-                    if (this.db) { try { this.db.close(); } catch (e) {} }
                     this.db = new this.SQL.Database(dbData);
-                    console.log('✅ Database opened');
-
-                    // Verify tables
-                    const tables = this.db.exec("SELECT name FROM sqlite_master WHERE type='table'");
-                    if (tables.length > 0) {
-                        const tableNames = tables[0].values.map(v => v[0]);
-                        console.log('📋 Tables:', tableNames);
+                    
+                    // Get models/note types
+                    const modelsResult = this.db.exec("SELECT models FROM col");
+                    if (!modelsResult.length || !modelsResult[0].values.length) {
+                        throw new Error('اطلاعات مدل‌ها یافت نشد');
                     }
-                } catch (error) {
-                    throw new Error('خطا در باز کردن دیتابیس: ' + error.message);
-                }
-            },
+                    const models = JSON.parse(modelsResult[0].values[0][0]);
 
-            // ═══════════════════════════════════════════════════════════
-            // 7. MEDIA EXTRACTION
-            // ═══════════════════════════════════════════════════════════
-
-            async extractMedia(zip) {
-                const mediaFile = zip.file('media');
-                if (!mediaFile) {
-                    console.log('ℹ️ No media file in APKG');
-                    return;
-                }
-
-                try {
-                    const mediaJson = await mediaFile.async('string');
-                    const mediaMapping = JSON.parse(mediaJson);
-                    const totalMedia = Object.keys(mediaMapping).length;
-                    console.log('📎 Media files:', totalMedia);
-                    if (totalMedia === 0) return;
-
-                    let processed = 0;
-                    const supportedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'mp3', 'wav', 'ogg', 'm4a'];
-                    const maxMediaSize = 5 * 1024 * 1024; // 5MB per file
-
-                    for (const [index, fileName] of Object.entries(mediaMapping)) {
-                        try {
-                            const ext = (fileName.split('.').pop() || '').toLowerCase();
-                            if (!supportedExt.includes(ext)) continue;
-
-                            const mf = zip.file(index);
-                            if (!mf) continue;
-
-                            const data = await mf.async('base64');
-                            if (data.length < maxMediaSize * 1.37) {
-                                this.mediaFiles[fileName] = 'data:' + this._getMimeType(fileName) + ';base64,' + data;
-                            }
-                        } catch (e) {
-                            // Skip this media file
-                        }
-
-                        processed++;
-                        if (processed % 50 === 0) {
-                            this.updateUI('processing', {
-                                stage: 'استخراج مدیا... ' + processed + '/' + totalMedia,
-                                progress: 55 + Math.round((processed / totalMedia) * 15)
-                            });
-                            await new Promise(r => setTimeout(r, 0));
-                        }
+                    // Get decks
+                    const decksResult = this.db.exec("SELECT decks FROM col");
+                    if (!decksResult.length || !decksResult[0].values.length) {
+                        throw new Error('اطلاعات دک‌ها یافت نشد');
                     }
-                    console.log('✅ Media extracted:', Object.keys(this.mediaFiles).length);
-                } catch (e) {
-                    console.warn('⚠️ Media extraction error:', e.message);
-                }
-            },
+                    const decks = JSON.parse(decksResult[0].values[0][0]);
 
-            _getMimeType(fileName) {
-                const ext = (fileName.split('.').pop() || '').toLowerCase();
-                const map = {
-                    'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png',
-                    'gif': 'image/gif', 'webp': 'image/webp', 'svg': 'image/svg+xml',
-                    'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'ogg': 'audio/ogg', 'm4a': 'audio/mp4'
-                };
-                return map[ext] || 'application/octet-stream';
-            },
+                    // Get notes (ALL OF THEM - NO LIMIT!)
+                    const notesResult = this.db.exec("SELECT id, mid, flds, tags, sfld FROM notes");
+                    if (!notesResult.length) {
+                        throw new Error('هیچ یادداشتی یافت نشد');
+                    }
 
-            // ═══════════════════════════════════════════════════════════
-            // 8. PARSE ANKI DATA - COMPLETE
-            // ═══════════════════════════════════════════════════════════
-
-            async parseAnkiData() {
-                if (!this.db) throw new Error('دیتابیس بارگذاری نشده');
-
-                let decks = {};
-                let models = {};
-
-                // Get collection info
-                try {
-                    const colResult = this.db.exec('SELECT * FROM col');
-                    if (colResult.length > 0) {
-                        const colData = colResult[0].values[0];
-                        const colCols = colResult[0].columns;
-                        const getCol = (name) => {
-                            const idx = colCols.indexOf(name);
-                            return idx !== -1 ? colData[idx] : null;
+                    const notes = {};
+                    notesResult[0].values.forEach(row => {
+                        notes[row[0]] = {
+                            id: row[0],
+                            modelId: row[1],
+                            fields: row[2].split('\x1f'),
+                            tags: row[3] || '',
+                            sortField: row[4] || ''
                         };
-                        const dr = getCol('decks');
-                        if (dr) decks = JSON.parse(dr);
-                        const mr = getCol('models');
-                        if (mr) models = JSON.parse(mr);
+                    });
+
+                    // Get cards (ALL OF THEM - NO LIMIT!)
+                    const cardsResult = this.db.exec("SELECT id, nid, did, ord, type, queue, due, ivl, factor, reps, lapses FROM cards");
+                    if (!cardsResult.length) {
+                        throw new Error('هیچ کارتی یافت نشد');
                     }
-                } catch (e) {
-                    console.warn('⚠️ col table read failed:', e.message);
-                    try {
-                        const dr = this.db.exec('SELECT id, name FROM decks');
-                        if (dr.length > 0) dr[0].values.forEach(r => { decks[r[0]] = { name: r[1], desc: '' }; });
-                    } catch (e2) {}
+
+                    const cards = [];
+                    cardsResult[0].values.forEach(row => {
+                        const note = notes[row[1]];
+                        if (!note) return;
+
+                        const model = models[note.modelId];
+                        if (!model) return;
+
+                        const cardOrd = row[3];
+                        const template = model.tmpls[cardOrd];
+                        if (!template) return;
+
+                        // Build card data
+                        const fields = {};
+                        model.flds.forEach((fld, idx) => {
+                            fields[fld.name] = note.fields[idx] || '';
+                        });
+
+                        cards.push({
+                            id: row[0],
+                            noteId: row[1],
+                            deckId: row[2],
+                            ord: cardOrd,
+                            type: row[4],
+                            queue: row[5],
+                            due: row[6],
+                            ivl: row[7],
+                            factor: row[8],
+                            reps: row[9],
+                            lapses: row[10],
+                            fields: fields,
+                            template: template,
+                            tags: note.tags,
+                            modelName: model.name
+                        });
+                    });
+
+                    console.log(`✅ Parsed ${cards.length} cards from database`);
+
+                    return { decks, models, cards, notes };
+
+                } catch (error) {
+                    console.error('Database parsing error:', error);
+                    throw new Error(`خطا در تجزیه دیتابیس: ${error.message}`);
                 }
+            },
 
-                if (Object.keys(decks).length === 0) {
-                    decks['1'] = { name: 'Imported Deck', desc: '' };
-                }
-
-                console.log('📚 Decks:', Object.entries(decks).map(([id, d]) => id + ': ' + d.name));
-                console.log('📋 Models:', Object.keys(models).length);
-
-                // Get notes
-                let notes = [];
+            async _extractMedia(zip) {
                 try {
-                    const nr = this.db.exec('SELECT * FROM notes');
-                    notes = this.resultToObjects(nr);
-                    console.log('📝 Notes:', notes.length);
-                } catch (e) {
-                    throw new Error('خطا در خواندن یادداشت‌ها: ' + e.message);
-                }
-
-                // Get cards
-                let cards = [];
-                try {
-                    const cr = this.db.exec('SELECT * FROM cards');
-                    cards = this.resultToObjects(cr);
-                    console.log('🎴 Cards:', cards.length);
-                } catch (e) {
-                    throw new Error('خطا در خواندن کارت‌ها: ' + e.message);
-                }
-
-                // Build maps
-                const notesMap = new Map();
-                notes.forEach(n => notesMap.set(n.id, n));
-
-                const modelsFieldNames = {};
-                for (const [modelId, model] of Object.entries(models)) {
-                    if (model.flds && Array.isArray(model.flds)) {
-                        modelsFieldNames[modelId] = model.flds.map(f => (typeof f === 'string') ? f : (f && f.name ? f.name : 'Unknown'));
+                    const mediaFile = zip.file('media');
+                    if (!mediaFile) {
+                        console.log('No media file found');
+                        return;
                     }
-                    console.log('📋 Model "' + (model.name || modelId) + '": fields =', modelsFieldNames[modelId]);
+
+                    const mediaJSON = await mediaFile.async('text');
+                    const mediaMap = JSON.parse(mediaJSON);
+
+                    for (const [idx, filename] of Object.entries(mediaMap)) {
+                        const file = zip.file(idx);
+                        if (file) {
+                            const blob = await file.async('blob');
+                            this.mediaFiles[filename] = URL.createObjectURL(blob);
+                        }
+                    }
+
+                    console.log(`✅ Extracted ${Object.keys(this.mediaFiles).length} media files`);
+                } catch (error) {
+                    console.warn('Media extraction error:', error);
                 }
+            },
+
+            _prepareDecks(parsedData) {
+                const { decks, cards } = parsedData;
+                const deckMap = {};
 
                 // Group cards by deck
-                const cardsByDeck = {};
-                cards.forEach(c => {
-                    const did = String(c.did);
-                    if (!cardsByDeck[did]) cardsByDeck[did] = [];
-                    cardsByDeck[did].push(c);
+                cards.forEach(card => {
+                    const deckId = String(card.deckId);
+                    if (!deckMap[deckId]) {
+                        deckMap[deckId] = [];
+                    }
+                    deckMap[deckId].push(card);
                 });
 
-                this.importedDecks = [];
-                this.importedCards = [];
-                let skipped = 0;
-                let processed = 0;
+                // Build deck list
+                const deckList = [];
+                for (const [deckId, deckData] of Object.entries(decks)) {
+                    if (deckId === '1') continue; // Skip default deck
 
-                for (const [deckId, deckInfo] of Object.entries(decks)) {
-                    const deckCards = cardsByDeck[deckId] || [];
-                    if (deckCards.length === 0) continue;
+                    const cards = deckMap[deckId] || [];
+                    if (cards.length === 0) continue;
 
-                    const pd = {
+                    deckList.push({
                         id: deckId,
-                        name: this._cleanDeckName(deckInfo.name),
-                        description: deckInfo.desc || '',
-                        selected: true,
-                        cards: []
-                    };
-
-                    const processedNotes = new Set();
-
-                    for (const card of deckCards) {
-                        const note = notesMap.get(card.nid);
-                        if (!note) { skipped++; continue; }
-
-                        if (processedNotes.has(note.id)) continue;
-                        processedNotes.add(note.id);
-
-                        const allFields = String(note.flds || '').split('\x1f');
-                        const fieldNames = modelsFieldNames[note.mid] || allFields.map((_, i) => 'Field_' + (i + 1));
-                        const model = models[note.mid] || {};
-                        const modelType = model.type;
-
-                        const pc = this._processCard(allFields, fieldNames, card, note, modelType, card.ord || 0);
-
-                        if (pc) {
-                            pd.cards.push(pc);
-                            this.importedCards.push({ ...pc, deckId: deckId, deckName: pd.name });
-                            processed++;
-                        } else {
-                            skipped++;
-                        }
-
-                        if (processed % 200 === 0) {
-                            this.updateUI('processing', {
-                                stage: 'پردازش... ' + processed + ' کارت',
-                                progress: 75 + Math.min(15, Math.round((processed / cards.length) * 15))
-                            });
-                            await new Promise(r => setTimeout(r, 0));
-                        }
-                    }
-
-                    if (pd.cards.length > 0) {
-                        this.importedDecks.push(pd);
-                    }
+                        name: deckData.name,
+                        cards: cards,
+                        cardCount: cards.length,
+                        selected: true
+                    });
                 }
 
-                console.log('═══════════════════════════════');
-                console.log('✅ Processed:', processed);
-                console.log('⚠️ Skipped:', skipped);
-                console.log('📚 Decks:', this.importedDecks.length);
-                console.log('═══════════════════════════════');
-
-                if (this.importedCards.length === 0) {
-                    throw new Error('هیچ کارت قابل واردسازی یافت نشد. (' + cards.length + ' کارت در فایل)');
-                }
+                return deckList;
             },
 
             // ═══════════════════════════════════════════════════════════
-            // 9. PROCESS SINGLE CARD - COMPLETE
+            // 5. PREVIEW & SELECTION
             // ═══════════════════════════════════════════════════════════
 
-            _processCard(fields, fieldNames, card, note, modelType, cardOrd) {
-                if (!fields || fields.length === 0) return null;
-
-                // Cloze card
-                if (modelType === 1) {
-                    return this._processClozeCard(fields, fieldNames, card, note, cardOrd);
-                }
-
-                // Build field map
-                const fieldMap = {};
-                fieldNames.forEach((name, i) => {
-                    if (i < fields.length) fieldMap[(name || '').toLowerCase().trim()] = fields[i] || '';
-                });
-
-                const frontKeys = ['front','word','english','expression','vocabulary','term','question','prompt','target','headword','entry','کلمه','سوال','جلو','انگلیسی','text','source','original'];
-                const backKeys = ['back','meaning','persian','farsi','definition','translation','answer','response','native','معنی','جواب','پشت','ترجمه','فارسی','explanation','description','gloss'];
-                const pronKeys = ['pronunciation','ipa','phonetic','reading','phonetics','pron','phon','تلفظ','آوا'];
-                const exKeys = ['example','sentence','usage','context','sample','مثال','جمله','نمونه','کاربرد'];
-
-                const findField = (keys) => {
-                    for (const key of keys) {
-                        for (const [fn, fv] of Object.entries(fieldMap)) {
-                            if (fn.includes(key) && fv.trim()) return fv;
-                        }
-                    }
-                    return '';
-                };
-
-                let front = findField(frontKeys);
-                let back = findField(backKeys);
-                let pron = findField(pronKeys);
-                let example = findField(exKeys);
-
-                // Fallback: positional
-                if (!front && !back) {
-                    front = fields[0] || '';
-                    back = fields[1] || '';
-                    if (fields.length > 2 && !pron) {
-                        for (let i = 2; i < fields.length; i++) {
-                            const c = this._cleanHtml(fields[i]);
-                            if (c.match(/^[\[\/].*[\]\/]$/) || c.match(/^[əɪɑːʊɒɔæʌ]/)) { pron = fields[i]; break; }
-                        }
-                    }
-                    if (fields.length > 2 && !example) {
-                        for (let i = 2; i < fields.length; i++) {
-                            if (fields[i] === pron) continue;
-                            const c = this._cleanHtml(fields[i]);
-                            if (c.length > 20 && c.includes(' ')) { example = fields[i]; break; }
-                        }
-                    }
-                } else if (!front) {
-                    front = fields[0] || '';
-                } else if (!back) {
-                    for (let i = 0; i < fields.length; i++) {
-                        if (fields[i] !== front && this._cleanHtml(fields[i]).trim()) { back = fields[i]; break; }
-                    }
-                }
-
-                // Extra content
-                let extra = '';
-                const used = new Set([front, back, pron, example]);
-                for (let i = 0; i < fields.length; i++) {
-                    if (!used.has(fields[i]) && fields[i] && fields[i].trim()) {
-                        const cl = this._cleanHtml(fields[i]).trim();
-                        if (cl.length > 0) extra += '\n[' + (fieldNames[i] || 'Field ' + (i + 1)) + ']: ' + cl;
-                    }
-                }
-
-                let word = this._cleanHtmlSmart(front);
-                let meaning = this._cleanHtmlSmart(back);
-                let pronClean = this._cleanHtml(pron);
-                let exClean = this._cleanHtml(example);
-
-                // Salvage
-                if (!word.trim() && !meaning.trim()) {
-                    const allContent = fields.map(f => this._cleanHtml(f)).filter(f => f.trim());
-                    if (allContent.length >= 2) {
-                        return {
-                            word: allContent[0].substring(0, 500),
-                            meaning: allContent.slice(1).join(' | ').substring(0, 2000),
-                            pronunciation: '', example: '',
-                            audio: this._extractAudio(fields.join(' ')),
-                            image: this._extractImage(fields.join(' ')),
-                            tags: this._extractTags(note),
-                            ankiReps: card.reps || 0, ankiLapses: card.lapses || 0, ankiInterval: card.ivl || 0
-                        };
-                    }
-                    return null;
-                }
-
-                if (!meaning.trim()) meaning = extra.trim() || '(بدون معنی)';
-                if (!word.trim() && meaning.trim()) {
-                    return {
-                        word: meaning.substring(0, 500), meaning: extra.trim() || '(بدون معنی)',
-                        pronunciation: pronClean, example: exClean,
-                        audio: this._extractAudio(fields.join(' ')), image: this._extractImage(fields.join(' ')),
-                        tags: this._extractTags(note),
-                        ankiReps: card.reps || 0, ankiLapses: card.lapses || 0, ankiInterval: card.ivl || 0
-                    };
-                }
-                if (!word.trim()) return null;
-                if (!exClean.trim() && extra.trim()) exClean = extra.trim().substring(0, 500);
-
-                const allText = fields.join(' ');
-                return {
-                    word: word.substring(0, 500),
-                    meaning: meaning.substring(0, 2000),
-                    pronunciation: pronClean.substring(0, 300),
-                    example: exClean.substring(0, 1000),
-                    audio: this._extractAudio(allText),
-                    image: this._extractImage(allText),
-                    tags: this._extractTags(note),
-                    ankiReps: card.reps || 0, ankiLapses: card.lapses || 0, ankiInterval: card.ivl || 0
-                };
-            },
-
-            // ═══════════════════════════════════════════════════════════
-            // 10. CLOZE CARD HANDLER
-            // ═══════════════════════════════════════════════════════════
-
-            _processClozeCard(fields, fieldNames, card, note, cardOrd) {
-                const text = fields[0] || '';
-                if (!text.trim()) return null;
-
-                const clozeRegex = /\{\{c(\d+)::([^}]*?)(?:::([^}]*?))?\}\}/g;
-                let allClozes = [];
-                let match;
-                while ((match = clozeRegex.exec(text)) !== null) {
-                    allClozes.push({ num: parseInt(match[1]), answer: match[2], hint: match[3] || '' });
-                }
-
-                if (allClozes.length === 0) {
-                    const w = this._cleanHtml(text);
-                    const b = fields[1] ? this._cleanHtml(fields[1]) : '';
-                    if (!w.trim()) return null;
-                    return {
-                        word: w.substring(0, 500), meaning: b || '(Cloze)',
-                        pronunciation: '', example: '',
-                        audio: this._extractAudio(fields.join(' ')), image: this._extractImage(fields.join(' ')),
-                        tags: [...this._extractTags(note), 'cloze'],
-                        ankiReps: card.reps || 0, ankiLapses: card.lapses || 0, ankiInterval: card.ivl || 0
-                    };
-                }
-
-                const targetNum = cardOrd + 1;
-                const target = allClozes.find(c => c.num === targetNum) || allClozes[0];
-
-                let question = text;
-                question = question.replace(
-                    new RegExp('\\{\\{c' + target.num + '::([^}]*?)(?:::[^}]*?)?\\}\\}', 'g'),
-                    target.hint ? '[' + target.hint + ']' : '[...]'
-                );
-                question = question.replace(/\{\{c\d+::([^}]*?)(?:::[^}]*?)?\}\}/g, '$1');
-
-                let extra = '';
-                for (let i = 1; i < fields.length; i++) {
-                    const c = this._cleanHtml(fields[i]);
-                    if (c.trim()) extra += (extra ? ' | ' : '') + c;
-                }
-
-                return {
-                    word: target.answer.substring(0, 500),
-                    meaning: this._cleanHtml(question).substring(0, 2000),
-                    pronunciation: '',
-                    example: extra.substring(0, 1000),
-                    audio: this._extractAudio(fields.join(' ')), image: this._extractImage(fields.join(' ')),
-                    tags: [...this._extractTags(note), 'cloze'],
-                    ankiReps: card.reps || 0, ankiLapses: card.lapses || 0, ankiInterval: card.ivl || 0
-                };
-            },
-
-            // ═══════════════════════════════════════════════════════════
-            // 11. HTML CLEANERS
-            // ═══════════════════════════════════════════════════════════
-
-            _cleanHtmlSmart(html) {
-                if (!html) return '';
-                let t = String(html);
-                t = t.replace(/\[sound:[^\]]+\]/g, '');
-                t = t.replace(/<br\s*\/?>/gi, '\n');
-                t = t.replace(/<li[^>]*>/gi, '• ');
-                t = t.replace(/<\/li>/gi, '\n');
-                t = t.replace(/<\/p>/gi, '\n');
-                t = t.replace(/<p[^>]*>/gi, '');
-                t = t.replace(/<b[^>]*>(.*?)<\/b>/gi, '$1');
-                t = t.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '$1');
-                t = t.replace(/<i[^>]*>(.*?)<\/i>/gi, '$1');
-                t = t.replace(/<em[^>]*>(.*?)<\/em>/gi, '$1');
-                t = t.replace(/<u[^>]*>(.*?)<\/u>/gi, '$1');
-                t = t.replace(/<img[^>]*alt="([^"]*)"[^>]*>/gi, '[$1]');
-                t = t.replace(/<img[^>]*>/gi, '');
-                t = t.replace(/<[^>]+>/g, ' ');
-                try {
-                    const el = document.createElement('textarea');
-                    el.innerHTML = t;
-                    t = el.value;
-                } catch (e) {}
-                t = t.replace(/[ \t]+/g, ' ');
-                t = t.replace(/\n\s*\n/g, '\n');
-                return t.trim();
-            },
-
-            _cleanHtml(html) {
-                if (!html) return '';
-                let t = String(html);
-                t = t.replace(/\[sound:[^\]]+\]/g, '');
-                t = t.replace(/<img[^>]*alt="([^"]*)"[^>]*>/gi, '$1');
-                t = t.replace(/<img[^>]*>/gi, '');
-                t = t.replace(/<br\s*\/?>/gi, ' ');
-                t = t.replace(/<[^>]+>/g, ' ');
-                try {
-                    const el = document.createElement('textarea');
-                    el.innerHTML = t;
-                    t = el.value;
-                } catch (e) {}
-                t = t.replace(/\s+/g, ' ');
-                return t.trim();
-            },
-
-            // ═══════════════════════════════════════════════════════════
-            // 12. MEDIA & TAG HELPERS
-            // ═══════════════════════════════════════════════════════════
-
-            _extractAudio(text) {
-                if (!text) return null;
-                const matches = text.match(/\[sound:([^\]]+)\]/g);
-                if (!matches) return null;
-                for (const m of matches) {
-                    const fn = m.replace('[sound:', '').replace(']', '');
-                    if (this.mediaFiles[fn]) return this.mediaFiles[fn];
-                }
-                return null;
-            },
-
-            _extractImage(text) {
-                if (!text) return null;
-                const re = /<img[^>]+src="([^"]+)"[^>]*>/gi;
-                let m;
-                while ((m = re.exec(text)) !== null) {
-                    if (this.mediaFiles[m[1]]) return this.mediaFiles[m[1]];
-                }
-                return null;
-            },
-
-            _extractTags(note) {
-                if (!note || !note.tags) return [];
-                return String(note.tags).split(' ').filter(t => t.trim()).map(t => t.trim());
-            },
-
-            _cleanDeckName(name) {
-                if (!name) return 'دک بدون نام';
-                return name.split('::').pop().trim() || name;
-            },
-
-            // ═══════════════════════════════════════════════════════════
-            // 13. RESULT TO OBJECTS (SQL HELPER)
-            // ═══════════════════════════════════════════════════════════
-
-            resultToObjects(result) {
-                if (!result || result.length === 0) return [];
-                const columns = result[0].columns;
-                const values = result[0].values;
-                if (!columns || !values) return [];
-                return values.map(row => {
-                    const obj = {};
-                    columns.forEach((col, i) => { obj[col] = row[i]; });
-                    return obj;
-                });
-            },
-
-            // ═══════════════════════════════════════════════════════════
-            // 14. PREVIEW
-            // ═══════════════════════════════════════════════════════════
-
-            showPreview() {
-                this.updateUI('preview');
-                this.renderPreviewDecks();
-                this.updateSelectedCount();
-            },
-
-            renderPreviewDecks() {
-                const container = document.getElementById('ankiPreviewDecks');
-                if (!container) return;
-
-                if (this.importedDecks.length === 0) {
-                    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div>هیچ دکی یافت نشد</div></div>';
+            renderPreview() {
+                if (!this.importedDecks || this.importedDecks.length === 0) {
+                    this.showError('هیچ دکی برای نمایش یافت نشد');
                     return;
                 }
 
-                const toPersian = (n) => {
-                    if (typeof Utils !== 'undefined' && Utils.toPersian) return Utils.toPersian(n);
-                    return String(n);
-                };
+                const totalCards = this.importedDecks.reduce((sum, d) => sum + d.cardCount, 0);
 
-                container.innerHTML = this.importedDecks.map((deck, i) => 
-                    '<div class="anki-preview-deck">' +
-                        '<div class="preview-deck-checkbox">' +
-                            '<input type="checkbox" id="ankiDeck_' + i + '" checked onchange="AnkiImporter.toggleDeck(' + i + ')">' +
-                        '</div>' +
-                        '<div class="preview-deck-info">' +
-                            '<div class="preview-deck-name">' + deck.name + '</div>' +
-                            '<div class="preview-deck-stats">' +
-                                '<span>📚 ' + toPersian(deck.cards.length) + ' کارت</span>' +
-                                (deck.cards.some(c => c.image) ? '<span>🖼️</span>' : '') +
-                                (deck.cards.some(c => c.audio) ? '<span>🔊</span>' : '') +
-                            '</div>' +
-                        '</div>' +
-                        '<button class="preview-deck-expand" onclick="AnkiImporter.previewDeckCards(' + i + ')">👁️</button>' +
-                    '</div>'
-                ).join('');
+                document.getElementById('ankiTotalDecks').textContent = Utils.toPersian(this.importedDecks.length);
+                document.getElementById('ankiTotalCards').textContent = Utils.toPersian(totalCards);
+                this.updateSelectionCount();
 
-                const tdEl = document.getElementById('ankiTotalDecks');
-                const tcEl = document.getElementById('ankiTotalCards');
-                if (tdEl) tdEl.textContent = toPersian(this.importedDecks.length);
-                if (tcEl) tcEl.textContent = toPersian(this.importedCards.length);
+                const container = document.getElementById('ankiPreviewDecks');
+                container.innerHTML = this.importedDecks.map(deck => `
+                    <div class="anki-preview-deck">
+                        <div class="preview-deck-checkbox">
+                            <input type="checkbox" 
+                                   id="deck_${deck.id}" 
+                                   ${deck.selected ? 'checked' : ''}
+                                   onchange="AnkiImporter.toggleDeck('${deck.id}')">
+                        </div>
+                        <div class="preview-deck-info">
+                            <div class="preview-deck-name">${this._escapeHtml(deck.name)}</div>
+                            <div class="preview-deck-stats">
+                                🎴 ${Utils.toPersian(deck.cardCount)} کارت
+                            </div>
+                        </div>
+                        <button class="preview-deck-expand" 
+                                onclick="AnkiImporter.showDeckCards('${deck.id}')">
+                            👁️
+                        </button>
+                    </div>
+                `).join('');
             },
 
-            toggleDeck(index) {
-                const cb = document.getElementById('ankiDeck_' + index);
+            toggleDeck(deckId) {
+                const deck = this.importedDecks.find(d => d.id === deckId);
+                if (deck) {
+                    deck.selected = !deck.selected;
+                    this.updateSelectionCount();
+                }
+            },
+
+            toggleAllDecks(select) {
+                this.importedDecks.forEach(deck => {
+                    deck.selected = select;
+                    const checkbox = document.getElementById(`deck_${deck.id}`);
+                    if (checkbox) checkbox.checked = select;
+                });
+                this.updateSelectionCount();
+            },
+
+            updateSelectionCount() {
+                const selected = this.importedDecks.filter(d => d.selected);
+                const selectedCards = selected.reduce((sum, d) => sum + d.cardCount, 0);
+                
+                document.getElementById('ankiSelectedDecks').textContent = Utils.toPersian(selected.length);
+                document.getElementById('ankiSelectedCards').textContent = Utils.toPersian(selectedCards);
+            },
+
+            showDeckCards(deckId) {
+                const deck = this.importedDecks.find(d => d.id === deckId);
+                if (!deck) return;
+
+                const modal = document.getElementById('ankiCardPreviewModal');
+                const container = document.getElementById('ankiCardPreviewList');
+                
+                document.getElementById('ankiPreviewDeckName').textContent = deck.name;
+
+                const cardsToShow = deck.cards.slice(0, 20);
+                container.innerHTML = cardsToShow.map((card, idx) => {
+                    const front = this._renderCardSide(card.template.qfmt, card.fields);
+                    const back = this._renderCardSide(card.template.afmt, card.fields);
+                    
+                    return `
+                        <div class="anki-card-preview">
+                            <div class="card-preview-word">${Utils.toPersian(idx + 1)}. ${this._stripHtml(front)}</div>
+                            <div class="card-preview-meaning">${this._stripHtml(back)}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (deck.cards.length > 20) {
+                    container.innerHTML += `
+                        <div class="more-cards-notice">
+                            و ${Utils.toPersian(deck.cards.length - 20)} کارت دیگر...
+                        </div>
+                    `;
+                }
+
+                modal.classList.add('active');
+            },
+
+            closeCardPreview() {
+                document.getElementById('ankiCardPreviewModal').classList.remove('active');
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // 6. CONFIRM IMPORT TO LIBRARY
+            // ═══════════════════════════════════════════════════════════
+
+            async confirmImport() {
+                const selectedDecks = this.importedDecks.filter(d => d.selected);
+                if (selectedDecks.length === 0) {
+                    if (typeof Toast !== 'undefined') Toast.warning('لطفاً حداقل یک دک را انتخاب کنید');
+                    return;
+                }
+
+                this.updateUI('importing');
+
+                try {
+                    const totalDecks = selectedDecks.length;
+                    let processedDecks = 0;
+                    let totalImportedCards = 0;
+
+                    document.getElementById('ankiImportTotal').textContent = Utils.toPersian(totalDecks);
+
+                    for (const deck of selectedDecks) {
+                        await new Promise(r => setTimeout(r, 100));
+
+                        // Convert Anki cards to LEXORA format
+                        const lexoraCards = deck.cards.map(card => this._convertToLexoraCard(card));
+
+                        // Create deck in library
+                        DeckManager.create({
+                            name: deck.name,
+                            description: `واردشده از Anki (${Utils.toPersian(lexoraCards.length)} کارت)`,
+                            icon: '📦'
+                        });
+
+                        const createdDeck = DeckManager.getAll().find(d => d.name === deck.name);
+                        if (createdDeck) {
+                            lexoraCards.forEach(card => {
+                                CardManager.add({
+                                    ...card,
+                                    deckId: createdDeck.id
+                                });
+                            });
+                        }
+
+                        processedDecks++;
+                        totalImportedCards += lexoraCards.length;
+
+                        const progress = (processedDecks / totalDecks) * 100;
+                        document.getElementById('ankiImportProgress').style.width = progress + '%';
+                        document.getElementById('ankiImportCurrent').textContent = Utils.toPersian(processedDecks);
+                    }
+
+                    // Success!
+                    document.getElementById('ankiSuccessDecks').textContent = Utils.toPersian(processedDecks);
+                    document.getElementById('ankiSuccessCards').textContent = Utils.toPersian(totalImportedCards);
+                    
+                    this.updateUI('success');
+
+                } catch (error) {
+                    console.error('Import confirmation error:', error);
+                    this.showError(`خطا در واردسازی: ${error.message}`);
+                }
+            },
+
+            _convertToLexoraCard(ankiCard) {
+                const front = this._renderCardSide(ankiCard.template.qfmt, ankiCard.fields);
+                const back = this._renderCardSide(ankiCard.template.afmt, ankiCard.fields);
+
+                return {
+                    word: this._stripHtml(front).substring(0, 200),
+                    meaning: this._stripHtml(back).substring(0, 500),
+                    pronunciation: ankiCard.fields['Pronunciation'] || ankiCard.fields['Reading'] || '',
+                    example: ankiCard.fields['Example'] || ankiCard.fields['Sentence'] || '',
+                    tags: ankiCard.tags ? ankiCard.tags.split(' ').filter(t => t) : [],
+                    image: this._extractImage(front + back),
+                    audio: this._extractAudio(front + back),
+                    level: ankiCard.reps > 5 ? 'intermediate' : 'beginner'
+                };
+            },
+
+            _renderCardSide(template, fields) {
+                let html = template;
+                for (const [field, value] of Object.entries(fields)) {
+                    const regex = new RegExp(`{{${field}}}`, 'gi');
+                    html = html.replace(regex, value);
+                }
+                return html;
+            },
+
+            _stripHtml(html) {
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html;
+                return tmp.textContent || tmp.innerText || '';
+            },
+
+            _extractImage(html) {
+                const match = html.match(/<img[^>]+src="([^">]+)"/i);
+                if (match && match[1]) {
+                    const filename = match[1];
+                    return this.mediaFiles[filename] || '';
+                }
+                return '';
+            },
+
+            _extractAudio(html) {
+                const match = html.match(/\[sound:([^\]]+)\]/i);
+                if (match && match[1]) {
+                    const filename = match[1];
+                    return this.mediaFiles[filename] || '';
+                }
+                return '';
+            },
+
+            _escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+
+            // ═══════════════════════════════════════════════════════════
+            // 7. UI UPDATES
+            // ═══════════════════════════════════════════════════════════
+
+            updateUI(state, data = {}) {
+                ['idle', 'selected', 'processing', 'preview', 'importing', 'success', 'error'].forEach(s => {
+                    const el = document.getElementById(`ankiState_${s}`);
+                    if (el) el.style.display = s === state ? 'block' : 'none';
+                });
+
+                if (state === 'selected') {
+                    if (data.fileName) document.getElementById('ankiFileName').textContent = data.fileName;
+                    if (data.fileSize) document.getElementById('ankiFileSize').textContent = data.fileSize;
+                }
+
+                if (state === 'processing') {
+                    if (data.stage) document.getElementById('ankiProcessStage').textContent = data.stage;
+                    if (data.progress !== undefined) {
+                        document.getElementById('ankiProcessProgress').style.width = data.progress + '%';
+                    }
+                }
+            },
+
+            showError(message) {
+                document.getElementById('ankiErrorMessage').textContent = message;
+                this.updateUI('error');
+            },
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 بایت';
+                const k = 1024;
+                const sizes = ['بایت', 'کیلوبایت', 'مگابایت', 'گیگابایت'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return Utils.toPersian(Math.round(bytes / Math.pow(k, i) * 100) / 100) + ' ' + sizes[i];
+            }
+        };
                 if (cb && this.importedDecks[index]) {
                     this.importedDecks[index].selected = cb.checked;
                 }
