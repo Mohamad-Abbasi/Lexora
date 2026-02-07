@@ -5772,67 +5772,191 @@
             }
         };
         // ═══════════════════════════════════════════════════════════════
-        // CARD MANAGER - FIXED VERSION
+        // CARD MANAGER - COMPLETE VERSION (ALL FUNCTIONS)
         // ═══════════════════════════════════════════════════════════════
         const CardManager = {
             
+            // ── دریافت همه کارت‌ها ──
             getAll() {
                 const data = DB.get('cards', []);
-                // Ensure it's always an array
                 if (Array.isArray(data)) return data;
                 if (typeof data === 'object' && data !== null) return Object.values(data);
                 return [];
             },
             
-            getByDeck(deckId) {
-                return this.getAll().filter(c => c.deckId === deckId);
-            },
-            
-            getById(cardId) {
-                return this.getAll().find(c => c.id === cardId);
-            },
-            
-            getDueCards(deckId = null) {
-                const now = Date.now();
-                let cards = this.getAll();
-                
-                if (deckId) {
-                    cards = cards.filter(c => c.deckId === deckId);
-                }
-                
-                return cards.filter(c => {
-                    if (!c.nextReview) return true;
-                    return new Date(c.nextReview).getTime() <= now;
-                });
-            },
-            
-            getNewCards(deckId = null) {
-                let cards = this.getAll();
-                if (deckId) cards = cards.filter(c => c.deckId === deckId);
-                return cards.filter(c => !c.reps || c.reps === 0);
-            },
-            
+            // ── ذخیره کارت‌ها ──
             save(cards) {
-                // Ensure we're saving an array
                 if (!Array.isArray(cards)) {
                     cards = Object.values(cards || {});
                 }
                 DB.set('cards', cards);
             },
             
+            // ── دریافت کارت‌های یک دک ──
+            getByDeck(deckId) {
+                return this.getAll().filter(c => c.deckId === deckId);
+            },
+            
+            // ── دریافت کارت با آیدی ──
+            getById(cardId) {
+                return this.getAll().find(c => c.id === cardId);
+            },
+            
+            // ── کارت‌های موعد مرور ──
+            getDue(deckId = null) {
+                const now = Date.now();
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => {
+                    if (!c.nextReview) return true;
+                    return new Date(c.nextReview).getTime() <= now;
+                });
+            },
+            
+            getDueCards(deckId = null) {
+                return this.getDue(deckId);
+            },
+            
+            getDueCount(deckId = null) {
+                return this.getDue(deckId).length;
+            },
+            
+            // ── کارت‌های جدید ──
+            getNew(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => !c.reps || c.reps === 0);
+            },
+            
+            getNewCards(deckId = null) {
+                return this.getNew(deckId);
+            },
+            
+            getNewCount(deckId = null) {
+                return this.getNew(deckId).length;
+            },
+            
+            // ── کارت‌های تسلط یافته ──
+            getMastered(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => c.stability >= 30 || (c.reps >= 5 && c.lapses === 0));
+            },
+            
+            getMasteredCards(deckId = null) {
+                return this.getMastered(deckId);
+            },
+            
+            getMasteredCount(deckId = null) {
+                return this.getMastered(deckId).length;
+            },
+            
+            // ── کارت‌های در حال یادگیری ──
+            getLearning(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => c.state === 1 || c.state === 3);
+            },
+            
+            getLearningCards(deckId = null) {
+                return this.getLearning(deckId);
+            },
+            
+            getLearningCount(deckId = null) {
+                return this.getLearning(deckId).length;
+            },
+            
+            // ── کارت‌های مرور ──
+            getReview(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => c.state === 2);
+            },
+            
+            getReviewCards(deckId = null) {
+                return this.getReview(deckId);
+            },
+            
+            getReviewCount(deckId = null) {
+                return this.getReview(deckId).length;
+            },
+            
+            // ── کارت‌های ستاره‌دار ──
+            getStarred(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => c.starred);
+            },
+            
+            getStarredCards(deckId = null) {
+                return this.getStarred(deckId);
+            },
+            
+            getStarredCount(deckId = null) {
+                return this.getStarred(deckId).length;
+            },
+            
+            // ── کارت‌های مشکل‌دار (Leeches) ──
+            getLeeches(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                return cards.filter(c => c.lapses >= 4);
+            },
+            
+            getLeechCount(deckId = null) {
+                return this.getLeeches(deckId).length;
+            },
+            
+            // ── تعداد کل ──
+            getCount(deckId = null) {
+                if (deckId) return this.getByDeck(deckId).length;
+                return this.getAll().length;
+            },
+            
+            getTotalCount() {
+                return this.getAll().length;
+            },
+            
+            // ── آمار کامل ──
+            getStats(deckId = null) {
+                let cards = this.getAll();
+                if (deckId) cards = cards.filter(c => c.deckId === deckId);
+                
+                const now = Date.now();
+                
+                return {
+                    total: cards.length,
+                    new: cards.filter(c => !c.reps || c.reps === 0).length,
+                    learning: cards.filter(c => c.state === 1 || c.state === 3).length,
+                    review: cards.filter(c => c.state === 2).length,
+                    due: cards.filter(c => {
+                        if (!c.nextReview) return true;
+                        return new Date(c.nextReview).getTime() <= now;
+                    }).length,
+                    mastered: cards.filter(c => c.stability >= 30 || (c.reps >= 5 && c.lapses === 0)).length,
+                    starred: cards.filter(c => c.starred).length,
+                    leeches: cards.filter(c => c.lapses >= 4).length
+                };
+            },
+            
+            // ── پیشرفت ──
+            getProgress(deckId = null) {
+                const stats = this.getStats(deckId);
+                if (stats.total === 0) return 0;
+                return Math.round((stats.mastered / stats.total) * 100);
+            },
+            
+            // ── ساخت کارت جدید ──
             create(cardData) {
-                // Get existing cards as array
                 let cards = this.getAll();
                 
-                // Double-check it's an array
                 if (!Array.isArray(cards)) {
-                    console.warn('⚠️ Cards data was not array, converting...');
-                    cards = Array.isArray(cards) ? cards : Object.values(cards || {});
+                    cards = [];
                 }
                 
                 const newCard = {
-                    id: Utils.generateId ? Utils.generateId() : ('card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)),
-                    deckId: cardData.deckId,
+                    id: 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    deckId: cardData.deckId || '',
                     word: cardData.word || '',
                     meaning: cardData.meaning || '',
                     pronunciation: cardData.pronunciation || '',
@@ -5841,19 +5965,19 @@
                     audio: cardData.audio || null,
                     tags: cardData.tags || [],
                     
-                    // FSRS parameters
-                    difficulty: 0.3,
-                    stability: 0,
+                    // FSRS
+                    difficulty: cardData.difficulty || 0.3,
+                    stability: cardData.stability || 0,
                     reps: cardData.reps || 0,
                     lapses: cardData.lapses || 0,
-                    state: 0, // 0=new, 1=learning, 2=review, 3=relearning
+                    state: cardData.state || 0,
                     
-                    // Scheduling
-                    nextReview: null,
-                    lastReview: null,
+                    // Schedule
+                    nextReview: cardData.nextReview || null,
+                    lastReview: cardData.lastReview || null,
                     
                     // Meta
-                    starred: false,
+                    starred: cardData.starred || false,
                     createdAt: Date.now(),
                     updatedAt: Date.now()
                 };
@@ -5864,6 +5988,43 @@
                 return newCard;
             },
             
+            // ── ساخت دسته‌ای ──
+            bulkCreate(deckId, cardsData) {
+                let cards = this.getAll();
+                
+                if (!Array.isArray(cards)) {
+                    cards = [];
+                }
+                
+                const newCards = cardsData.map((cd, i) => ({
+                    id: 'card_' + Date.now() + '_' + i + '_' + Math.random().toString(36).substr(2, 6),
+                    deckId: deckId,
+                    word: cd.word || '',
+                    meaning: cd.meaning || '',
+                    pronunciation: cd.pronunciation || '',
+                    example: cd.example || '',
+                    image: cd.image || null,
+                    audio: cd.audio || null,
+                    tags: cd.tags || [],
+                    difficulty: 0.3,
+                    stability: 0,
+                    reps: cd.reps || 0,
+                    lapses: cd.lapses || 0,
+                    state: 0,
+                    nextReview: null,
+                    lastReview: null,
+                    starred: false,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                }));
+                
+                cards = cards.concat(newCards);
+                this.save(cards);
+                
+                return newCards;
+            },
+            
+            // ── بروزرسانی ──
             update(cardId, updates) {
                 let cards = this.getAll();
                 const index = cards.findIndex(c => c.id === cardId);
@@ -5877,10 +6038,10 @@
                     this.save(cards);
                     return cards[index];
                 }
-                
                 return null;
             },
             
+            // ── حذف ──
             delete(cardId) {
                 let cards = this.getAll();
                 cards = cards.filter(c => c.id !== cardId);
@@ -5893,6 +6054,7 @@
                 this.save(cards);
             },
             
+            // ── ستاره‌دار ──
             toggleStar(cardId) {
                 const card = this.getById(cardId);
                 if (card) {
@@ -5901,10 +6063,11 @@
                 return null;
             },
             
+            // ── جستجو ──
             search(query) {
                 if (!query) return this.getAll();
                 const q = query.toLowerCase();
-                return this.getAll().filter(c => 
+                return this.getAll().filter(c =>
                     (c.word && c.word.toLowerCase().includes(q)) ||
                     (c.meaning && c.meaning.toLowerCase().includes(q)) ||
                     (c.example && c.example.toLowerCase().includes(q)) ||
@@ -5912,55 +6075,60 @@
                 );
             },
             
-            getStats() {
+            // ── مرتب‌سازی ──
+            sort(cards, sortBy = 'date') {
+                const sorted = [...cards];
+                switch (sortBy) {
+                    case 'date': return sorted.sort((a, b) => b.createdAt - a.createdAt);
+                    case 'alpha': return sorted.sort((a, b) => (a.word || '').localeCompare(b.word || ''));
+                    case 'difficulty': return sorted.sort((a, b) => (b.difficulty || 0) - (a.difficulty || 0));
+                    case 'due': return sorted.sort((a, b) => {
+                        const aTime = a.nextReview ? new Date(a.nextReview).getTime() : 0;
+                        const bTime = b.nextReview ? new Date(b.nextReview).getTime() : 0;
+                        return aTime - bTime;
+                    });
+                    default: return sorted;
+                }
+            },
+            
+            // ── آمار امروز ──
+            getTodayStats() {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayStart = today.getTime();
+                
                 const cards = this.getAll();
-                const now = Date.now();
+                const reviewed = cards.filter(c => 
+                    c.lastReview && new Date(c.lastReview).getTime() >= todayStart
+                );
                 
                 return {
-                    total: cards.length,
-                    new: cards.filter(c => !c.reps || c.reps === 0).length,
-                    learning: cards.filter(c => c.state === 1).length,
-                    review: cards.filter(c => c.state === 2).length,
-                    due: cards.filter(c => c.nextReview && new Date(c.nextReview).getTime() <= now).length,
-                    mastered: cards.filter(c => c.stability >= 30).length,
-                    starred: cards.filter(c => c.starred).length
+                    reviewed: reviewed.length,
+                    correct: reviewed.filter(c => c.lapses === 0 || !c.lastLapse || new Date(c.lastLapse).getTime() < todayStart).length,
+                    streak: this.getStreak()
                 };
             },
             
-            // Bulk import for Anki
-            bulkCreate(deckId, cardsData) {
-                let cards = this.getAll();
+            // ── استریک ──
+            getStreak() {
+                const streakData = DB.get('streak', { count: 0, lastDate: null });
+                const today = new Date().toDateString();
                 
-                if (!Array.isArray(cards)) {
-                    cards = [];
+                if (streakData.lastDate === today) {
+                    return streakData.count;
                 }
                 
-                const newCards = cardsData.map(cardData => ({
-                    id: 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-                    deckId: deckId,
-                    word: cardData.word || '',
-                    meaning: cardData.meaning || '',
-                    pronunciation: cardData.pronunciation || '',
-                    example: cardData.example || '',
-                    image: cardData.image || null,
-                    audio: cardData.audio || null,
-                    tags: cardData.tags || [],
-                    difficulty: 0.3,
-                    stability: 0,
-                    reps: cardData.reps || 0,
-                    lapses: cardData.lapses || 0,
-                    state: 0,
-                    nextReview: null,
-                    lastReview: null,
-                    starred: false,
-                    createdAt: Date.now(),
-                    updatedAt: Date.now()
-                }));
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                if (streakData.lastDate === yesterday) {
+                    return streakData.count;
+                }
                 
-                cards = cards.concat(newCards);
-                this.save(cards);
-                
-                return newCards;
+                return 0;
+            },
+            
+            // ── ریست ──
+            reset() {
+                this.save([]);
             }
         };
 
