@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LEXORA - یادگیری هوشمند زبان</title>
+    <meta name="description" content="LEXORA - برنامه یادگیری هوشمند زبان با الگوریتم FSRS-4.5">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd6;
+            --primary-light: #8b9cf7;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #2ecc71;
+            --success-dark: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --danger-dark: #c0392b;
+            --info: #3498db;
+            --bg-primary: #f0f2f5;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --text-light: #bdc3c7;
+            --border: #e8e8e8;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-success: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            --gradient-warning: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            --gradient-danger: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Vazirmatn', sans-serif;
+        }
+        .dark-mode {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #1e2a4a;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0b0;
+            --text-light: #6c6c7e;
+            --border: #2a2a4a;
+            --shadow: 0 2px 10px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { font-family:var(--font); background:var(--bg-primary); color:var(--text-primary); min-height:100vh; overflow-x:hidden; line-height:1.6; }
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--text-light); border-radius:3px; }
+        .app-container { max-width:480px; margin:0 auto; min-height:100vh; position:relative; padding-bottom:80px; }
+        .header { background:var(--gradient); padding:20px; padding-top:40px; border-radius:0 0 24px 24px; color:white; position:relative; overflow:hidden; }
+        .header::before { content:''; position:absolute; top:-50%; right:-50%; width:200%; height:200%; background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 60%); animation:headerPulse 4s ease-in-out infinite; }
+        @keyframes headerPulse { 0%,100%{transform:scale(1);opacity:0.5;} 50%{transform:scale(1.1);opacity:0.8;} }
+        .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; position:relative; z-index:1; }
+        .header-greeting { font-size:18px; font-weight:600; }
+        .header-settings { width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.2); border:none; color:white; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:var(--transition); }
+        .header-settings:hover { background:rgba(255,255,255,0.3); transform:rotate(90deg); }
+        .streak-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.2); padding:6px 14px; border-radius:20px; font-size:14px; font-weight:500; position:relative; z-index:1; }
+        .level-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.2); padding:6px 14px; border-radius:20px; font-size:14px; font-weight:500; margin-right:8px; position:relative; z-index:1; }
+        .progress-section { background:var(--bg-card); margin:16px; padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); }
+        .progress-title { font-size:15px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .progress-bar { height:10px; background:var(--border); border-radius:5px; overflow:hidden; margin-bottom:8px; }
+        .progress-bar-fill { height:100%; background:var(--gradient); border-radius:5px; transition:width 0.5s ease; }
+        .progress-stats { display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); }
+        .streak-reward { background:var(--bg-card); margin:0 16px 16px; padding:16px; border-radius:var(--radius); box-shadow:var(--shadow); display:flex; align-items:center; gap:12px; cursor:pointer; transition:var(--transition); }
+        .streak-reward:hover { transform:translateY(-2px); }
+        .streak-reward.claimed { opacity:0.6; cursor:default; }
+        .streak-reward.claimed:hover { transform:none; }
+        .streak-reward-icon { font-size:32px; }
+        .streak-reward-info { flex:1; }
+        .streak-reward-title { font-size:14px; font-weight:600; }
+        .streak-reward-desc { font-size:12px; color:var(--text-secondary); }
+        .menu-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:0 16px 16px; }
+        .menu-item { background:var(--bg-card); border-radius:var(--radius); padding:14px 8px; text-align:center; cursor:pointer; transition:var(--transition); box-shadow:var(--shadow); }
+        .menu-item:hover { transform:translateY(-3px); }
+        .menu-item-icon { font-size:24px; display:block; margin-bottom:4px; }
+        .menu-item-label { font-size:11px; font-weight:500; }
+        .word-of-day { background:var(--bg-card); margin:0 16px 16px; padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); text-align:center; }
+        .word-of-day-header { font-size:13px; font-weight:600; color:var(--primary); margin-bottom:8px; }
+        .word-of-day-word { font-size:24px; font-weight:700; }
+        .word-of-day-phonetic { font-size:14px; color:var(--text-secondary); margin-bottom:4px; }
+        .word-of-day-meaning { font-size:14px; color:var(--text-secondary); }
+        .quick-start { background:var(--bg-card); margin:0 16px 16px; padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); }
+        .quick-start-title { font-size:15px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .deck-list { display:flex; flex-direction:column; gap:8px; }
+        .deck-item { display:flex; align-items:center; gap:12px; padding:12px; background:var(--bg-primary); border-radius:var(--radius-sm); cursor:pointer; transition:var(--transition); position:relative; }
+        .deck-item:hover { background:var(--primary); color:white; }
+        .deck-item:hover .deck-item-count { color:white; }
+        .deck-item-icon { font-size:24px; }
+        .deck-item-name { flex:1; font-weight:500; }
+        .deck-item-count { font-size:12px; color:var(--text-secondary); }
+        .deck-delete-btn { position:absolute; left:8px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:16px; cursor:pointer; opacity:0.7; }
+        .deck-delete-btn:hover { opacity:1; transform:translateY(-50%) scale(1.1); }
+        .all-decks-btn { display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:var(--bg-primary); border-radius:var(--radius-sm); cursor:pointer; font-size:13px; color:var(--primary); font-weight:500; transition:var(--transition); margin-top:4px; }
+        .all-decks-btn:hover { background:var(--primary); color:white; }
+        .medals-section { background:var(--bg-card); margin:0 16px 16px; padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); }
+        .medals-title { font-size:15px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .medals-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+        .medal-item { text-align:center; padding:10px 4px; border-radius:var(--radius-sm); background:var(--bg-primary); transition:var(--transition); }
+        .medal-item.earned { background:linear-gradient(135deg,#ffd700 0%,#ffaa00 100%); color:white; }
+        .medal-item-icon { font-size:24px; margin-bottom:4px; display:block; }
+        .medal-item.earned .medal-item-icon { animation:medalShine 2s ease-in-out infinite; }
+        @keyframes medalShine { 0%,100%{transform:scale(1);} 50%{transform:scale(1.15);} }
+        .medal-item-name { font-size:10px; font-weight:500; }
+        .footer { text-align:center; padding:20px 16px; font-size:11px; color:var(--text-light); }
+        .bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:var(--bg-card); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:8px 0; padding-bottom:max(8px,env(safe-area-inset-bottom)); z-index:100; box-shadow:0 -2px 10px rgba(0,0,0,0.05); }
+        .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; padding:6px 12px; border-radius:12px; transition:var(--transition); border:none; background:none; color:var(--text-secondary); font-family:var(--font); }
+        .nav-item.active { color:var(--primary); }
+        .nav-item-icon { font-size:22px; }
+        .nav-item-label { font-size:10px; font-weight:500; }
+        .page { display:none; animation:pageIn 0.3s ease; }
+        .page.active { display:block; }
+        @keyframes pageIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+        .btn { padding:12px 24px; border-radius:var(--radius-sm); border:none; font-family:var(--font); font-size:14px; font-weight:600; cursor:pointer; transition:var(--transition); display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+        .btn-primary { background:var(--gradient); color:white; }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(102,126,234,0.4); }
+        .btn-success { background:var(--gradient-success); color:white; }
+        .btn-danger { background:var(--gradient-danger); color:white; }
+        .btn-warning { background:var(--gradient-warning); color:white; }
+        .btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary); }
+        .btn-block { width:100%; }
+        .btn-sm { padding:8px 16px; font-size:12px; }
+        .btn-lg { padding:14px 28px; font-size:16px; }
+        .form-group { margin-bottom:16px; }
+        .form-label { display:block; font-size:13px; font-weight:500; margin-bottom:6px; color:var(--text-secondary); }
+        .form-input { width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); font-size:14px; background:var(--bg-primary); color:var(--text-primary); transition:var(--transition); }
+        .form-input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(102,126,234,0.1); }
+        textarea.form-input { resize:vertical; min-height:100px; }
+        .toggle-switch { width:48px; height:26px; background:var(--border); border-radius:13px; position:relative; cursor:pointer; transition:var(--transition); flex-shrink:0; }
+        .toggle-switch.active { background:var(--primary); }
+        .toggle-switch::after { content:''; width:22px; height:22px; background:white; border-radius:50%; position:absolute; top:2px; right:2px; transition:var(--transition); box-shadow:0 2px 4px rgba(0,0,0,0.2); }
+        .toggle-switch.active::after { right:24px; }
+        .setting-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border); }
+        .setting-item:last-child { border-bottom:none; }
+        .setting-info { flex:1; }
+        .setting-title { font-size:14px; font-weight:500; }
+        .setting-desc { font-size:12px; color:var(--text-secondary); }
+        .review-header { display:flex; align-items:center; justify-content:space-between; padding:16px; }
+        .review-back { width:40px; height:40px; border-radius:50%; border:none; background:var(--bg-card); color:var(--text-primary); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); }
+        .review-progress { flex:1; margin:0 12px; }
+        .review-progress-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+        .review-progress-fill { height:100%; background:var(--gradient); border-radius:3px; transition:width 0.3s ease; }
+        .review-counter { font-size:13px; font-weight:600; color:var(--text-secondary); }
+        .flashcard-container { padding:0 16px; margin-bottom:16px; }
+        .flashcard { background:var(--bg-card); border-radius:var(--radius); padding:30px 20px; box-shadow:var(--shadow-lg); text-align:center; min-height:250px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .flashcard-mode-icon { font-size:20px; margin-bottom:8px; opacity:0.6; }
+        .flashcard-word { font-size:28px; font-weight:700; margin-bottom:8px; word-break:break-word; }
+        .flashcard-phonetic { font-size:14px; color:var(--text-secondary); margin-bottom:8px; }
+        .flashcard-front { width:100%; }
+        .flashcard-answer { display:none; width:100%; border-top:2px dashed var(--border); padding-top:16px; margin-top:16px; }
+        .flashcard-answer.show { display:block; }
+        .flashcard-meaning { font-size:22px; font-weight:600; margin-bottom:8px; word-break:break-word; }
+        .flashcard-example { font-size:14px; color:var(--text-secondary); font-style:italic; margin-bottom:6px; }
+        .flashcard-mnemonic { font-size:13px; color:var(--primary); }
+        .flashcard-media-front,.flashcard-media-back { max-width:100%; margin:8px auto; }
+        .flashcard-media-front img,.flashcard-media-back img { max-width:100%; max-height:200px; border-radius:8px; }
+        .play-btn { width:48px; height:48px; border-radius:50%; border:none; background:var(--gradient); color:white; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:var(--transition); }
+        .play-btn:hover { transform:scale(1.1); }
+        .show-answer-btn { display:block; width:100%; padding:16px; background:var(--gradient); color:white; border:none; border-radius:var(--radius-sm); font-family:var(--font); font-size:16px; font-weight:600; cursor:pointer; margin:0 16px; transition:var(--transition); }
+        .rating-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:0 16px; }
+        .rating-btn { padding:12px 8px; border-radius:var(--radius-sm); border:2px solid var(--border); background:var(--bg-card); font-family:var(--font); font-size:13px; font-weight:600; cursor:pointer; text-align:center; transition:var(--transition); }
+        .rating-btn:hover { transform:translateY(-2px); }
+        .rating-btn.again { background:#fde8e8; color:var(--danger); }
+        .rating-btn.hard { background:#fff3e0; color:var(--warning); }
+        .rating-btn.good { background:#e0f7e0; color:var(--success); }
+        .rating-btn.easy { background:#e0e7ff; color:var(--primary); }
+        .rating-btn .time { display:block; font-size:11px; font-weight:400; margin-top:2px; opacity:0.7; }
+        .review-complete { text-align:center; padding:40px 20px; }
+        .review-complete-icon { font-size:64px; margin-bottom:16px; }
+        .review-complete-title { font-size:22px; font-weight:700; margin-bottom:8px; }
+        .review-complete-stats { display:flex; justify-content:center; gap:30px; margin:20px 0; }
+        .review-complete-stat { text-align:center; }
+        .review-complete-stat-value { font-size:28px; font-weight:700; color:var(--primary); }
+        .review-complete-stat-label { font-size:12px; color:var(--text-secondary); }
+        .review-complete-xp { font-size:18px; font-weight:600; color:var(--warning); margin:16px 0; }
+        .mode-select { padding:20px 16px; }
+        .mode-select-title { font-size:20px; font-weight:700; text-align:center; margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:10px; }
+        .mode-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+        .mode-card { background:var(--bg-card); border-radius:var(--radius); padding:20px; text-align:center; cursor:pointer; transition:var(--transition); box-shadow:var(--shadow); border:2px solid transparent; }
+        .mode-card:hover,.mode-card:active { border-color:var(--primary); transform:translateY(-3px); }
+        .mode-card-icon { font-size:32px; margin-bottom:8px; display:block; }
+        .mode-card-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+        .mode-card-desc { font-size:11px; color:var(--text-secondary); }
+        .dictionary-page { padding:16px; }
+        .search-box { display:flex; gap:8px; margin-bottom:16px; }
+        .search-input { flex:1; padding:12px 16px; border:2px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); font-size:14px; background:var(--bg-card); color:var(--text-primary); }
+        .search-input:focus { outline:none; border-color:var(--primary); }
+        .search-btn { padding:12px 16px; background:var(--gradient); border:none; border-radius:var(--radius-sm); color:white; font-size:18px; cursor:pointer; }
+        .dict-result { background:var(--bg-card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); display:none; }
+        .dict-result.show { display:block; }
+        .dict-word { font-size:24px; font-weight:700; margin-bottom:4px; }
+        .dict-phonetic { font-size:14px; color:var(--text-secondary); margin-bottom:12px; }
+        .dict-meanings { display:flex; flex-direction:column; gap:12px; }
+        .dict-meaning-item { padding:12px; background:var(--bg-primary); border-radius:var(--radius-sm); }
+        .dict-pos { font-size:12px; font-weight:600; color:var(--primary); margin-bottom:4px; }
+        .dict-def { font-size:14px; margin-bottom:4px; }
+        .dict-example { font-size:13px; color:var(--text-secondary); font-style:italic; }
+        .dict-add-btn { margin-top:16px; }
+        .ready-decks-page { padding:16px; }
+        .ready-deck-card { background:var(--bg-card); border-radius:var(--radius); padding:16px; margin-bottom:12px; box-shadow:var(--shadow); display:flex; align-items:center; gap:12px; cursor:pointer; transition:var(--transition); }
+        .ready-deck-card:hover { transform:translateY(-2px); }
+        .ready-deck-icon { font-size:32px; }
+        .ready-deck-info { flex:1; }
+        .ready-deck-name { font-size:14px; font-weight:600; }
+        .ready-deck-desc { font-size:12px; color:var(--text-secondary); }
+        .library-page { padding:16px; }
+        .library-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+        .library-title { font-size:18px; font-weight:700; display:flex; align-items:center; gap:8px; }
+        .library-search { width:100%; padding:10px 16px; border:2px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); font-size:14px; background:var(--bg-card); color:var(--text-primary); margin-bottom:12px; }
+        .library-search:focus { outline:none; border-color:var(--primary); }
+        .library-deck { background:var(--bg-card); border-radius:var(--radius); padding:16px; margin-bottom:12px; box-shadow:var(--shadow); }
+        .library-deck-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+        .library-deck-name { font-size:16px; font-weight:600; }
+        .library-deck-stats { display:flex; gap:16px; }
+        .library-deck-stat { text-align:center; }
+        .library-deck-stat-value { font-size:18px; font-weight:700; color:var(--primary); }
+        .library-deck-stat-label { font-size:11px; color:var(--text-secondary); }
+        .library-deck-progress { height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:10px; }
+        .library-deck-progress-fill { height:100%; background:var(--gradient); border-radius:2px; }
+        .anki-import-page { padding:16px; }
+        .anki-import-area { background:var(--bg-card); border-radius:var(--radius); padding:30px; box-shadow:var(--shadow); text-align:center; border:3px dashed var(--border); cursor:pointer; transition:var(--transition); margin-bottom:16px; }
+        .anki-import-area:hover,.anki-import-area.dragover { border-color:var(--primary); background:rgba(102,126,234,0.05); }
+        .anki-import-icon { font-size:48px; margin-bottom:12px; display:block; }
+        .anki-import-title { font-size:16px; font-weight:600; margin-bottom:6px; }
+        .anki-import-desc { font-size:13px; color:var(--text-secondary); }
+        .anki-file-info { background:var(--bg-card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); margin-bottom:16px; display:none; }
+        .anki-file-info.show { display:block; }
+        .anki-file-name { font-weight:600; margin-bottom:4px; }
+        .anki-file-size { font-size:12px; color:var(--text-secondary); }
+        .anki-processing { text-align:center; padding:20px; display:none; }
+        .anki-processing.show { display:block; }
+        .anki-spinner { width:40px; height:40px; border:4px solid var(--border); border-top:4px solid var(--primary); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 12px; }
+        @keyframes spin { to{transform:rotate(360deg);} }
+        .anki-decks-list { display:none; flex-direction:column; gap:8px; margin-bottom:16px; }
+        .anki-decks-list.show { display:flex; }
+        .anki-deck-item { display:flex; align-items:center; gap:12px; padding:12px; background:var(--bg-card); border-radius:var(--radius-sm); box-shadow:var(--shadow); }
+        .anki-deck-checkbox { width:20px; height:20px; accent-color:var(--primary); }
+        .anki-deck-name { flex:1; font-weight:500; }
+        .anki-deck-count { font-size:12px; color:var(--text-secondary); }
+        .anki-import-btn { display:none; }
+        .anki-import-btn.show { display:block; }
+        .anki-import-progress { display:none; text-align:center; padding:20px; }
+        .anki-import-progress.show { display:block; }
+        .anki-import-progress-bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin:12px 0; }
+        .anki-import-progress-fill { height:100%; background:var(--gradient); border-radius:4px; transition:width 0.3s ease; }
+        .anki-success { display:none; text-align:center; padding:20px; }
+        .anki-success.show { display:block; }
+        .anki-success-icon { font-size:48px; margin-bottom:12px; }
+        .anki-error { display:none; text-align:center; padding:20px; color:var(--danger); }
+        .anki-error.show { display:block; }
+        .anki-preview { display:none; background:var(--bg-card); border-radius:var(--radius); padding:16px; margin-bottom:16px; box-shadow:var(--shadow); }
+        .anki-preview.show { display:block; }
+        .anki-preview-title { font-weight:600; margin-bottom:8px; font-size:14px; }
+        .anki-preview-card { padding:10px; background:var(--bg-primary); border-radius:var(--radius-sm); margin-bottom:8px; font-size:13px; }
+        .add-card-section { background:var(--bg-card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:16px; }
+        .add-card-title { font-size:15px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .image-upload { width:100%; height:120px; border:2px dashed var(--border); border-radius:var(--radius-sm); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:var(--transition); overflow:hidden; }
+        .image-upload:hover { border-color:var(--primary); }
+        .image-upload img { width:100%; height:100%; object-fit:cover; }
+        .image-upload-icon { font-size:28px; margin-bottom:4px; }
+        .image-upload-text { font-size:12px; color:var(--text-secondary); }
+        .deck-detail-page { padding:16px; }
+        .deck-detail-header { background:var(--bg-card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:16px; text-align:center; }
+        .deck-detail-name { font-size:20px; font-weight:700; margin-bottom:8px; }
+        .deck-detail-stats { display:flex; justify-content:center; gap:24px; margin-bottom:16px; }
+        .deck-detail-stat { text-align:center; }
+        .deck-detail-stat-value { font-size:22px; font-weight:700; color:var(--primary); }
+        .deck-detail-stat-label { font-size:11px; color:var(--text-secondary); }
+        .deck-detail-actions { display:flex; gap:8px; justify-content:center; }
+        .deck-card-item { display:flex; align-items:center; padding:10px; background:var(--bg-card); border-radius:var(--radius-sm); margin-bottom:6px; box-shadow:var(--shadow); }
+        .deck-card-front { font-weight:500; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .deck-card-back { font-size:12px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .deck-card-status { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-right:8px; }
+        .deck-card-status.new { background:var(--info); }
+        .deck-card-status.learning { background:var(--warning); }
+        .deck-card-status.review { background:var(--success); }
+        .deck-card-status.relearning { background:var(--danger); }
+        .audio-page { padding:16px; }
+        .audio-card { background:var(--bg-card); border-radius:var(--radius); padding:30px; box-shadow:var(--shadow); text-align:center; margin-bottom:16px; }
+        .audio-word { font-size:28px; font-weight:700; margin-bottom:4px; }
+        .audio-phonetic { font-size:14px; color:var(--text-secondary); margin-bottom:16px; }
+        .audio-instruction { font-size:13px; color:var(--text-secondary); margin-bottom:16px; }
+        .record-btn { width:56px; height:56px; border-radius:50%; border:none; background:var(--gradient-danger); color:white; font-size:24px; cursor:pointer; margin:0 auto; display:flex; align-items:center; justify-content:center; transition:var(--transition); }
+        .record-btn.recording { animation:recordPulse 1s ease-in-out infinite; }
+        @keyframes recordPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
+        .study-page { padding:16px; }
+        .study-textarea { width:100%; min-height:200px; padding:16px; border:2px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); font-size:14px; background:var(--bg-card); color:var(--text-primary); resize:vertical; }
+        .study-textarea:focus { outline:none; border-color:var(--primary); }
+        .study-stats { display:flex; gap:16px; margin:12px 0; font-size:13px; color:var(--text-secondary); }
+        .sample-texts { display:flex; flex-direction:column; gap:8px; margin-top:16px; }
+        .sample-text-item { padding:12px; background:var(--bg-card); border-radius:var(--radius-sm); cursor:pointer; transition:var(--transition); box-shadow:var(--shadow); }
+        .sample-text-item:hover { border-right:3px solid var(--primary); }
+        .sample-text-title { font-weight:600; font-size:14px; }
+        .sample-text-preview { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+        .challenges-page { padding:16px; }
+        .challenge-section { margin-bottom:20px; }
+        .challenge-section-title { font-size:16px; font-weight:600; margin-bottom:12px; }
+        .challenge-item { display:flex; align-items:center; gap:12px; padding:14px; background:var(--bg-card); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:8px; }
+        .challenge-icon { font-size:28px; }
+        .challenge-info { flex:1; }
+        .challenge-name { font-size:14px; font-weight:600; }
+        .challenge-desc { font-size:12px; color:var(--text-secondary); }
+        .challenge-progress-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-top:6px; }
+        .challenge-progress-fill { height:100%; background:var(--gradient); border-radius:3px; }
+        .challenge-reward { font-size:12px; font-weight:600; color:var(--warning); }
+        .stats-page { padding:16px; }
+        .stats-summary { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:16px; }
+        .stats-card { background:var(--bg-card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); text-align:center; }
+        .stats-card-value { font-size:24px; font-weight:700; color:var(--primary); }
+        .stats-card-label { font-size:12px; color:var(--text-secondary); }
+        .stats-chart { background:var(--bg-card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:16px; }
+        .stats-chart-title { font-size:14px; font-weight:600; margin-bottom:12px; }
+        .stats-bars { display:flex; align-items:flex-end; gap:4px; height:120px; }
+        .stats-bar { flex:1; background:var(--gradient); border-radius:3px 3px 0 0; min-height:4px; transition:height 0.5s ease; }
+        .stats-bar-label { font-size:9px; color:var(--text-secondary); text-align:center; margin-top:4px; }
+        .tags-page { padding:16px; }
+        .tag-item { display:flex; align-items:center; gap:10px; padding:12px; background:var(--bg-card); border-radius:var(--radius-sm); box-shadow:var(--shadow); margin-bottom:8px; }
+        .tag-name { flex:1; font-weight:500; }
+        .tag-count { font-size:12px; color:var(--text-secondary); }
+        .import-export-section { background:var(--bg-card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:16px; }
+        .import-export-title { font-size:15px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .import-export-buttons { display:flex; gap:8px; }
+        .loading-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:var(--bg-primary); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.5s ease; }
+        .loading-overlay.hide { opacity:0; pointer-events:none; }
+        .loading-logo { font-size:36px; font-weight:800; background:var(--gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:20px; }
+        .loading-spinner { width:40px; height:40px; border:4px solid var(--border); border-top:4px solid var(--primary); border-radius:50%; animation:spin 1s linear infinite; }
+        .toast-container { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; max-width:400px; width:calc(100% - 32px); }
+        .toast { background:var(--bg-card); border-radius:var(--radius-sm); padding:14px 18px; box-shadow:var(--shadow-lg); display:flex; align-items:center; gap:10px; animation:toastIn 0.3s ease; border-right:4px solid var(--primary); }
+        .toast.success { border-right-color:var(--success); }
+        .toast.error { border-right-color:var(--danger); }
+        .toast.warning { border-right-color:var(--warning); }
+        @keyframes toastIn { from{opacity:0;transform:translateY(-10px);} to{opacity:1;transform:translateY(0);} }
+        .toast-icon { font-size:20px; flex-shrink:0; }
+        .toast-message { font-size:13px; flex:1; }
+        .toast-close { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:4px; }
+        .level-up-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:250; display:none; align-items:center; justify-content:center; }
+        .level-up-overlay.active { display:flex; }
+        .level-up-content { text-align:center; color:white; animation:levelUpAnim 0.5s ease; }
+        @keyframes levelUpAnim { from{opacity:0;transform:scale(0.5);} to{opacity:1;transform:scale(1);} }
+        .level-up-icon { font-size:64px; margin-bottom:16px; }
+        .level-up-title { font-size:28px; font-weight:700; margin-bottom:8px; }
+        .level-up-subtitle { font-size:16px; opacity:0.8; }
+        .confetti-container { position:fixed; top:0; left:0; right:0; bottom:0; pointer-events:none; z-index:200; overflow:hidden; }
+        .confetti { position:absolute; top:-10px; animation:confettiFall linear forwards; }
+        @keyframes confettiFall { to{transform:translateY(100vh) rotate(720deg); opacity:0;} }
+        .confirm-dialog { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:250; display:none; align-items:center; justify-content:center; padding:20px; }
+        .confirm-dialog.active { display:flex; }
+        .confirm-dialog-content { background:var(--bg-card); border-radius:var(--radius); padding:24px; width:100%; max-width:350px; text-align:center; box-shadow:var(--shadow-lg); }
+        .confirm-dialog-icon { font-size:48px; margin-bottom:12px; }
+        .confirm-dialog-title { font-size:18px; font-weight:700; margin-bottom:8px; }
+        .confirm-dialog-message { font-size:14px; color:var(--text-secondary); margin-bottom:20px; }
+        .confirm-dialog-buttons { display:flex; gap:8px; justify-content:center; }
+        .install-prompt { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); width:calc(100% - 32px); max-width:448px; background:var(--bg-card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow-lg); z-index:150; display:none; animation:slideUp 0.3s ease; }
+        .install-prompt.show { display:block; }
+        @keyframes slideUp { from{transform:translateX(-50%) translateY(20px);opacity:0;} to{transform:translateX(-50%) translateY(0);opacity:1;} }
+        .install-prompt-title { font-size:16px; font-weight:600; margin-bottom:8px; }
+        .install-prompt-desc { font-size:13px; color:var(--text-secondary); margin-bottom:16px; }
+        .install-prompt-buttons { display:flex; gap:8px; }
+        .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:200; display:none; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
+        .modal-overlay.active { display:flex; }
+        .modal { background:var(--bg-card); border-radius:var(--radius); padding:24px; width:100%; max-width:400px; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-lg); animation:modalIn 0.3s ease; }
+        @keyframes modalIn { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
+        .empty-state { text-align:center; padding:40px 20px; }
+        .empty-state-icon { font-size:48px; margin-bottom:12px; }
+        .empty-state-text { font-size:16px; color:var(--text-secondary); margin-bottom:16px; }
+        @media (max-width:360px) {
+            .menu-grid { grid-template-columns:repeat(3,1fr); }
+            .flashcard-word { font-size:22px; }
+            .rating-buttons { grid-template-columns:repeat(2,1fr); }
+        }
+        /* Anki HTML card styling */
+        .anki-card-html { font-size:14px; line-height:1.6; word-break:break-word; }
+        .anki-card-html img { max-width:100%; height:auto; border-radius:8px; }
+        .anki-card-html .cloze { font-weight:700; color:var(--primary); }
+        .anki-card-html .cloze-blank { display:inline-block; min-width:80px; border-bottom:2px solid var(--primary); color:transparent; }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-logo">LEXORA</div>
+        <div class="loading-spinner"></div>
+    </div>
+    <div class="toast-container" id="toastContainer"></div>
+    <div class="confirm-dialog" id="confirmDialog">
+        <div class="confirm-dialog-content">
+            <div class="confirm-dialog-icon" id="confirmIcon">⚠️</div>
+            <div class="confirm-dialog-title" id="confirmTitle">تأیید</div>
+            <div class="confirm-dialog-message" id="confirmMessage">آیا مطمئن هستید؟</div>
+            <div class="confirm-dialog-buttons">
+                <button class="btn btn-outline" onclick="closeConfirmDialog()">انصراف</button>
+                <button class="btn btn-danger" onclick="confirmAction()">تأیید</button>
+            </div>
+        </div>
+    </div>
+    <div class="level-up-overlay" id="levelUpOverlay" onclick="closeLevelUp()">
+        <div class="level-up-content">
+            <div class="level-up-icon">🎉</div>
+            <div class="level-up-title" id="levelUpTitle">سطح جدید!</div>
+            <div class="level-up-subtitle" id="levelUpSubtitle">به سطح ۲ رسیدید</div>
+        </div>
+    </div>
+    <div class="confetti-container" id="confettiContainer"></div>
+    <div class="app-container" id="appContainer">
+        <!-- HOME PAGE -->
+        <div class="page active" id="homePage">
+            <div class="header">
+                <div class="header-top">
+                    <div class="header-greeting" id="headerGreeting">سلام!</div>
+                    <button class="header-settings" onclick="showPage('settingsPage')">⚙️</button>
+                </div>
+                <div>
+                    <span class="level-badge" id="levelBadge">⭐ سطح <span id="userLevel">1</span></span>
+                    <span class="streak-badge">🔥 <span id="streakCount">0</span> روز</span>
+                </div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-title">📊 پیشرفت امروز</div>
+                <div class="progress-bar"><div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div></div>
+                <div class="progress-stats">
+                    <span>مرور: <b id="reviewedToday">0</b>/<b id="dailyGoal">20</b></span>
+                    <span>جدید: <b id="newToday">0/10</b></span>
+                    <span>دقت: <b id="accuracyToday">0%</b></span>
+                </div>
+            </div>
+            <div class="streak-reward" id="streakReward" onclick="claimStreakReward()">
+                <div class="streak-reward-icon">🎁</div>
+                <div class="streak-reward-info">
+                    <div class="streak-reward-title">پاداش روزانه</div>
+                    <div class="streak-reward-desc" id="streakRewardDesc">برای دریافت پاداش کلیک کنید</div>
+                </div>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item" onclick="showPage('reviewPage')"><span class="menu-item-icon">📝</span><span class="menu-item-label">مرور</span></div>
+                <div class="menu-item" onclick="showPage('addCardPage')"><span class="menu-item-icon">➕</span><span class="menu-item-label">کارت جدید</span></div>
+                <div class="menu-item" onclick="showPage('dictionaryPage')"><span class="menu-item-icon">📖</span><span class="menu-item-label">دیکشنری</span></div>
+                <div class="menu-item" onclick="showPage('readyDecksPage')"><span class="menu-item-icon">📦</span><span class="menu-item-label">دک‌ها</span></div>
+                <div class="menu-item" onclick="showPage('challengesPage')"><span class="menu-item-icon">🏆</span><span class="menu-item-label">چالش‌ها</span></div>
+                <div class="menu-item" onclick="showPage('studyPage')"><span class="menu-item-icon">📚</span><span class="menu-item-label">مطالعه</span></div>
+                <div class="menu-item" onclick="showPage('audioPage')"><span class="menu-item-icon">🎧</span><span class="menu-item-label">صوتی</span></div>
+                <div class="menu-item" onclick="showPage('statsPage')"><span class="menu-item-icon">📈</span><span class="menu-item-label">آمار</span></div>
+                <div class="menu-item" onclick="showPage('tagsPage')"><span class="menu-item-icon">🏷️</span><span class="menu-item-label">تگ‌ها</span></div>
+            </div>
+            <div class="word-of-day" id="wordOfDay">
+                <div class="word-of-day-header">💡 کلمه روز</div>
+                <div class="word-of-day-word" id="wodWord">Serendipity</div>
+                <div class="word-of-day-phonetic" id="wodPhonetic">/ˌserənˈdɪpəti/</div>
+                <div class="word-of-day-meaning" id="wodMeaning">اتفاق خوب و غیرمنتظره، شانس</div>
+            </div>
+            <div class="quick-start" id="quickStart">
+                <div class="quick-start-title">🚀 شروع سریع</div>
+                <div class="deck-list" id="deckList"></div>
+                <div class="all-decks-btn" onclick="showPage('libraryPage')">📚 مشاهده همه دک‌ها</div>
+            </div>
+            <div class="medals-section"><div class="medals-title">🏅 مدال‌ها</div><div class="medals-grid" id="medalsGrid"></div></div>
+            <div class="footer">LEXORA v3.5 | طراح و برنامه‌نویس: محمد عباسی</div>
+        </div>
+        <!-- REVIEW PAGE -->
+        <div class="page" id="reviewPage">
+            <div class="mode-select" id="modeSelect">
+                <div class="mode-select-title">📝 انتخاب حالت مرور</div>
+                <div class="mode-grid">
+                    <div class="mode-card" onclick="selectReviewMode('normal')"><span class="mode-card-icon">🔄</span><div class="mode-card-title">عادی</div><div class="mode-card-desc">نمایش جلو، حدس پشت</div></div>
+                    <div class="mode-card" onclick="selectReviewMode('reverse')"><span class="mode-card-icon">↩️</span><div class="mode-card-title">معکوس</div><div class="mode-card-desc">نمایش پشت، حدس جلو</div></div>
+                    <div class="mode-card" onclick="selectReviewMode('typing')"><span class="mode-card-icon">⌨️</span><div class="mode-card-title">تایپی</div><div class="mode-card-desc">تایپ پاسخ صحیح</div></div>
+                    <div class="mode-card" onclick="selectReviewMode('quiz')"><span class="mode-card-icon">❓</span><div class="mode-card-title">کوییز</div><div class="mode-card-desc">انتخاب از گزینه‌ها</div></div>
+                </div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+            <div id="reviewSession" style="display:none">
+                <div class="review-header">
+                    <button class="review-back" onclick="endReview()">→</button>
+                    <div class="review-progress"><div class="review-progress-bar"><div class="review-progress-fill" id="reviewProgressFill" style="width:0%"></div></div></div>
+                    <div class="review-counter" id="reviewCounter">0/0</div>
+                </div>
+                <div id="flashcardContainer" style="display:none" class="flashcard-container">
+                    <div class="flashcard">
+                        <div class="flashcard-mode-icon" id="flashcardModeIcon">🔄</div>
+                        <div class="flashcard-media-front" id="flashcardMediaFront"></div>
+                        <div class="flashcard-front" id="flashcardFront">
+                            <div class="flashcard-word" id="flashcardWord"></div>
+                            <div class="flashcard-phonetic" id="flashcardPhonetic"></div>
+                            <button class="play-btn" onclick="speakCurrentCard()" style="margin:8px auto">🔊</button>
+                        </div>
+                        <div class="flashcard-answer" id="flashcardAnswer">
+                            <div class="flashcard-media-back" id="flashcardMediaBack"></div>
+                            <div class="flashcard-meaning" id="flashcardMeaning"></div>
+                            <div class="flashcard-example" id="flashcardExample"></div>
+                            <div class="flashcard-mnemonic" id="flashcardMnemonic"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="typingContainer" style="display:none" class="flashcard-container">
+                    <div class="flashcard">
+                        <div class="flashcard-mode-icon">⌨️</div>
+                        <div class="flashcard-word" id="typingWord"></div>
+                        <div class="flashcard-phonetic" id="typingPhonetic"></div>
+                        <div style="width:100%; margin-top:16px">
+                            <input type="text" class="form-input" id="typingInput" placeholder="پاسخ خود را تایپ کنید..." onkeypress="if(event.key==='Enter')checkTypingAnswer()">
+                            <button class="btn btn-primary btn-block" style="margin-top:8px" onclick="checkTypingAnswer()">بررسی</button>
+                        </div>
+                        <div id="typingResult" style="margin-top:12px; display:none"></div>
+                    </div>
+                </div>
+                <div id="quizContainer" style="display:none" class="flashcard-container">
+                    <div class="flashcard">
+                        <div class="flashcard-mode-icon">❓</div>
+                        <div class="flashcard-word" id="quizWord"></div>
+                        <div class="flashcard-phonetic" id="quizPhonetic"></div>
+                        <div id="quizOptions" style="width:100%; margin-top:16px; display:flex; flex-direction:column; gap:8px"></div>
+                        <div id="quizResult" style="margin-top:12px; display:none"></div>
+                    </div>
+                </div>
+                <button class="show-answer-btn" id="showAnswerBtn" onclick="showAnswer()" style="display:none">نمایش پاسخ</button>
+                <div class="rating-buttons" id="ratingButtons" style="display:none">
+                    <button class="rating-btn again" onclick="rateCard(1)">دوباره<span class="time" id="timeAgain"></span></button>
+                    <button class="rating-btn hard" onclick="rateCard(2)">سخت<span class="time" id="timeHard"></span></button>
+                    <button class="rating-btn good" onclick="rateCard(3)">خوب<span class="time" id="timeGood"></span></button>
+                    <button class="rating-btn easy" onclick="rateCard(4)">آسان<span class="time" id="timeEasy"></span></button>
+                </div>
+            </div>
+            <div class="review-complete" id="reviewComplete" style="display:none">
+                <div class="review-complete-icon">🎉</div>
+                <div class="review-complete-title">آفرین! مرور تکمیل شد</div>
+                <div class="review-complete-stats">
+                    <div class="review-complete-stat"><div class="review-complete-stat-value" id="completeTotal">0</div><div class="review-complete-stat-label">مرور شده</div></div>
+                    <div class="review-complete-stat"><div class="review-complete-stat-value" id="completeCorrect">0</div><div class="review-complete-stat-label">صحیح</div></div>
+                    <div class="review-complete-stat"><div class="review-complete-stat-value" id="completeAccuracy">0%</div><div class="review-complete-stat-label">دقت</div></div>
+                </div>
+                <div class="review-complete-xp" id="completeXP">+0 XP</div>
+                <button class="btn btn-primary btn-lg btn-block" onclick="showPage('homePage')">بازگشت به خانه</button>
+            </div>
+        </div>
+        <!-- DICTIONARY PAGE -->
+        <div class="page" id="dictionaryPage">
+            <div class="dictionary-page">
+                <div class="mode-select-title">📖 دیکشنری</div>
+                <div class="search-box"><input type="text" class="search-input" id="dictSearchInput" placeholder="جستجوی کلمه..." onkeypress="if(event.key==='Enter')searchDictionary()"><button class="search-btn" onclick="searchDictionary()">🔍</button></div>
+                <div class="dict-result" id="dictResult">
+                    <div class="dict-word" id="dictWord"></div>
+                    <div class="dict-phonetic" id="dictPhonetic"></div>
+                    <button class="play-btn" onclick="playDictWord()" style="margin-bottom:12px">🔊</button>
+                    <div class="dict-meanings" id="dictMeanings"></div>
+                    <button class="btn btn-primary btn-block dict-add-btn" onclick="addDictWordToDeck()">➕ افزودن به دک</button>
+                </div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- READY DECKS PAGE -->
+        <div class="page" id="readyDecksPage">
+            <div class="ready-decks-page">
+                <div class="mode-select-title">📦 دک‌های آماده</div>
+                <div class="anki-import-page" style="padding:0; margin-bottom:16px">
+                    <div class="anki-import-area" id="ankiImportArea" onclick="document.getElementById('ankiFileInput').click()">
+                        <span class="anki-import-icon">📥</span>
+                        <div class="anki-import-title">وارد کردن فایل Anki</div>
+                        <div class="anki-import-desc">فایل .apkg یا .colpkg را انتخاب یا اینجا رها کنید</div>
+                    </div>
+                    <input type="file" id="ankiFileInput" accept=".apkg,.colpkg" style="display:none" onchange="handleAnkiFile(event)">
+                    <div class="anki-file-info" id="ankiFileInfo"><div class="anki-file-name" id="ankiFileName"></div><div class="anki-file-size" id="ankiFileSize"></div></div>
+                    <div class="anki-processing" id="ankiProcessing"><div class="anki-spinner"></div><div>در حال پردازش فایل...</div></div>
+                    <div class="anki-decks-list" id="ankiDecksList"></div>
+                    <div class="anki-preview" id="ankiPreview"><div class="anki-preview-title">پیش‌نمایش کارت‌ها:</div><div id="ankiPreviewCards"></div></div>
+                    <button class="btn btn-primary btn-block anki-import-btn" id="ankiImportBtn" onclick="importSelectedAnkiDecks()">وارد کردن دک‌های انتخاب شده</button>
+                    <div class="anki-import-progress" id="ankiImportProgress"><div>در حال وارد کردن...</div><div class="anki-import-progress-bar"><div class="anki-import-progress-fill" id="ankiImportProgressFill"></div></div><div id="ankiImportProgressText">0%</div></div>
+                    <div class="anki-success" id="ankiSuccess"><div class="anki-success-icon">✅</div><div id="ankiSuccessText"></div><button class="btn btn-primary btn-block" style="margin-top:12px" onclick="showPage('libraryPage')">مشاهده دک‌ها</button></div>
+                    <div class="anki-error" id="ankiError"><div style="font-size:48px; margin-bottom:12px">❌</div><div id="ankiErrorText"></div><button class="btn btn-outline btn-block" style="margin-top:12px" onclick="resetAnkiImport()">تلاش مجدد</button></div>
+                </div>
+                <div class="ready-deck-card" onclick="addReadyDeck('essential504')"><div class="ready-deck-icon">📕</div><div class="ready-deck-info"><div class="ready-deck-name">504 واژه ضروری</div><div class="ready-deck-desc">30 لغت پرکاربرد</div></div></div>
+                <div class="ready-deck-card" onclick="addReadyDeck('ielts')"><div class="ready-deck-icon">📗</div><div class="ready-deck-info"><div class="ready-deck-name">لغات IELTS</div><div class="ready-deck-desc">30 لغت آکادمیک</div></div></div>
+                <div class="ready-deck-card" onclick="addReadyDeck('daily')"><div class="ready-deck-icon">📘</div><div class="ready-deck-info"><div class="ready-deck-name">مکالمه روزمره</div><div class="ready-deck-desc">20 عبارت کاربردی</div></div></div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- ADD CARD PAGE -->
+        <div class="page" id="addCardPage">
+            <div style="padding:16px">
+                <div class="mode-select-title">➕ کارت جدید</div>
+                <div class="add-card-section">
+                    <div class="form-group"><label class="form-label">دک</label><select class="form-input" id="addCardDeck"></select></div>
+                    <div class="form-group"><label class="form-label">جلو (انگلیسی)</label><input type="text" class="form-input" id="addCardFront" placeholder="مثلاً: Abandon"></div>
+                    <div class="form-group"><label class="form-label">پشت (فارسی)</label><input type="text" class="form-input" id="addCardBack" placeholder="مثلاً: ترک کردن"></div>
+                    <div class="form-group"><label class="form-label">تلفظ</label><input type="text" class="form-input" id="addCardPhonetic" placeholder="/əˈbændən/"></div>
+                    <div class="form-group"><label class="form-label">مثال</label><input type="text" class="form-input" id="addCardExample" placeholder="He abandoned the car."></div>
+                    <div class="form-group"><label class="form-label">تگ</label><input type="text" class="form-input" id="addCardTag" placeholder="مثلاً: verbs"></div>
+                    <div class="form-group"><label class="form-label">تصویر</label><div class="image-upload" id="imageUpload" onclick="document.getElementById('cardImageInput').click()"><div class="image-upload-icon">📷</div><div class="image-upload-text">کلیک برای انتخاب تصویر</div></div><input type="file" id="cardImageInput" accept="image/*" style="display:none" onchange="handleCardImage(event)"></div>
+                    <button class="btn btn-primary btn-block" onclick="addNewCard()">افزودن کارت</button>
+                </div>
+                <button class="btn btn-outline btn-block" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- LIBRARY PAGE -->
+        <div class="page" id="libraryPage">
+            <div class="library-page">
+                <div class="library-header"><div class="library-title">📚 کتابخانه</div><button class="btn btn-primary btn-sm" onclick="showCreateDeckDialog()">➕ دک جدید</button></div>
+                <input type="text" class="library-search" id="librarySearch" placeholder="جستجوی دک..." oninput="filterLibraryDecks()">
+                <div id="libraryContent"></div>
+                <div class="import-export-section">
+                    <div class="import-export-title">💾 پشتیبان‌گیری</div>
+                    <div class="import-export-buttons">
+                        <button class="btn btn-primary btn-sm" onclick="exportData()">📤 خروجی</button>
+                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('importFileInput').click()">📥 ورودی</button>
+                        <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event)">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- DECK DETAIL PAGE -->
+        <div class="page" id="deckDetailPage">
+            <div class="deck-detail-page">
+                <div class="deck-detail-header">
+                    <div class="deck-detail-name" id="deckDetailName"></div>
+                    <div class="deck-detail-stats">
+                        <div class="deck-detail-stat"><div class="deck-detail-stat-value" id="deckDetailTotal">0</div><div class="deck-detail-stat-label">کل</div></div>
+                        <div class="deck-detail-stat"><div class="deck-detail-stat-value" id="deckDetailNew">0</div><div class="deck-detail-stat-label">جدید</div></div>
+                        <div class="deck-detail-stat"><div class="deck-detail-stat-value" id="deckDetailDue">0</div><div class="deck-detail-stat-label">مرور</div></div>
+                    </div>
+                    <div class="deck-detail-actions">
+                        <button class="btn btn-primary btn-sm" onclick="startDeckReview()">📝 شروع مرور</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteDeckConfirm()">🗑️ حذف</button>
+                    </div>
+                </div>
+                <div id="deckCardsList"></div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('libraryPage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- STUDY PAGE -->
+        <div class="page" id="studyPage">
+            <div class="study-page">
+                <div class="mode-select-title">📚 مطالعه متن</div>
+                <textarea class="study-textarea" id="studyTextarea" placeholder="متن انگلیسی خود را وارد کنید..."></textarea>
+                <div class="study-stats"><span>کلمات: <b id="studyWordCount">0</b></span><span>حروف: <b id="studyCharCount">0</b></span></div>
+                <button class="btn btn-primary btn-block" onclick="saveStudyNote()">💾 ذخیره یادداشت</button>
+                <div class="sample-texts">
+                    <div class="sample-text-item" onclick="loadSampleText(0)"><div class="sample-text-title">📖 داستان کوتاه</div><div class="sample-text-preview">The little prince lived on a tiny planet...</div></div>
+                    <div class="sample-text-item" onclick="loadSampleText(1)"><div class="sample-text-title">📰 مقاله علمی</div><div class="sample-text-preview">Recent studies have shown that language learning...</div></div>
+                    <div class="sample-text-item" onclick="loadSampleText(2)"><div class="sample-text-title">💬 مکالمه</div><div class="sample-text-preview">A: Hello! How are you doing today?...</div></div>
+                </div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- CHALLENGES PAGE -->
+        <div class="page" id="challengesPage">
+            <div class="challenges-page">
+                <div class="mode-select-title">🏆 چالش‌ها</div>
+                <div class="challenge-section"><div class="challenge-section-title">📅 چالش‌های روزانه</div><div id="dailyChallenges"></div></div>
+                <div class="challenge-section"><div class="challenge-section-title">🎯 چالش‌های هفتگی</div><div id="weeklyChallenges"></div></div>
+                <div class="challenge-section"><div class="challenge-section-title">🏅 دستاوردها</div><div id="achievements"></div></div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- AUDIO PAGE -->
+        <div class="page" id="audioPage">
+            <div class="audio-page">
+                <div class="mode-select-title">🎧 تمرین صوتی</div>
+                <div class="audio-card">
+                    <div class="audio-word" id="audioWord">Listen</div>
+                    <div class="audio-phonetic" id="audioPhonetic">/ˈlɪs.ən/</div>
+                    <button class="play-btn" onclick="playAudioWord()" style="margin:0 auto 16px">🔊</button>
+                    <div class="audio-instruction">کلمه را گوش دهید و تکرار کنید</div>
+                    <button class="record-btn" id="recordBtn" onclick="toggleRecording()">🎤</button>
+                    <div id="audioFeedback" style="margin-top:16px"></div>
+                </div>
+                <div style="display:flex; gap:8px">
+                    <button class="btn btn-outline" style="flex:1" onclick="prevAudioWord()">⬅️ قبلی</button>
+                    <button class="btn btn-primary" style="flex:1" onclick="nextAudioWord()">بعدی ➡️</button>
+                </div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- STATS PAGE -->
+        <div class="page" id="statsPage">
+            <div class="stats-page">
+                <div class="mode-select-title">📈 آمار</div>
+                <div class="stats-summary">
+                    <div class="stats-card"><div class="stats-card-value" id="statTotalCards">0</div><div class="stats-card-label">کل کارت‌ها</div></div>
+                    <div class="stats-card"><div class="stats-card-value" id="statTotalReviews">0</div><div class="stats-card-label">کل مرورها</div></div>
+                    <div class="stats-card"><div class="stats-card-value" id="statStreak">0</div><div class="stats-card-label">بهترین استریک</div></div>
+                    <div class="stats-card"><div class="stats-card-value" id="statAccuracy">0%</div><div class="stats-card-label">دقت کل</div></div>
+                </div>
+                <div class="stats-chart"><div class="stats-chart-title">📊 مرور هفتگی</div><div class="stats-bars" id="statsBars"></div></div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- TAGS PAGE -->
+        <div class="page" id="tagsPage">
+            <div class="tags-page">
+                <div class="mode-select-title">🏷️ تگ‌ها</div>
+                <div style="display:flex; gap:8px; margin-bottom:16px">
+                    <input type="text" class="form-input" id="newTagInput" placeholder="نام تگ جدید...">
+                    <button class="btn btn-primary btn-sm" onclick="createTag()">ایجاد</button>
+                </div>
+                <div id="tagsList"></div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+            </div>
+        </div>
+        <!-- SETTINGS PAGE -->
+        <div class="page" id="settingsPage">
+            <div style="padding:16px">
+                <div class="mode-select-title">⚙️ تنظیمات</div>
+                <div class="add-card-section">
+                    <div class="add-card-title">🎨 ظاهر</div>
+                    <div class="setting-item"><div class="setting-info"><div class="setting-title">حالت تاریک</div><div class="setting-desc">تغییر به تم تاریک</div></div><div class="toggle-switch" id="darkModeToggle" onclick="toggleDarkMode()"></div></div>
+                </div>
+                <div class="add-card-section">
+                    <div class="add-card-title">📝 مرور</div>
+                    <div class="setting-item"><div class="setting-info"><div class="setting-title">هدف روزانه</div><div class="setting-desc">تعداد مرور روزانه</div></div>
+                        <select class="form-input" style="width:80px" id="dailyGoalSelect" onchange="updateDailyGoal()"><option value="10">10</option><option value="20" selected>20</option><option value="30">30</option><option value="50">50</option></select>
+                    </div>
+                    <div class="setting-item"><div class="setting-info"><div class="setting-title">کارت جدید روزانه</div><div class="setting-desc">حداکثر کارت جدید در روز</div></div>
+                        <select class="form-input" style="width:80px" id="newCardsPerDaySelect" onchange="updateNewCardsPerDay()"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="30">30</option><option value="50">50</option></select>
+                    </div>
+                    <div class="setting-item"><div class="setting-info"><div class="setting-title">پخش خودکار تلفظ</div><div class="setting-desc">پخش تلفظ هنگام نمایش کارت</div></div><div class="toggle-switch" id="autoPlayToggle" onclick="toggleAutoPlay()"></div></div>
+                </div>
+                <div class="add-card-section">
+                    <div class="add-card-title">🔔 اعلان‌ها</div>
+                    <div class="setting-item"><div class="setting-info"><div class="setting-title">یادآوری مرور</div><div class="setting-desc">اعلان روزانه برای مرور</div></div><div class="toggle-switch" id="reminderToggle" onclick="toggleReminder()"></div></div>
+                </div>
+                <div class="add-card-section">
+                    <div class="add-card-title">🗑️ داده‌ها</div>
+                    <div class="setting-item"><div class="setting-info"><div class="setting-title">پاک کردن تمام داده‌ها</div><div class="setting-desc">حذف تمام کارت‌ها و تنظیمات</div></div><button class="btn btn-danger btn-sm" onclick="clearAllData()">پاک کردن</button></div>
+                </div>
+                <button class="btn btn-outline btn-block" style="margin-top:16px" onclick="showPage('homePage')">بازگشت</button>
+                <div class="footer">LEXORA v3.5 | الگوریتم FSRS-4.5<br>طراح و برنامه‌نویس: محمد عباسی</div>
+            </div>
+        </div>
+    </div>
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <button class="nav-item active" data-page="homePage" onclick="showPage('homePage')"><span class="nav-item-icon">🏠</span><span class="nav-item-label">خانه</span></button>
+        <button class="nav-item" data-page="reviewPage" onclick="showPage('reviewPage')"><span class="nav-item-icon">📝</span><span class="nav-item-label">مرور</span></button>
+        <button class="nav-item" data-page="libraryPage" onclick="showPage('libraryPage')"><span class="nav-item-icon">📚</span><span class="nav-item-label">کتابخانه</span></button>
+        <button class="nav-item" data-page="statsPage" onclick="showPage('statsPage')"><span class="nav-item-icon">📈</span><span class="nav-item-label">آمار</span></button>
+        <button class="nav-item" data-page="settingsPage" onclick="showPage('settingsPage')"><span class="nav-item-icon">⚙️</span><span class="nav-item-label">تنظیمات</span></button>
+    </div>
+<script>
+// ============================================
+// ============= DATABASE LAYER ===============
+// ============================================
+const DB_NAME = 'LexoraDB';
+const DB_VERSION = 5;
+let db = null;
+
+function openDatabase() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => { db = request.result; resolve(db); };
+        request.onupgradeneeded = (event) => {
+            const d = event.target.result;
+            if (!d.objectStoreNames.contains('cards')) {
+                const cs = d.createObjectStore('cards', { keyPath: 'id' });
+                cs.createIndex('deck', 'deck', { unique: false });
+                cs.createIndex('due', 'due', { unique: false });
+                cs.createIndex('state', 'state', { unique: false });
+                cs.createIndex('tag', 'tag', { unique: false });
+            }
+            if (!d.objectStoreNames.contains('decks')) d.createObjectStore('decks', { keyPath: 'id' });
+            if (!d.objectStoreNames.contains('stats')) d.createObjectStore('stats', { keyPath: 'date' });
+            if (!d.objectStoreNames.contains('settings')) d.createObjectStore('settings', { keyPath: 'key' });
+            if (!d.objectStoreNames.contains('tags')) d.createObjectStore('tags', { keyPath: 'id' });
+            if (!d.objectStoreNames.contains('notes')) d.createObjectStore('notes', { keyPath: 'id' });
+            if (!d.objectStoreNames.contains('media')) {
+                const ms = d.createObjectStore('media', { keyPath: 'filename' });
+                ms.createIndex('deck', 'deck', { unique: false });
+            }
+        };
+    });
+}
+
+function dbPut(s, d) { return new Promise((res, rej) => { if(!db){rej('DB not open');return;} try{const t=db.transaction(s,'readwrite');t.objectStore(s).put(d).onsuccess=e=>res(e.target.result);t.onerror=()=>rej(t.error);}catch(e){rej(e);}}); }
+function dbGet(s, k) { return new Promise((res, rej) => { if(!db){rej('DB not open');return;} try{const t=db.transaction(s,'readonly');const r=t.objectStore(s).get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}}); }
+function dbGetAll(s) { return new Promise((res, rej) => { if(!db){rej('DB not open');return;} try{const t=db.transaction(s,'readonly');const r=t.objectStore(s).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error);}catch(e){rej(e);}}); }
+function dbDelete(s, k) { return new Promise((res, rej) => { if(!db){rej('DB not open');return;} try{const t=db.transaction(s,'readwrite');t.objectStore(s).delete(k).onsuccess=()=>res();t.onerror=()=>rej(t.error);}catch(e){rej(e);}}); }
+function dbGetByIndex(s, i, v) { return new Promise((res, rej) => { if(!db){rej('DB not open');return;} try{const t=db.transaction(s,'readonly');const r=t.objectStore(s).index(i).getAll(v);r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error);}catch(e){rej(e);}}); }
+function dbClearStore(s) { return new Promise((res, rej) => { if(!db){rej('DB not open');return;} try{const t=db.transaction(s,'readwrite');t.objectStore(s).clear().onsuccess=()=>res();t.onerror=()=>rej(t.error);}catch(e){rej(e);}}); }
+// FIX #11: Improved batch insert with proper error handling
+function dbPutBatch(s, items) {
+    return new Promise((res, rej) => {
+        if(!db){rej('DB not open');return;}
+        if(!items||items.length===0){res();return;}
+        try {
+            const tx = db.transaction(s, 'readwrite');
+            const store = tx.objectStore(s);
+            let errors = [];
+            tx.oncomplete = () => { if(errors.length>0) console.warn(`Batch: ${errors.length} errors in ${s}`); res(); };
+            tx.onerror = (e) => { e.preventDefault(); }; // prevent abort on individual errors
+            tx.onabort = () => rej(tx.error);
+            for (const item of items) {
+                const req = store.put(item);
+                req.onerror = (e) => { errors.push(e); e.preventDefault(); };
+            }
+        } catch(e) { rej(e); }
+    });
+}
+
+// ============================================
+// ============= FSRS 4.5 ALGORITHM ==========
+// ============================================
+const FSRS = {
+    p: { w: [0.4,0.6,2.4,5.8,4.93,0.94,0.86,0.01,1.49,0.14,0.94,2.18,0.05,0.34,1.26,0.29,2.61], requestRetention: 0.9, maximumInterval: 36500 },
+    State: { New:0, Learning:1, Review:2, Relearning:3 },
+    Rating: { Again:1, Hard:2, Good:3, Easy:4 },
+    createCard() { return { due: new Date().toISOString(), stability:0, difficulty:0, elapsed_days:0, scheduled_days:0, reps:0, lapses:0, state:this.State.New, last_review:null }; },
+    initDS(rating) { const w=this.p.w; let d=w[4]-(rating-3)*w[5]; d=Math.max(1,Math.min(10,d)); let s; if(rating===1)s=w[0];else if(rating===2)s=w[1];else if(rating===3)s=w[2];else s=w[3]; return{difficulty:d,stability:s}; },
+    nextDifficulty(d, rating) { const w=this.p.w; let nd=d-w[6]*(rating-3); return Math.max(1,Math.min(10,this.meanReversion(w[4],nd))); },
+    meanReversion(init, current) { const w=this.p.w; return w[7]*init+(1-w[7])*current; },
+    nextRecallStability(d,s,r,rating) { const w=this.p.w; let mod=1; if(rating===2)mod=w[15];else if(rating===4)mod=w[16]; return s*(1+Math.exp(w[8])*(11-d)*Math.pow(s,-w[9])*(Math.exp((1-r)*w[10])-1)*mod); },
+    nextForgetStability(d,s,r) { const w=this.p.w; return w[11]*Math.pow(d,-w[12])*(Math.pow(s+1,w[13])-1)*Math.exp((1-r)*w[14]); },
+    retrievability(elapsed_days, stability) { if(stability<=0)return 0; return Math.pow(1+elapsed_days/(9*stability),-1); },
+    nextInterval(s) { const interval=(s/9)*(Math.pow(1/this.p.requestRetention,1)-1); return Math.max(1,Math.min(Math.round(interval),this.p.maximumInterval)); },
+    schedule(card, rating) {
+        const now = new Date();
+        const result = JSON.parse(JSON.stringify(card));
+        if (!result.last_review) result.elapsed_days = 0;
+        else result.elapsed_days = Math.max(0, (now - new Date(result.last_review)) / 86400000);
+        result.last_review = now.toISOString();
+        result.reps += 1;
+        if (result.state === this.State.New) {
+            const ds = this.initDS(rating);
+            result.difficulty = ds.difficulty; result.stability = ds.stability;
+            if (rating===1) { result.state=this.State.Learning; result.scheduled_days=0; result.due=new Date(now.getTime()+60000).toISOString(); }
+            else if (rating===2) { result.state=this.State.Learning; result.scheduled_days=0; result.due=new Date(now.getTime()+300000).toISOString(); }
+            else if (rating===3) { result.state=this.State.Review; const iv=this.nextInterval(result.stability); result.scheduled_days=iv; result.due=new Date(now.getTime()+iv*86400000).toISOString(); }
+            else { result.state=this.State.Review; const iv=Math.max(this.nextInterval(result.stability),4); result.scheduled_days=iv; result.due=new Date(now.getTime()+iv*86400000).toISOString(); }
+        } else if (result.state===this.State.Learning||result.state===this.State.Relearning) {
+            result.difficulty = this.nextDifficulty(result.difficulty, rating);
+            if (rating===1) { result.stability=this.initDS(1).stability; result.state=result.state===this.State.Learning?this.State.Learning:this.State.Relearning; result.scheduled_days=0; result.due=new Date(now.getTime()+60000).toISOString(); }
+            else if (rating===2) { result.stability=this.initDS(2).stability; result.scheduled_days=0; result.due=new Date(now.getTime()+600000).toISOString(); }
+            else if (rating===3) { result.stability=this.nextRecallStability(result.difficulty,result.stability,0.9,rating); result.state=this.State.Review; const iv=this.nextInterval(result.stability); result.scheduled_days=iv; result.due=new Date(now.getTime()+iv*86400000).toISOString(); }
+            else { result.stability=this.nextRecallStability(result.difficulty,result.stability,0.9,rating); result.state=this.State.Review; const iv=Math.max(this.nextInterval(result.stability),4); result.scheduled_days=iv; result.due=new Date(now.getTime()+iv*86400000).toISOString(); }
+        } else {
+            const r = this.retrievability(result.elapsed_days, result.stability);
+            result.difficulty = this.nextDifficulty(result.difficulty, rating);
+            if (rating===1) { result.lapses+=1; result.stability=this.nextForgetStability(result.difficulty,result.stability,r); result.state=this.State.Relearning; result.scheduled_days=0; result.due=new Date(now.getTime()+60000).toISOString(); }
+            else if (rating===2) { result.stability=this.nextRecallStability(result.difficulty,result.stability,r,rating); const iv=this.nextInterval(result.stability); result.scheduled_days=iv; result.due=new Date(now.getTime()+iv*86400000).toISOString(); }
+            else if (rating===3) { result.stability=this.nextRecallStability(result.difficulty,result.stability,r,rating); const iv=this.nextInterval(result.stability); result.scheduled_days=iv; result.due=new Date(now.getTime()+iv*86400000).toISOString(); }
+            else { result.stability=this.nextRecallStability(result.difficulty,result.stability,r,rating); const iv=Math.max(this.nextInterval(result.stability),result.scheduled_days+1); result.scheduled_days=iv; result.due=new Date(now.getTime()+iv*86400000).toISOString(); }
+        }
+        return result;
+    },
+    getIntervals(card) {
+        const intervals = {};
+        for (let r=1;r<=4;r++) {
+            const s = this.schedule(card, r);
+            if (s.scheduled_days===0) { const mins=Math.round((new Date(s.due)-new Date())/60000); intervals[r]=mins<=0?'<1 دقیقه':(mins<60?`${mins} دقیقه`:`${Math.round(mins/60)} ساعت`); }
+            else { const d=s.scheduled_days; if(d===1)intervals[r]='1 روز';else if(d<30)intervals[r]=`${d} روز`;else if(d<365)intervals[r]=`${Math.round(d/30)} ماه`;else intervals[r]=`${(d/365).toFixed(1)} سال`; }
+        }
+        return intervals;
+    }
+};
+
+// ============================================
+// ============= APP STATE ====================
+// ============================================
+let appState = {
+    currentPage:'homePage',
+    settings:{ darkMode:false, autoPlay:false, reminder:false, dailyGoal:20, newCardsPerDay:10, language:'fa' },
+    user:{ xp:0, level:1, streak:0, lastStudyDate:null, totalReviews:0, bestStreak:0, streakRewardClaimed:false },
+    review:{ mode:'normal', queue:[], currentIndex:0, sessionStats:{total:0,correct:0,xpEarned:0}, currentDeckId:null },
+    audio:{ currentIndex:0, isRecording:false },
+    confirmCallback:null
+};
+
+// ============================================
+// ============= UTILITY FUNCTIONS ============
+// ============================================
+function generateId() { return Date.now().toString(36)+Math.random().toString(36).substr(2,9); }
+function getToday() { return new Date().toISOString().split('T')[0]; }
+function escapeHtml(str) { if(!str)return''; const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+// FIX #15: Sanitize HTML from Anki to prevent XSS
+function sanitizeHtml(html) {
+    if(!html)return'';
+    // Remove script tags and event handlers
+    let clean = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    clean = clean.replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '');
+    clean = clean.replace(/\bon\w+\s*=\s*\S+/gi, '');
+    clean = clean.replace(/javascript\s*:/gi, '');
+    return clean;
+}
+function stripHtml(html) { if(!html)return''; const t=document.createElement('div'); t.innerHTML=html; return t.textContent||t.innerText||''; }
+function showToast(message, type='info') {
+    const c=document.getElementById('toastContainer');
+    const t=document.createElement('div'); t.className=`toast ${type}`;
+    const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+    t.innerHTML=`<span class="toast-icon">${icons[type]||icons.info}</span><span class="toast-message">${message}</span><button class="toast-close" onclick="this.parentElement.remove()">✕</button>`;
+    c.appendChild(t);
+    setTimeout(()=>{if(t.parentElement)t.remove();},4000);
+}
+function showConfirmDialog(title,message,callback,icon='⚠️') {
+    document.getElementById('confirmIcon').textContent=icon;
+    document.getElementById('confirmTitle').textContent=title;
+    document.getElementById('confirmMessage').textContent=message;
+    document.getElementById('confirmDialog').classList.add('active');
+    appState.confirmCallback=callback;
+}
+function closeConfirmDialog() { document.getElementById('confirmDialog').classList.remove('active'); appState.confirmCallback=null; }
+function confirmAction() { if(appState.confirmCallback)appState.confirmCallback(); closeConfirmDialog(); }
+function showConfetti() {
+    const c=document.getElementById('confettiContainer'); c.innerHTML='';
+    const colors=['#667eea','#764ba2','#f093fb','#ffd700','#2ecc71','#e74c3c','#3498db'];
+    for(let i=0;i<50;i++){const cf=document.createElement('div');cf.className='confetti';cf.style.left=Math.random()*100+'%';cf.style.background=colors[Math.floor(Math.random()*colors.length)];cf.style.animationDelay=Math.random()*2+'s';cf.style.animationDuration=(2+Math.random()*2)+'s';cf.style.borderRadius=Math.random()>0.5?'50%':'0';cf.style.width=(6+Math.random()*8)+'px';cf.style.height=(6+Math.random()*8)+'px';c.appendChild(cf);}
+    setTimeout(()=>c.innerHTML='',4000);
+}
+function closeLevelUp() { document.getElementById('levelUpOverlay').classList.remove('active'); }
+
+// ============================================
+// ============= SETTINGS =====================
+// ============================================
+async function loadSettings() {
+    try {
+        const s=await dbGet('settings','appSettings'); if(s)appState.settings={...appState.settings,...s.value};
+        const u=await dbGet('settings','userData'); if(u)appState.user={...appState.user,...u.value};
+        applySettings();
+    } catch(e) { console.error('Error loading settings:',e); }
+}
+async function saveSettings() { try{await dbPut('settings',{key:'appSettings',value:appState.settings});await dbPut('settings',{key:'userData',value:appState.user});}catch(e){console.error('Error saving settings:',e);} }
+function applySettings() {
+    if(appState.settings.darkMode){document.body.classList.add('dark-mode');const t=document.getElementById('darkModeToggle');if(t)t.classList.add('active');}
+    if(appState.settings.autoPlay){const t=document.getElementById('autoPlayToggle');if(t)t.classList.add('active');}
+    if(appState.settings.reminder){const t=document.getElementById('reminderToggle');if(t)t.classList.add('active');}
+}
+function refreshSettingsPage() {
+    const dt=document.getElementById('darkModeToggle'),at=document.getElementById('autoPlayToggle'),rt=document.getElementById('reminderToggle'),dg=document.getElementById('dailyGoalSelect'),nc=document.getElementById('newCardsPerDaySelect');
+    if(dt)dt.classList.toggle('active',appState.settings.darkMode);
+    if(at)at.classList.toggle('active',appState.settings.autoPlay);
+    if(rt)rt.classList.toggle('active',appState.settings.reminder);
+    if(dg)dg.value=appState.settings.dailyGoal;
+    if(nc)nc.value=appState.settings.newCardsPerDay;
+}
+function toggleDarkMode(){appState.settings.darkMode=!appState.settings.darkMode;document.body.classList.toggle('dark-mode');document.getElementById('darkModeToggle').classList.toggle('active');saveSettings();}
+function toggleAutoPlay(){appState.settings.autoPlay=!appState.settings.autoPlay;document.getElementById('autoPlayToggle').classList.toggle('active');saveSettings();}
+function toggleReminder(){appState.settings.reminder=!appState.settings.reminder;document.getElementById('reminderToggle').classList.toggle('active');saveSettings();}
+function updateDailyGoal(){appState.settings.dailyGoal=parseInt(document.getElementById('dailyGoalSelect').value);saveSettings();}
+function updateNewCardsPerDay(){appState.settings.newCardsPerDay=parseInt(document.getElementById('newCardsPerDaySelect').value);saveSettings();}
+
+// ============================================
+// ============= XP & LEVEL ===================
+// ============================================
+function addXP(amount) {
+    appState.user.xp+=amount;
+    const newLevel=Math.floor(appState.user.xp/100)+1;
+    if(newLevel>appState.user.level){appState.user.level=newLevel;document.getElementById('levelUpSubtitle').textContent=`به سطح ${newLevel} رسیدید`;document.getElementById('levelUpOverlay').classList.add('active');setTimeout(closeLevelUp,3000);}
+    saveSettings();updateXPDisplay();
+}
+function updateXPDisplay() { const l=document.getElementById('userLevel');if(l)l.textContent=appState.user.level; }
+function checkStreak() {
+    const today=getToday();
+    if(appState.user.lastStudyDate!==today){
+        const yesterday=new Date(Date.now()-86400000).toISOString().split('T')[0];
+        if(appState.user.lastStudyDate===yesterday||!appState.user.lastStudyDate)appState.user.streak+=1;
+        else appState.user.streak=1;
+        appState.user.lastStudyDate=today;
+        appState.user.streakRewardClaimed=false;
+        if(appState.user.streak>appState.user.bestStreak)appState.user.bestStreak=appState.user.streak;
+        saveSettings();
+    }
+}
+function claimStreakReward() {
+    if(appState.user.streakRewardClaimed)return;
+    appState.user.streakRewardClaimed=true;
+    const xp=Math.min(appState.user.streak*5,50);
+    addXP(xp);showToast(`🎁 ${xp} XP پاداش استریک!`,'success');showConfetti();saveSettings();refreshHomePage();
+}
+function updateGreeting() {
+    const h=new Date().getHours();let g='سلام!';
+    if(h<12)g='صبح بخیر! ☀️';else if(h<17)g='ظهر بخیر! 🌤️';else if(h<21)g='عصر بخیر! 🌅';else g='شب بخیر! 🌙';
+    document.getElementById('headerGreeting').textContent=g;
+}
+
+// ============================================
+// ============= PAGE NAVIGATION ==============
+// ============================================
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const page=document.getElementById(pageId);if(page){page.classList.add('active');appState.currentPage=pageId;}
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===pageId));
+    switch(pageId){
+        case'homePage':refreshHomePage();break;case'libraryPage':refreshLibraryPage();break;case'statsPage':refreshStatsPage();break;
+        case'tagsPage':refreshTagsPage();break;case'addCardPage':refreshAddCardPage();break;case'challengesPage':refreshChallengesPage();break;
+        case'settingsPage':refreshSettingsPage();break;
+    }
+    window.scrollTo(0,0);
+}
+
+// ============================================
+// ============= HOME PAGE ====================
+// ============================================
+const wordsOfDay=[
+    {word:'Serendipity',phonetic:'/ˌserənˈdɪpəti/',meaning:'اتفاق خوب و غیرمنتظره'},
+    {word:'Ephemeral',phonetic:'/ɪˈfemərəl/',meaning:'زودگذر، فانی'},
+    {word:'Eloquent',phonetic:'/ˈeləkwənt/',meaning:'فصیح، بلیغ'},
+    {word:'Resilient',phonetic:'/rɪˈzɪliənt/',meaning:'تاب‌آور، مقاوم'},
+    {word:'Ubiquitous',phonetic:'/juːˈbɪkwɪtəs/',meaning:'همه‌جاحاضر، فراگیر'},
+    {word:'Pragmatic',phonetic:'/præɡˈmætɪk/',meaning:'عمل‌گرا، واقع‌بین'},
+    {word:'Ambiguous',phonetic:'/æmˈbɪɡjuəs/',meaning:'مبهم، دوپهلو'},
+];
+function updateWordOfDay(){const d=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/86400000);const w=wordsOfDay[d%wordsOfDay.length];document.getElementById('wodWord').textContent=w.word;document.getElementById('wodPhonetic').textContent=w.phonetic;document.getElementById('wodMeaning').textContent=w.meaning;}
+
+async function refreshHomePage() {
+    updateGreeting();updateWordOfDay();updateXPDisplay();
+    document.getElementById('streakCount').textContent=appState.user.streak;
+    const reward=document.getElementById('streakReward');
+    if(appState.user.streakRewardClaimed){reward.classList.add('claimed');document.getElementById('streakRewardDesc').textContent='✅ پاداش امروز دریافت شد';}
+    else{reward.classList.remove('claimed');document.getElementById('streakRewardDesc').textContent='برای دریافت پاداش کلیک کنید';}
+    try {
+        const todayStats=await dbGet('stats',getToday());
+        const reviewed=todayStats?todayStats.reviewed:0,correct=todayStats?todayStats.correct:0,newCards=todayStats?todayStats.newCards:0;
+        const goal=appState.settings.dailyGoal,percent=Math.min(100,Math.round((reviewed/goal)*100));
+        document.getElementById('reviewedToday').textContent=reviewed;document.getElementById('dailyGoal').textContent=goal;
+        document.getElementById('newToday').textContent=`${newCards}/${appState.settings.newCardsPerDay}`;
+        document.getElementById('accuracyToday').textContent=reviewed>0?`${Math.round((correct/reviewed)*100)}%`:'0%';
+        document.getElementById('progressBarFill').style.width=`${percent}%`;
+        const decks=await dbGetAll('decks');
+        let html='';
+        for(const deck of decks.slice(0,5)){
+            const cards=await dbGetByIndex('cards','deck',deck.id);
+            const due=cards.filter(c=>c.state!==0&&new Date(c.due)<=new Date()).length;
+            const nw=cards.filter(c=>c.state===0).length;
+            html+=`<div class="deck-item" onclick="openDeckDetail('${deck.id}')"><span class="deck-item-icon">${deck.icon||'📚'}</span><span class="deck-item-name">${escapeHtml(deck.name)}</span><span class="deck-item-count">${due} مرور | ${nw} جدید</span></div>`;
+        }
+        document.getElementById('deckList').innerHTML=html||'<div style="text-align:center;color:var(--text-secondary);padding:16px">دکی وجود ندارد</div>';
+        renderMedals();
+    }catch(e){console.error('Error refreshing home:',e);}
+}
+function renderMedals() {
+    const medals=[{icon:'🌱',name:'تازه‌کار',earned:appState.user.totalReviews>=1},{icon:'📖',name:'خوان',earned:appState.user.totalReviews>=50},{icon:'🔥',name:'آتشین',earned:appState.user.bestStreak>=7},{icon:'🏆',name:'قهرمان',earned:appState.user.totalReviews>=500},{icon:'💎',name:'الماس',earned:appState.user.level>=5},{icon:'🎯',name:'دقیق',earned:appState.user.totalReviews>=100},{icon:'⭐',name:'ستاره',earned:appState.user.level>=10},{icon:'👑',name:'شاه',earned:appState.user.bestStreak>=30}];
+    document.getElementById('medalsGrid').innerHTML=medals.map(m=>`<div class="medal-item ${m.earned?'earned':''}"><span class="medal-item-icon">${m.icon}</span><div class="medal-item-name">${m.name}</div></div>`).join('');
+}
+
+// ============================================
+// ============= REVIEW SYSTEM ================
+// ============================================
+function selectReviewMode(mode){appState.review.mode=mode;startReview();}
+async function startReview(specificDeckId) {
+    try {
+        const now=new Date(); let allCards=[];
+        if(specificDeckId)allCards=await dbGetByIndex('cards','deck',specificDeckId);
+        else allCards=await dbGetAll('cards');
+        if(allCards.length===0){showToast('کارتی برای مرور وجود ندارد','warning');return;}
+        const todayStats=await dbGet('stats',getToday());
+        const newCardsToday=todayStats?todayStats.newCards:0,maxNew=appState.settings.newCardsPerDay;
+        const dueCards=allCards.filter(c=>c.state!==0&&new Date(c.due)<=now);
+        const remainingNew=Math.max(0,maxNew-newCardsToday);
+        const newCards=allCards.filter(c=>c.state===0).slice(0,remainingNew);
+        let queue=[...dueCards,...newCards];
+        if(queue.length===0){showToast('تمام کارت‌ها مرور شده‌اند! 🎉','success');return;}
+        for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}
+        appState.review.queue=queue;appState.review.currentIndex=0;appState.review.sessionStats={total:0,correct:0,xpEarned:0};
+        document.getElementById('modeSelect').style.display='none';document.getElementById('reviewSession').style.display='block';document.getElementById('reviewComplete').style.display='none';
+        showCurrentCard();
+    }catch(e){showToast('خطا در شروع مرور','error');console.error(e);}
+}
+function showCurrentCard() {
+    const queue=appState.review.queue,index=appState.review.currentIndex;
+    if(index>=queue.length){endReviewSession();return;}
+    const card=queue[index],mode=appState.review.mode;
+    const total=queue.length,percent=Math.round((index/total)*100);
+    document.getElementById('reviewProgressFill').style.width=`${percent}%`;
+    document.getElementById('reviewCounter').textContent=`${index+1}/${total}`;
+    document.getElementById('flashcardContainer').style.display='none';document.getElementById('typingContainer').style.display='none';document.getElementById('quizContainer').style.display='none';
+    document.getElementById('showAnswerBtn').style.display='none';document.getElementById('ratingButtons').style.display='none';
+    const front=stripHtml(card.front||''),back=stripHtml(card.back||'');
+    if(mode==='normal'||mode==='reverse'){
+        document.getElementById('flashcardContainer').style.display='block';document.getElementById('flashcardModeIcon').textContent=mode==='normal'?'🔄':'↩️';
+        if(mode==='normal'){document.getElementById('flashcardWord').textContent=front;document.getElementById('flashcardPhonetic').textContent=card.phonetic||'';document.getElementById('flashcardMeaning').textContent=back;}
+        else{document.getElementById('flashcardWord').textContent=back;document.getElementById('flashcardPhonetic').textContent='';document.getElementById('flashcardMeaning').textContent=front;}
+        document.getElementById('flashcardExample').textContent=card.example||'';document.getElementById('flashcardMnemonic').textContent=card.phonetic||'';
+        // Handle Anki HTML cards
+        document.getElementById('flashcardMediaFront').innerHTML='';document.getElementById('flashcardMediaBack').innerHTML='';
+        if(card.frontHtml&&card.frontHtml.trim()){
+            document.getElementById('flashcardMediaFront').innerHTML=`<div class="anki-card-html">${sanitizeHtml(card.frontHtml)}</div>`;
+        }
+        if(card.backHtml&&card.backHtml.trim()){
+            document.getElementById('flashcardMediaBack').innerHTML=`<div class="anki-card-html">${sanitizeHtml(card.backHtml)}</div>`;
+        }
+        document.getElementById('flashcardFront').style.display='block';document.getElementById('flashcardAnswer').classList.remove('show');
+        document.getElementById('showAnswerBtn').style.display='block';
+        if(appState.settings.autoPlay&&mode==='normal')speakWord(front);
+    } else if(mode==='typing'){
+        document.getElementById('typingContainer').style.display='block';document.getElementById('typingWord').textContent=back;document.getElementById('typingPhonetic').textContent='';
+        document.getElementById('typingInput').value='';document.getElementById('typingResult').style.display='none';document.getElementById('typingInput').focus();
+    } else if(mode==='quiz'){
+        document.getElementById('quizContainer').style.display='block';document.getElementById('quizWord').textContent=front;document.getElementById('quizPhonetic').textContent=card.phonetic||'';
+        document.getElementById('quizResult').style.display='none';generateQuizOptions(card);
+    }
+    const intervals=FSRS.getIntervals(card);
+    document.getElementById('timeAgain').textContent=intervals[1];document.getElementById('timeHard').textContent=intervals[2];
+    document.getElementById('timeGood').textContent=intervals[3];document.getElementById('timeEasy').textContent=intervals[4];
+}
+function showAnswer(){document.getElementById('flashcardAnswer').classList.add('show');document.getElementById('showAnswerBtn').style.display='none';document.getElementById('ratingButtons').style.display='grid';}
+function speakCurrentCard(){const q=appState.review.queue,i=appState.review.currentIndex;if(i<q.length)speakWord(stripHtml(q[i].front||''));}
+// FIX #13: Improved quiz option generation
+async function generateQuizOptions(card) {
+    const correctAnswer=stripHtml(card.back||'');
+    let allCards=await dbGetAll('cards');
+    // Get unique backs excluding current card
+    let otherBacks=[...new Set(allCards.filter(c=>c.id!==card.id&&c.back).map(c=>stripHtml(c.back)))];
+    // Shuffle
+    for(let i=otherBacks.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[otherBacks[i],otherBacks[j]]=[otherBacks[j],otherBacks[i]];}
+    // Pick 3 wrong answers (or fewer if not enough cards)
+    let wrongAnswers=otherBacks.filter(b=>b!==correctAnswer).slice(0,3);
+    // If not enough wrong answers, add placeholder options
+    const placeholders=['گزینه الف','گزینه ب','گزینه ج'];
+    while(wrongAnswers.length<3){wrongAnswers.push(placeholders[wrongAnswers.length]);}
+    let options=[correctAnswer,...wrongAnswers];
+    // Shuffle options
+    for(let i=options.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[options[i],options[j]]=[options[j],options[i]];}
+    const container=document.getElementById('quizOptions');
+    container.innerHTML=options.map(opt=>`<button class="btn btn-outline btn-block" style="text-align:right;justify-content:flex-start" onclick="checkQuizAnswer(this,'${escapeHtml(opt).replace(/'/g,"\\'")}','${escapeHtml(correctAnswer).replace(/'/g,"\\'")}')">${escapeHtml(opt)}</button>`).join('');
+}
+function checkQuizAnswer(btn,selected,correct) {
+    const resultDiv=document.getElementById('quizResult');resultDiv.style.display='block';
+    document.querySelectorAll('#quizOptions button').forEach(b=>{b.disabled=true;});
+    if(selected===correct){btn.style.background='var(--success)';btn.style.color='white';resultDiv.innerHTML='<div style="color:var(--success);font-weight:600">✅ صحیح!</div>';autoRate(3);}
+    else{btn.style.background='var(--danger)';btn.style.color='white';resultDiv.innerHTML=`<div style="color:var(--danger);font-weight:600">❌ پاسخ صحیح: ${escapeHtml(correct)}</div>`;autoRate(1);}
+}
+function checkTypingAnswer() {
+    const input=document.getElementById('typingInput').value.trim().toLowerCase();
+    const card=appState.review.queue[appState.review.currentIndex];
+    const correct=stripHtml(card.front||'').toLowerCase();
+    const resultDiv=document.getElementById('typingResult');resultDiv.style.display='block';
+    if(input===correct){resultDiv.innerHTML='<div style="color:var(--success);font-weight:600">✅ صحیح!</div>';autoRate(3);}
+    else{resultDiv.innerHTML=`<div style="color:var(--danger);font-weight:600">❌ پاسخ صحیح: ${escapeHtml(stripHtml(card.front||''))}</div>`;autoRate(1);}
+}
+function autoRate(rating){setTimeout(()=>rateCard(rating),1500);}
+async function rateCard(rating) {
+    const queue=appState.review.queue,index=appState.review.currentIndex;
+    if(index>=queue.length)return;
+    let card=queue[index]; const wasNew=card.state===0;
+    const updated=FSRS.schedule(card,rating);
+    const fullCard=await dbGet('cards',card.id);
+    if(fullCard){
+        Object.assign(fullCard,{due:updated.due,stability:updated.stability,difficulty:updated.difficulty,elapsed_days:updated.elapsed_days,scheduled_days:updated.scheduled_days,reps:updated.reps,lapses:updated.lapses,state:updated.state,last_review:updated.last_review,reviews:(fullCard.reviews||0)+1,correctCount:(fullCard.correctCount||0)+(rating>=3?1:0)});
+        await dbPut('cards',fullCard);
+    }
+    appState.review.sessionStats.total+=1;if(rating>=3)appState.review.sessionStats.correct+=1;
+    const xp=rating===4?5:rating===3?3:rating===2?1:0;appState.review.sessionStats.xpEarned+=xp;
+    await updateDailyStats(rating>=3,wasNew);
+    if(rating===1){const pos=Math.min(index+3+Math.floor(Math.random()*5),queue.length);queue.splice(pos,0,{...card,...updated});}
+    appState.review.currentIndex+=1;showCurrentCard();
+}
+async function updateDailyStats(isCorrect,isNew) {
+    const today=getToday();let stats=await dbGet('stats',today);
+    if(!stats)stats={date:today,reviewed:0,correct:0,newCards:0,xp:0};
+    stats.reviewed+=1;if(isCorrect)stats.correct+=1;if(isNew)stats.newCards+=1;
+    await dbPut('stats',stats);checkStreak();
+}
+function endReviewSession() {
+    const stats=appState.review.sessionStats;
+    document.getElementById('reviewSession').style.display='none';document.getElementById('reviewComplete').style.display='block';
+    document.getElementById('completeTotal').textContent=stats.total;document.getElementById('completeCorrect').textContent=stats.correct;
+    document.getElementById('completeAccuracy').textContent=stats.total>0?`${Math.round((stats.correct/stats.total)*100)}%`:'0%';
+    document.getElementById('completeXP').textContent=`+${stats.xpEarned} XP`;
+    addXP(stats.xpEarned);if(stats.total>0)showConfetti();
+    appState.user.totalReviews+=stats.total;saveSettings();
+}
+function endReview(){showConfirmDialog('پایان مرور','آیا می‌خواهید مرور را پایان دهید؟',()=>{if(appState.review.sessionStats.total>0)endReviewSession();else{showPage('homePage');document.getElementById('modeSelect').style.display='block';document.getElementById('reviewSession').style.display='none';}});}
+
+// ============================================
+// =========== ANKI IMPORT (FIXED) ============
+// ============================================
+let ankiParsedData = null;
+
+document.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(()=>{
+        const area=document.getElementById('ankiImportArea');
+        if(area){
+            area.addEventListener('dragover',e=>{e.preventDefault();area.classList.add('dragover');});
+            area.addEventListener('dragleave',()=>area.classList.remove('dragover'));
+            area.addEventListener('drop',e=>{e.preventDefault();area.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)processAnkiFile(f);});
+        }
+    },500);
+});
+function handleAnkiFile(event){const f=event.target.files[0];if(!f)return;processAnkiFile(f);event.target.value='';}
+function resetAnkiImport(){
+    ['ankiFileInfo','ankiProcessing','ankiDecksList','ankiImportBtn','ankiImportProgress','ankiSuccess','ankiError','ankiPreview'].forEach(id=>{
+        const el=document.getElementById(id);if(el)el.classList.remove('show');
+    });
+    ankiParsedData=null;
+}
+function formatFileSize(bytes){if(bytes<1024)return bytes+' B';if(bytes<1048576)return(bytes/1024).toFixed(1)+' KB';return(bytes/1048576).toFixed(1)+' MB';}
+function loadScript(src){return new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`)){res();return;}const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error(`Failed to load: ${src}`));document.head.appendChild(s);});}
+function escapeRegex(string){return string.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+
+async function processAnkiFile(file) {
+    const validExtensions=['.apkg','.colpkg'];
+    if(!validExtensions.some(ext=>file.name.toLowerCase().endsWith(ext))){showToast('فرمت فایل پشتیبانی نمی‌شود. لطفاً فایل .apkg یا .colpkg انتخاب کنید','error');return;}
+    resetAnkiImport();
+    document.getElementById('ankiFileInfo').classList.add('show');
+    document.getElementById('ankiFileName').textContent=file.name;
+    document.getElementById('ankiFileSize').textContent=formatFileSize(file.size);
+    document.getElementById('ankiProcessing').classList.add('show');
+    try {
+        if(typeof JSZip==='undefined')await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+        if(typeof initSqlJs==='undefined')await loadScript('https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js');
+        const arrayBuffer=await file.arrayBuffer();
+        const zip=await JSZip.loadAsync(arrayBuffer);
+        let dbFile=null,mediaJson=null,mediaFiles={};
+        for(const [filename,zipEntry] of Object.entries(zip.files)){
+            // FIX #1: Support both old and new Anki formats
+            if(filename==='collection.anki2'||filename==='collection.anki21'||filename==='collection.anki21b'){
+                dbFile=await zipEntry.async('uint8array');
+            } else if(filename==='media'){
+                try{mediaJson=JSON.parse(await zipEntry.async('text'));}catch(e){mediaJson={};}
+            } else if(/^\d+$/.test(filename)){
+                mediaFiles[filename]=zipEntry;
+            }
+        }
+        if(!dbFile)throw new Error('فایل دیتابیس Anki در بسته یافت نشد');
+        const SQL=await initSqlJs({locateFile:f=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${f}`});
+        const ankiDb=new SQL.Database(dbFile);
+        ankiParsedData=await parseAnkiDatabase(ankiDb,mediaJson,mediaFiles,zip);
+        ankiDb.close();
+        document.getElementById('ankiProcessing').classList.remove('show');
+        if(ankiParsedData.decks.length===0)throw new Error('هیچ دکی در فایل یافت نشد');
+        renderAnkiDecks(ankiParsedData.decks);
+        // FIX #18: Show preview of first few cards
+        showAnkiPreview(ankiParsedData);
+    } catch(e) {
+        document.getElementById('ankiProcessing').classList.remove('show');
+        document.getElementById('ankiError').classList.add('show');
+        document.getElementById('ankiErrorText').textContent=e.message||'خطا در پردازش فایل Anki';
+        console.error('Anki import error:',e);
+    }
+}
+
+// FIX #18: Show preview of imported cards
+function showAnkiPreview(data) {
+    const previewEl=document.getElementById('ankiPreview');
+    const cardsEl=document.getElementById('ankiPreviewCards');
+    if(data.cards.length===0)return;
+    const sampleCards=data.cards.slice(0,3);
+    let html='';
+    for(const c of sampleCards){
+        const front=stripHtml(c.front||'').substring(0,60);
+        const back=stripHtml(c.back||'').substring(0,60);
+        html+=`<div class="anki-preview-card"><b>جلو:</b> ${escapeHtml(front)}<br><b>پشت:</b> ${escapeHtml(back)}</div>`;
+    }
+    if(data.cards.length>3)html+=`<div style="font-size:12px;color:var(--text-secondary);text-align:center">و ${data.cards.length-3} کارت دیگر...</div>`;
+    cardsEl.innerHTML=html;
+    previewEl.classList.add('show');
+}
+
+async function parseAnkiDatabase(ankiDb, mediaJson, mediaFiles, zip) {
+    const result={decks:[],cards:[],models:{},media:{}};
+    // === Parse Models ===
+    try {
+        const modelsResult=ankiDb.exec("SELECT models FROM col");
+        if(modelsResult.length>0){
+            const models=JSON.parse(modelsResult[0].values[0][0]);
+            for(const [modelId,model] of Object.entries(models)){
+                result.models[modelId]={name:model.name,fields:model.flds.map(f=>f.name),templates:model.tmpls.map(t=>({name:t.name,qfmt:t.qfmt,afmt:t.afmt})),css:model.css||'',type:model.type||0};
+            }
+        }
+    } catch(e) {
+        // FIX #1: Try Anki 2.1.28+ format with separate tables
+        try {
+            const modelsResult=ankiDb.exec("SELECT id, name FROM notetypes");
+            if(modelsResult.length>0){
+                for(const row of modelsResult[0].values){
+                    const modelId=row[0].toString();
+                    let fields=[],templates=[],css='',type=0;
+                    try{const fr=ankiDb.exec(`SELECT name, ord FROM fields WHERE ntid=${row[0]} ORDER BY ord`);if(fr.length>0)fields=fr[0].values.map(f=>f[0]);}catch(e2){}
+                    try{const tr=ankiDb.exec(`SELECT name, qfmt, afmt FROM templates WHERE ntid=${row[0]} ORDER BY ord`);if(tr.length>0)templates=tr[0].values.map(t=>({name:t[0],qfmt:t[1],afmt:t[2]}));}catch(e2){}
+                    result.models[modelId]={name:row[1],fields,templates,css,type};
+                }
+            }
+        } catch(e2) { console.warn('Error parsing notetypes:',e2); }
+    }
+    // === Parse Decks ===
+    try {
+        const decksResult=ankiDb.exec("SELECT decks FROM col");
+        if(decksResult.length>0){
+            const decks=JSON.parse(decksResult[0].values[0][0]);
+            for(const [deckId,deck] of Object.entries(decks)){
+                // FIX #3: Better Default deck filtering
+                if(deck.name==='Default'||deck.name==='default')continue;
+                result.decks.push({id:deckId,name:deck.name});
+            }
+        }
+    } catch(e) {
+        try{const dr=ankiDb.exec("SELECT id, name FROM decks");if(dr.length>0)for(const row of dr[0].values){if(row[1]!=='Default'&&row[1]!=='default')result.decks.push({id:row[0].toString(),name:row[1]});}}catch(e2){}
+    }
+    if(result.decks.length===0)result.decks.push({id:'1',name:'Imported Deck'});
+    // === Parse Notes & Cards ===
+    try {
+        const notesResult=ankiDb.exec("SELECT id, mid, flds, tags FROM notes");
+        const cardsResult=ankiDb.exec("SELECT id, nid, did, ord, type, queue, ivl, factor, reps, lapses, due FROM cards");
+        if(notesResult.length>0&&cardsResult.length>0){
+            const notesMap={};
+            for(const row of notesResult[0].values){
+                notesMap[row[0]]={id:row[0],mid:row[1].toString(),fields:row[2].split('\x1f'),tags:row[3]?row[3].trim().split(/\s+/):[]};
+            }
+            for(const row of cardsResult[0].values){
+                const cardId=row[0],noteId=row[1],deckId=row[2].toString(),ord=row[3]||0;
+                const type=row[4],interval=row[6],factor=row[7],reps=row[8],lapses=row[9],ankiDue=row[10];
+                const note=notesMap[noteId];if(!note)continue;
+                const model=result.models[note.mid];
+                let front='',back='',frontHtml='',backHtml='';
+                if(model&&model.fields.length>0){
+                    // FIX #5: Support multi-template notes
+                    const templateIndex=Math.min(ord,model.templates.length-1);
+                    const template=model.templates[templateIndex]||model.templates[0];
+                    // FIX #6: Cloze support
+                    if(model.type===1){
+                        // Cloze note type
+                        const clozeNum=ord+1;
+                        frontHtml=renderClozeTemplate(template?template.qfmt:'',model.fields,note.fields,clozeNum,true);
+                        backHtml=renderClozeTemplate(template?template.afmt:'',model.fields,note.fields,clozeNum,false);
+                        front=stripHtml(frontHtml);
+                        back=stripHtml(backHtml);
+                    } else {
+                        front=note.fields[0]||'';
+                        back=note.fields.length>1?note.fields[1]:'';
+                        if(template){
+                            // FIX #7: Replace {{FrontSide}} with actual front content
+                            const renderedFront=renderAnkiTemplate(template.qfmt,model.fields,note.fields);
+                            let renderedBack=template.afmt.replace(/\{\{FrontSide\}\}/g,renderedFront);
+                            renderedBack=renderAnkiTemplate(renderedBack,model.fields,note.fields);
+                            frontHtml=renderedFront;
+                            backHtml=renderedBack;
+                        }
+                    }
+                } else {
+                    front=note.fields[0]||'';
+                    back=note.fields.length>1?note.fields[1]:'';
+                }
+                // FIX #2: Calculate proper due date from Anki
+                let dueDate=new Date().toISOString();
+                if(type===2&&interval>0){
+                    // Review card: due is days since collection creation epoch
+                    // Approximate: if ankiDue > 100000 it's a timestamp, otherwise days
+                    if(ankiDue>100000){dueDate=new Date(ankiDue*1000).toISOString();}
+                    else{const d=new Date();d.setDate(d.getDate()+(ankiDue-Math.floor(Date.now()/86400000)));dueDate=d.toISOString();}
+                } else if(type===1){
+                    // Learning card: due is timestamp in seconds
+                    if(ankiDue>100000)dueDate=new Date(ankiDue*1000).toISOString();
+                }
+                result.cards.push({ankiCardId:cardId,ankiNoteId:noteId,ankiDeckId:deckId,front:stripHtml(front),back:stripHtml(back),frontHtml,backHtml,fields:note.fields,tags:note.tags,type,interval,factor,reps,lapses,ankiDue,calculatedDue:dueDate});
+            }
+        }
+    } catch(e) { console.error('Error parsing notes/cards:',e); }
+    // Count cards per deck
+    for(const deck of result.decks)deck.cardCount=result.cards.filter(c=>c.ankiDeckId===deck.id).length;
+    result.decks=result.decks.filter(d=>d.cardCount>0);
+    // FIX #9: Process media lazily - only store references, not full base64 in memory
+    if(mediaJson){
+        result.mediaMap=mediaJson;
+        result.mediaFiles=mediaFiles;
+    }
+    return result;
+}
+
+// FIX #6: Cloze deletion rendering
+function renderClozeTemplate(template,fieldNames,fieldValues,clozeNum,isFront) {
+    if(!template)return'';
+    let result=template;
+    // First replace field references
+    for(let i=0;i<fieldNames.length;i++){
+        const name=fieldNames[i],value=fieldValues[i]||'';
+        result=result.replace(new RegExp(`\\{\\{${escapeRegex(name)}\\}\\}`,'g'),value);
+        result=result.replace(new RegExp(`\\{\\{cloze:${escapeRegex(name)}\\}\\}`,'g'),value);
+    }
+    // Process cloze deletions
+    // Active cloze (matching number)
+    if(isFront){
+        result=result.replace(new RegExp(`\\{\\{c${clozeNum}::(.*?)(?:::(.*?))?\\}\\}`,'g'),(m,text,hint)=>{
+            return `<span class="cloze-blank">[${hint||'...'}]</span>`;
+        });
+    } else {
+        result=result.replace(new RegExp(`\\{\\{c${clozeNum}::(.*?)(?:::(.*?))?\\}\\}`,'g'),(m,text)=>{
+            return `<span class="cloze">${text}</span>`;
+        });
+    }
+    // Inactive clozes (different numbers) - show text as-is
+    result=result.replace(/\{\{c\d+::(.*?)(?:::(.*?))?\}\}/g,'$1');
+    result=result.replace(/\{\{FrontSide\}\}/g,'');
+    result=result.replace(/\{\{[^}]*\}\}/g,'');
+    return result;
+}
+
+function renderAnkiTemplate(template,fieldNames,fieldValues) {
+    if(!template)return'';
+    let result=template;
+    for(let i=0;i<fieldNames.length;i++){
+        const name=fieldNames[i],value=fieldValues[i]||'';
+        result=result.replace(new RegExp(`\\{\\{${escapeRegex(name)}\\}\\}`,'g'),value);
+        if(value)result=result.replace(new RegExp(`\\{\\{#${escapeRegex(name)}\\}\\}([\\s\\S]*?)\\{\\{/${escapeRegex(name)}\\}\\}`,'g'),'$1');
+        else result=result.replace(new RegExp(`\\{\\{#${escapeRegex(name)}\\}\\}[\\s\\S]*?\\{\\{/${escapeRegex(name)}\\}\\}`,'g'),'');
+        if(!value)result=result.replace(new RegExp(`\\{\\{\\^${escapeRegex(name)}\\}\\}([\\s\\S]*?)\\{\\{/${escapeRegex(name)}\\}\\}`,'g'),'$1');
+        else result=result.replace(new RegExp(`\\{\\{\\^${escapeRegex(name)}\\}\\}[\\s\\S]*?\\{\\{/${escapeRegex(name)}\\}\\}`,'g'),'');
+    }
+    result=result.replace(/\{\{FrontSide\}\}/g,'');
+    result=result.replace(/\{\{[^}]*\}\}/g,'');
+    return result;
+}
+
+function renderAnkiDecks(decks) {
+    const list=document.getElementById('ankiDecksList');
+    let html='<div style="font-weight:600;margin-bottom:8px">دک‌های یافت شده:</div>';
+    for(const deck of decks){
+        html+=`<div class="anki-deck-item"><input type="checkbox" class="anki-deck-checkbox" value="${deck.id}" checked><div class="anki-deck-name">${escapeHtml(deck.name)}</div><div class="anki-deck-count">${deck.cardCount} کارت</div></div>`;
+    }
+    list.innerHTML=html;list.classList.add('show');document.getElementById('ankiImportBtn').classList.add('show');
+}
+
+async function importSelectedAnkiDecks() {
+    if(!ankiParsedData){showToast('ابتدا یک فایل Anki انتخاب کنید','warning');return;}
+    const checkboxes=document.querySelectorAll('.anki-deck-checkbox:checked');
+    const selectedDeckIds=Array.from(checkboxes).map(cb=>cb.value);
+    if(selectedDeckIds.length===0){showToast('لطفاً حداقل یک دک انتخاب کنید','warning');return;}
+    document.getElementById('ankiDecksList').classList.remove('show');document.getElementById('ankiImportBtn').classList.remove('show');document.getElementById('ankiPreview').classList.remove('show');
+    document.getElementById('ankiImportProgress').classList.add('show');
+    try {
+        let totalImported=0,totalDecks=0;
+        const selectedCards=ankiParsedData.cards.filter(c=>selectedDeckIds.includes(c.ankiDeckId));
+        const totalCards=selectedCards.length;let processedCards=0;
+        for(const ankiDeckId of selectedDeckIds){
+            const ankiDeck=ankiParsedData.decks.find(d=>d.id===ankiDeckId);if(!ankiDeck)continue;
+            const newDeckId=generateId();
+            const deck={id:newDeckId,name:ankiDeck.name,icon:'📥',created:new Date().toISOString(),description:`وارد شده از Anki - ${ankiDeck.cardCount} کارت`,source:'anki'};
+            await dbPut('decks',deck);totalDecks++;
+            const deckCards=ankiParsedData.cards.filter(c=>c.ankiDeckId===ankiDeckId);
+            const batchSize=100;
+            for(let i=0;i<deckCards.length;i+=batchSize){
+                const batch=deckCards.slice(i,i+batchSize);
+                const cardsToInsert=[];
+                for(const ankiCard of batch){
+                    const fsrsCard=FSRS.createCard();
+                    let state=0;
+                    if(ankiCard.type===0)state=0;else if(ankiCard.type===1)state=1;else if(ankiCard.type===2)state=2;else if(ankiCard.type===3)state=3;
+                    // FIX #8: Proper factor-to-difficulty conversion
+                    let stability=fsrsCard.stability,difficulty=fsrsCard.difficulty;
+                    if(ankiCard.interval>0)stability=ankiCard.interval;
+                    if(ankiCard.factor>0){
+                        // Anki factor: 2500=normal, 1300=hard, 3500+=easy
+                        // FSRS difficulty: 1=easy, 10=hard
+                        // Map: factor 1300->8, 2500->5, 3500->2
+                        difficulty=Math.max(1,Math.min(10, 11.9 - (ankiCard.factor / 437)));
+                    }
+                    // FIX #2: Use calculated due date instead of "now"
+                    const card={
+                        id:generateId(),deck:newDeckId,
+                        front:ankiCard.front||'',back:ankiCard.back||'',
+                        frontHtml:ankiCard.frontHtml||'',backHtml:ankiCard.backHtml||'',
+                        phonetic:'',example:'',
+                        tag:ankiCard.tags?ankiCard.tags.join(', '):'',
+                        fields:ankiCard.fields||[],
+                        due:ankiCard.calculatedDue||fsrsCard.due,
+                        stability,difficulty,
+                        elapsed_days:fsrsCard.elapsed_days,scheduled_days:ankiCard.interval||0,
+                        reps:ankiCard.reps||0,lapses:ankiCard.lapses||0,
+                        state,last_review:fsrsCard.last_review,
+                        created:new Date().toISOString(),reviews:ankiCard.reps||0,correctCount:0,source:'anki'
+                    };
+                    cardsToInsert.push(card);totalImported++;processedCards++;
+                }
+                await dbPutBatch('cards',cardsToInsert);
+                const percent=Math.round((processedCards/totalCards)*100);
+                document.getElementById('ankiImportProgressFill').style.width=`${percent}%`;
+                document.getElementById('ankiImportProgressText').textContent=`${percent}% (${processedCards}/${totalCards})`;
+                await new Promise(r=>setTimeout(r,10));
+            }
+            // FIX #4 & #9: Import media efficiently per deck
+            if(ankiParsedData.mediaMap&&ankiParsedData.mediaFiles){
+                const entries=Object.entries(ankiParsedData.mediaMap);
+                const mediaBatch=[];
+                for(let i=0;i<entries.length;i+=50){
+                    const chunk=entries.slice(i,i+50);
+                    for(const [numKey,realName] of chunk){
+                        if(ankiParsedData.mediaFiles[numKey]){
+                            try{
+                                const data=await ankiParsedData.mediaFiles[numKey].async('base64');
+                                const ext=realName.split('.').pop().toLowerCase();
+                                let mimeType='application/octet-stream';
+                                if(['jpg','jpeg'].includes(ext))mimeType='image/jpeg';
+                                else if(ext==='png')mimeType='image/png';else if(ext==='gif')mimeType='image/gif';
+                                else if(ext==='svg')mimeType='image/svg+xml';else if(ext==='webp')mimeType='image/webp';
+                                else if(ext==='mp3')mimeType='audio/mpeg';else if(ext==='ogg')mimeType='audio/ogg';
+                                else if(ext==='wav')mimeType='audio/wav';else if(ext==='mp4')mimeType='video/mp4';
+                                mediaBatch.push({filename:realName,data:`data:${mimeType};base64,${data}`,deck:newDeckId});
+                            }catch(e){console.warn(`Error media ${numKey}:`,e);}
+                        }
+                    }
+                    if(mediaBatch.length>0){try{await dbPutBatch('media',mediaBatch.splice(0));}catch(e){console.warn('Media batch error:',e);}}
+                    await new Promise(r=>setTimeout(r,5));
+                }
+            }
+        }
+        document.getElementById('ankiImportProgress').classList.remove('show');
+        document.getElementById('ankiSuccess').classList.add('show');
+        document.getElementById('ankiSuccessText').textContent=`${totalDecks} دک و ${totalImported} کارت با موفقیت وارد شد`;
+        showToast(`${totalImported} کارت از Anki وارد شد!`,'success');addXP(Math.min(totalImported,50));
+        ankiParsedData=null;
+    } catch(e) {
+        document.getElementById('ankiImportProgress').classList.remove('show');
+        document.getElementById('ankiError').classList.add('show');
+        document.getElementById('ankiErrorText').textContent=e.message||'خطا در وارد کردن دک‌ها';
+        console.error('Anki import error:',e);
+    }
+}
+
+// ============================================
+// ============= ADD CARD =====================
+// ============================================
+async function refreshAddCardPage(){
+    const select=document.getElementById('addCardDeck');
+    try{const decks=await dbGetAll('decks');let o='<option value="">انتخاب دک...</option>';for(const d of decks)o+=`<option value="${d.id}">${escapeHtml(d.name)}</option>`;select.innerHTML=o;}catch(e){}
+}
+let cardImageData=null;
+function handleCardImage(event){const f=event.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{cardImageData=e.target.result;document.getElementById('imageUpload').innerHTML=`<img src="${cardImageData}" alt="تصویر">`};r.readAsDataURL(f);}
+async function addNewCard(){
+    const deckId=document.getElementById('addCardDeck').value,front=document.getElementById('addCardFront').value.trim(),back=document.getElementById('addCardBack').value.trim();
+    const phonetic=document.getElementById('addCardPhonetic').value.trim(),example=document.getElementById('addCardExample').value.trim(),tag=document.getElementById('addCardTag').value.trim();
+    if(!deckId){showToast('لطفاً یک دک انتخاب کنید','warning');return;}
+    if(!front){showToast('لطفاً روی کارت را پر کنید','warning');return;}
+    if(!back){showToast('لطفاً پشت کارت را پر کنید','warning');return;}
+    const fsrsCard=FSRS.createCard();
+    const card={id:generateId(),deck:deckId,front,back,phonetic,example,tag,image:cardImageData,...fsrsCard,created:new Date().toISOString(),reviews:0,correctCount:0};
+    try{await dbPut('cards',card);['addCardFront','addCardBack','addCardPhonetic','addCardExample','addCardTag'].forEach(id=>document.getElementById(id).value='');cardImageData=null;document.getElementById('imageUpload').innerHTML='<div class="image-upload-icon">📷</div><div class="image-upload-text">کلیک برای انتخاب تصویر</div>';showToast('کارت با موفقیت اضافه شد!','success');addXP(2);}catch(e){showToast('خطا در افزودن کارت','error');}
+}
+
+// ============================================
+// ============= LIBRARY ======================
+// ============================================
+async function refreshLibraryPage(){
+    const content=document.getElementById('libraryContent');
+    try{
+        const decks=await dbGetAll('decks');
+        if(decks.length===0){content.innerHTML='<div class="empty-state"><div class="empty-state-icon">📚</div><div class="empty-state-text">کتابخانه خالی است</div><button class="btn btn-primary" onclick="showPage(\'readyDecksPage\')">افزودن دک</button></div>';return;}
+        let html='';
+        for(const deck of decks){
+            const cards=await dbGetByIndex('cards','deck',deck.id);
+            const now=new Date(),nw=cards.filter(c=>c.state===0).length,due=cards.filter(c=>new Date(c.due)<=now&&c.state!==0).length;
+            const mastered=cards.filter(c=>c.state===2&&c.stability>30).length;
+            const progress=cards.length>0?Math.round((mastered/cards.length)*100):0;
+            html+=`<div class="library-deck" onclick="openDeckDetail('${deck.id}')">
+                <div class="library-deck-header"><div class="library-deck-name">${deck.icon||'📚'} ${escapeHtml(deck.name)}</div></div>
+                <div class="library-deck-stats">
+                    <div class="library-deck-stat"><div class="library-deck-stat-value">${cards.length}</div><div class="library-deck-stat-label">کل</div></div>
+                    <div class="library-deck-stat"><div class="library-deck-stat-value">${nw}</div><div class="library-deck-stat-label">جدید</div></div>
+                    <div class="library-deck-stat"><div class="library-deck-stat-value">${due}</div><div class="library-deck-stat-label">مرور</div></div>
+                </div>
+                <div class="library-deck-progress"><div class="library-deck-progress-fill" style="width:${progress}%"></div></div>
+            </div>`;
+        }
+        content.innerHTML=html;
+    }catch(e){showToast('خطا در بارگذاری','error');}
+}
+function filterLibraryDecks(){const q=document.getElementById('librarySearch').value.toLowerCase();document.querySelectorAll('.library-deck').forEach(d=>{d.style.display=d.textContent.toLowerCase().includes(q)?'block':'none';});}
+function showCreateDeckDialog(){
+    const name=prompt('نام دک جدید:');if(!name||!name.trim())return;
+    const deck={id:generateId(),name:name.trim(),icon:'📚',created:new Date().toISOString(),description:''};
+    dbPut('decks',deck).then(()=>{showToast('دک ایجاد شد!','success');refreshLibraryPage();}).catch(()=>showToast('خطا','error'));
+}
+async function openDeckDetail(deckId){
+    try{
+        const deck=await dbGet('decks',deckId);if(!deck)return;
+        appState.review.currentDeckId=deckId;
+        const cards=await dbGetByIndex('cards','deck',deckId);
+        const now=new Date();
+        document.getElementById('deckDetailName').textContent=`${deck.icon||'📚'} ${deck.name}`;
+        document.getElementById('deckDetailTotal').textContent=cards.length;
+        document.getElementById('deckDetailNew').textContent=cards.filter(c=>c.state===0).length;
+        document.getElementById('deckDetailDue').textContent=cards.filter(c=>new Date(c.due)<=now&&c.state!==0).length;
+        const cardsList=document.getElementById('deckCardsList');
+        let html='';
+        for(const card of cards.slice(0,100)){
+            const stateClass=['new','learning','review','relearning'][card.state]||'new';
+            html+=`<div class="deck-card-item"><div style="flex:1;min-width:0"><div class="deck-card-front">${escapeHtml(stripHtml(card.front||'').substring(0,50))}</div><div class="deck-card-back">${escapeHtml(stripHtml(card.back||'').substring(0,50))}</div></div><div class="deck-card-status ${stateClass}"></div></div>`;
+        }
+        if(cards.length>100)html+=`<div style="text-align:center;padding:10px;color:var(--text-secondary);font-size:13px">و ${cards.length-100} کارت دیگر...</div>`;
+        cardsList.innerHTML=html;
+        showPage('deckDetailPage');
+    }catch(e){showToast('خطا در بارگذاری دک','error');}
+}
+function startDeckReview(){const d=appState.review.currentDeckId;if(d)startReview(d);}
+function deleteDeckConfirm(){const d=appState.review.currentDeckId;showConfirmDialog('حذف دک','تمام کارت‌های این دک حذف خواهد شد!',async()=>{try{const cards=await dbGetByIndex('cards','deck',d);for(const c of cards)await dbDelete('cards',c.id);await dbDelete('decks',d);showToast('دک حذف شد','success');showPage('libraryPage');}catch(e){showToast('خطا','error');}},'🗑️');}
+function deleteDeckPrompt(deckId,name){appState.review.currentDeckId=deckId;deleteDeckConfirm();}
+
+// ============================================
+// ============= DICTIONARY ===================
+// ============================================
+let dictEntry=null;
+async function searchDictionary(){
+    const word=document.getElementById('dictSearchInput').value.trim();if(!word){showToast('کلمه‌ای وارد کنید','warning');return;}
+    try{
+        const res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+        if(!res.ok)throw new Error('Not found');
+        const data=await res.json();dictEntry=data[0];
+        document.getElementById('dictWord').textContent=dictEntry.word;
+        document.getElementById('dictPhonetic').textContent=dictEntry.phonetic||'';
+        let html='';
+        for(const meaning of dictEntry.meanings){
+            for(const def of meaning.definitions.slice(0,3)){
+                html+=`<div class="dict-meaning-item"><div class="dict-pos">${meaning.partOfSpeech}</div><div class="dict-def">${def.definition}</div>${def.example?`<div class="dict-example">"${def.example}"</div>`:''}</div>`;
+            }
+        }
+        document.getElementById('dictMeanings').innerHTML=html;document.getElementById('dictResult').classList.add('show');
+    }catch(e){showToast('کلمه یافت نشد','error');document.getElementById('dictResult').classList.remove('show');}
+}
+function playDictWord(){if(dictEntry)speakWord(dictEntry.word);}
+async function addDictWordToDeck(){
+    if(!dictEntry)return;
+    const decks=await dbGetAll('decks');if(decks.length===0){showToast('ابتدا یک دک بسازید','warning');return;}
+    const meaning=dictEntry.meanings[0];const def=meaning?meaning.definitions[0]:null;
+    const fsrsCard=FSRS.createCard();
+    const card={id:generateId(),deck:decks[0].id,front:dictEntry.word,back:def?def.definition:'',phonetic:dictEntry.phonetic||'',example:def&&def.example?def.example:'',tag:'dictionary',image:null,...fsrsCard,created:new Date().toISOString(),reviews:0,correctCount:0};
+    try{await dbPut('cards',card);showToast(`"${dictEntry.word}" به دک "${decks[0].name}" اضافه شد`,'success');addXP(3);}catch(e){showToast('خطا','error');}
+}
+
+// ============================================
+// ============= AUDIO / TTS ==================
+// ============================================
+function speakWord(word){if(!word)return;try{if('speechSynthesis'in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(word);u.lang='en-US';u.rate=0.9;window.speechSynthesis.speak(u);}}catch(e){}}
+let audioWordIndex=0,audioWordsList=[];
+async function initAudioWords(){
+    try{const all=await dbGetAll('cards');audioWordsList=all.filter(c=>c.front).map(c=>({word:stripHtml(c.front),phonetic:c.phonetic||''}));
+    if(audioWordsList.length===0)audioWordsList=[{word:'Listen',phonetic:'/ˈlɪs.ən/'},{word:'Speak',phonetic:'/spiːk/'},{word:'Learn',phonetic:'/lɜːrn/'},{word:'Practice',phonetic:'/ˈpræk.tɪs/'},{word:'Remember',phonetic:'/rɪˈmem.bər/'}];
+    showAudioWord();}catch(e){}
+}
+function showAudioWord(){if(audioWordsList.length===0)return;const i=audioWordsList[audioWordIndex%audioWordsList.length];document.getElementById('audioWord').textContent=i.word;document.getElementById('audioPhonetic').textContent=i.phonetic;}
+function nextAudioWord(){audioWordIndex=(audioWordIndex+1)%Math.max(1,audioWordsList.length);showAudioWord();}
+function prevAudioWord(){audioWordIndex=(audioWordIndex-1+audioWordsList.length)%Math.max(1,audioWordsList.length);showAudioWord();}
+async function playAudioWord(){speakWord(document.getElementById('audioWord').textContent);}
+let mediaRecorder=null,audioChunks=[];
+function toggleRecording(){if(appState.audio.isRecording)stopRecording();else startRecording();}
+async function startRecording(){
+    try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});mediaRecorder=new MediaRecorder(stream);audioChunks=[];
+    mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+    mediaRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(audioChunks,{type:'audio/webm'});const url=URL.createObjectURL(blob);document.getElementById('audioFeedback').innerHTML=`<audio controls src="${url}" style="width:100%;margin-top:8px"></audio><div style="margin-top:8px;color:var(--success);font-weight:600">✅ ضبط شد! گوش دهید و مقایسه کنید</div>`;};
+    mediaRecorder.start();appState.audio.isRecording=true;document.getElementById('recordBtn').classList.add('recording');document.getElementById('recordBtn').textContent='⏹️';document.getElementById('audioFeedback').innerHTML='<div style="color:var(--danger)">🔴 در حال ضبط...</div>';}catch(e){showToast('دسترسی به میکروفون داده نشد','error');}
+}
+function stopRecording(){if(mediaRecorder&&mediaRecorder.state!=='inactive')mediaRecorder.stop();appState.audio.isRecording=false;document.getElementById('recordBtn').classList.remove('recording');document.getElementById('recordBtn').textContent='🎤';}
+
+// ============================================
+// ============= STUDY PAGE ===================
+// ============================================
+const sampleTexts=[{title:'📖 داستان',text:'The little prince lived on a tiny planet no bigger than a house...'},{title:'📰 مقاله',text:'Recent studies have shown that language learning activates multiple regions of the brain...'},{title:'💬 مکالمه',text:'A: Hello! How are you doing today?\nB: I\'m doing great, thanks for asking!'}];
+function loadSampleText(i){if(i>=0&&i<sampleTexts.length){document.getElementById('studyTextarea').value=sampleTexts[i].text;updateStudyStats();}}
+function updateStudyStats(){const t=document.getElementById('studyTextarea').value;document.getElementById('studyWordCount').textContent=t.trim()?t.trim().split(/\s+/).length:0;document.getElementById('studyCharCount').textContent=t.length;}
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{const ta=document.getElementById('studyTextarea');if(ta)ta.addEventListener('input',updateStudyStats);},500);});
+async function saveStudyNote(){const t=document.getElementById('studyTextarea').value.trim();if(!t){showToast('یادداشت خالی است','warning');return;}try{await dbPut('notes',{id:generateId(),text:t,created:new Date().toISOString()});showToast('ذخیره شد!','success');}catch(e){showToast('خطا','error');}}
+
+// ============================================
+// ============= CHALLENGES ===================
+// ============================================
+async function refreshChallengesPage(){
+    const todayStats=await dbGet('stats',getToday())||{reviewed:0,correct:0,newCards:0};
+    const dailyChallenges=[{icon:'📝',name:'مرور ۱۰ کارت',desc:'امروز ۱۰ کارت مرور کنید',current:todayStats.reviewed,target:10,reward:'10 XP'},{icon:'🎯',name:'دقت ۸۰٪',desc:'با دقت بالای ۸۰٪ مرور کنید',current:todayStats.reviewed>0?Math.round((todayStats.correct/todayStats.reviewed)*100):0,target:80,reward:'15 XP'},{icon:'🆕',name:'۵ کارت جدید',desc:'۵ کارت جدید یاد بگیرید',current:todayStats.newCards,target:5,reward:'10 XP'}];
+    let dhtml='';for(const c of dailyChallenges){const p=Math.min(100,Math.round((c.current/c.target)*100));const done=p>=100;dhtml+=`<div class="challenge-item" style="${done?'opacity:0.6':''}"><div class="challenge-icon">${c.icon}</div><div class="challenge-info"><div class="challenge-name">${done?'✅ ':''}${c.name}</div><div class="challenge-desc">${c.desc}</div><div class="challenge-progress-bar"><div class="challenge-progress-fill" style="width:${p}%"></div></div></div><div class="challenge-reward">${c.reward}</div></div>`;}
+    document.getElementById('dailyChallenges').innerHTML=dhtml;
+    const weeklyStats=await getWeeklyStats();
+    const weeklyChallenges=[{icon:'📚',name:'۵۰ مرور هفتگی',current:weeklyStats.reviewed,target:50,reward:'30 XP'},{icon:'🔥',name:'۳ روز متوالی',current:appState.user.streak,target:3,reward:'20 XP'}];
+    let whtml='';for(const c of weeklyChallenges){const p=Math.min(100,Math.round((c.current/c.target)*100));const done=p>=100;whtml+=`<div class="challenge-item" style="${done?'opacity:0.6':''}"><div class="challenge-icon">${c.icon}</div><div class="challenge-info"><div class="challenge-name">${done?'✅ ':''}${c.name}</div><div class="challenge-progress-bar"><div class="challenge-progress-fill" style="width:${p}%"></div></div></div><div class="challenge-reward">${c.reward}</div></div>`;}
+    document.getElementById('weeklyChallenges').innerHTML=whtml;
+    const achievements=[{icon:'🌟',name:'اولین مرور',desc:'اولین مرور را انجام دهید',earned:appState.user.totalReviews>=1},{icon:'💯',name:'صد مرور',desc:'۱۰۰ مرور انجام دهید',earned:appState.user.totalReviews>=100},{icon:'🔥',name:'آتش‌نشان',desc:'۷ روز متوالی مرور',earned:appState.user.bestStreak>=7},{icon:'🎓',name:'فارغ‌التحصیل',desc:'به سطح ۱۰ برسید',earned:appState.user.level>=10}];
+    let ahtml='';for(const a of achievements)ahtml+=`<div class="challenge-item" style="${a.earned?'':'opacity:0.5'}"><div class="challenge-icon">${a.icon}</div><div class="challenge-info"><div class="challenge-name">${a.earned?'✅ ':'🔒 '}${a.name}</div><div class="challenge-desc">${a.desc}</div></div></div>`;
+    document.getElementById('achievements').innerHTML=ahtml;
+}
+async function getWeeklyStats(){let total=0;for(let i=0;i<7;i++){const d=new Date(Date.now()-i*86400000).toISOString().split('T')[0];const s=await dbGet('stats',d);if(s)total+=s.reviewed;}return{reviewed:total};}
+
+// ============================================
+// ============= STATS PAGE ===================
+// ============================================
+async function refreshStatsPage(){
+    try{
+        const allCards=await dbGetAll('cards');
+        document.getElementById('statTotalCards').textContent=allCards.length;document.getElementById('statTotalReviews').textContent=appState.user.totalReviews;document.getElementById('statStreak').textContent=appState.user.bestStreak;
+        const totalCorrect=allCards.reduce((s,c)=>s+(c.correctCount||0),0),totalReviews=allCards.reduce((s,c)=>s+(c.reviews||0),0);
+        document.getElementById('statAccuracy').textContent=totalReviews>0?`${Math.round((totalCorrect/totalReviews)*100)}%`:'0%';
+        let barsHtml='';const days=['ش','ی','د','س','چ','پ','ج'];
+        for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*86400000).toISOString().split('T')[0];const s=await dbGet('stats',d);const v=s?s.reviewed:0;const h=Math.min(100,v*5);barsHtml+=`<div style="flex:1;text-align:center"><div class="stats-bar" style="height:${Math.max(4,h)}%"></div><div class="stats-bar-label">${days[(new Date(d).getDay()+1)%7]}</div></div>`;}
+        document.getElementById('statsBars').innerHTML=barsHtml;
+    }catch(e){}
+}
+
+// ============================================
+// ============= TAGS =========================
+// ============================================
+async function refreshTagsPage(){
+    try{
+        const tags=await dbGetAll('tags');const allCards=await dbGetAll('cards');
+        let html='';for(const tag of tags){const count=allCards.filter(c=>(c.tag||'').includes(tag.name)).length;html+=`<div class="tag-item"><div class="tag-name">🏷️ ${escapeHtml(tag.name)}</div><div class="tag-count">${count} کارت</div></div>`;}
+        document.getElementById('tagsList').innerHTML=html||'<div style="text-align:center;color:var(--text-secondary);padding:20px">تگی وجود ندارد</div>';
+    }catch(e){}
+}
+async function createTag(){const name=document.getElementById('newTagInput').value.trim();if(!name){showToast('نام تگ را وارد کنید','warning');return;}try{await dbPut('tags',{id:generateId(),name,created:new Date().toISOString()});document.getElementById('newTagInput').value='';showToast('تگ ایجاد شد','success');refreshTagsPage();}catch(e){showToast('خطا','error');}}
+
+// ============================================
+// ============= IMPORT / EXPORT ==============
+// ============================================
+async function exportData(){
+    try{
+        const data={version:'3.5',exportDate:new Date().toISOString(),decks:await dbGetAll('decks'),cards:await dbGetAll('cards'),stats:await dbGetAll('stats'),tags:await dbGetAll('tags'),notes:await dbGetAll('notes'),settings:appState.settings,user:appState.user};
+        const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download=`lexora-backup-${getToday()}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+        showToast('پشتیبان ذخیره شد','success');
+    }catch(e){showToast('خطا','error');}
+}
+// FIX #12: Added merge option for import
+async function importData(event){
+    const file=event.target.files[0];if(!file)return;
+    try{
+        const data=JSON.parse(await file.text());if(!data.version){showToast('فایل نامعتبر','error');return;}
+        showConfirmDialog('بازیابی اطلاعات','این عمل تمام داده‌های فعلی را جایگزین می‌کند. ادامه می‌دهید؟',async()=>{
+            try{
+                await dbClearStore('decks');await dbClearStore('cards');await dbClearStore('stats');await dbClearStore('tags');await dbClearStore('notes');
+                if(data.decks)await dbPutBatch('decks',data.decks);if(data.cards)await dbPutBatch('cards',data.cards);if(data.stats)await dbPutBatch('stats',data.stats);if(data.tags)await dbPutBatch('tags',data.tags);if(data.notes)await dbPutBatch('notes',data.notes);
+                if(data.settings)appState.settings={...appState.settings,...data.settings};if(data.user)appState.user={...appState.user,...data.user};
+                await saveSettings();applySettings();showToast('بازیابی انجام شد!','success');showPage('homePage');
+            }catch(e){showToast('خطا در بازیابی','error');}
+        });
+    }catch(e){showToast('فایل نامعتبر','error');}
+    event.target.value='';
+}
+
+// ============================================
+// ============= CLEAR ALL DATA ===============
+// ============================================
+function clearAllData(){showConfirmDialog('⚠️ حذف تمام داده‌ها','تمام کارت‌ها، دک‌ها، آمار و تنظیمات حذف خواهد شد!',async()=>{try{await dbClearStore('decks');await dbClearStore('cards');await dbClearStore('stats');await dbClearStore('tags');await dbClearStore('notes');try{await dbClearStore('media');}catch(e){}appState.user={xp:0,level:1,streak:0,lastStudyDate:null,totalReviews:0,bestStreak:0,streakRewardClaimed:false};await saveSettings();showToast('تمام داده‌ها پاک شد','success');showPage('homePage');}catch(e){showToast('خطا','error');}},'🗑️');}
+
+// ============================================
+// ============= READY DECKS ==================
+// ============================================
+const readyDecksData={
+    essential504:{name:'504 واژه ضروری',icon:'📕',words:[
+        {front:'Abandon',back:'ترک کردن، رها کردن',phonetic:'/əˈbændən/',example:'He abandoned his car in the snow.'},
+        {front:'Keen',back:'مشتاق، تیز',phonetic:'/kiːn/',example:'She has a keen interest in art.'},
+        {front:'Jealous',back:'حسود، غیرتی',phonetic:'/ˈdʒeləs/',example:'He was jealous of his brother.'},
+        {front:'Tact',back:'درایت، ظرافت',phonetic:'/tækt/',example:'She handled it with great tact.'},
+        {front:'Oath',back:'سوگند، قسم',phonetic:'/oʊθ/',example:'He took an oath of loyalty.'},
+        {front:'Vacant',back:'خالی، بلاتصدی',phonetic:'/ˈveɪkənt/',example:'The house has been vacant for months.'},
+        {front:'Hardship',back:'سختی، مشقت',phonetic:'/ˈhɑːrdʃɪp/',example:'They faced many hardships.'},
+        {front:'Gallant',back:'شجاع، دلیر',phonetic:'/ˈɡælənt/',example:'A gallant knight rescued them.'},
+        {front:'Data',back:'داده‌ها، اطلاعات',phonetic:'/ˈdeɪtə/',example:'The data was collected carefully.'},
+        {front:'Unaccustomed',back:'ناآشنا، عادت نکرده',phonetic:'/ˌʌnəˈkʌstəmd/',example:'He was unaccustomed to the cold.'},
+        {front:'Bachelor',back:'مجرد، لیسانس',phonetic:'/ˈbætʃələr/',example:'He remained a bachelor all his life.'},
+        {front:'Qualify',back:'واجد شرایط شدن',phonetic:'/ˈkwɑːlɪfaɪ/',example:'She qualified for the finals.'},
+        {front:'Corpse',back:'جسد، لاشه',phonetic:'/kɔːrps/',example:'The corpse was found in the river.'},
+        {front:'Conceal',back:'پنهان کردن',phonetic:'/kənˈsiːl/',example:'He concealed the truth from everyone.'},
+        {front:'Dismal',back:'دلگیر، تیره',phonetic:'/ˈdɪzməl/',example:'The weather was dismal.'},
+        {front:'Frigid',back:'سرد، یخ‌زده',phonetic:'/ˈfrɪdʒɪd/',example:'The frigid air stung their faces.'},
+        {front:'Inhabit',back:'ساکن بودن، زندگی کردن',phonetic:'/ɪnˈhæbɪt/',example:'Many species inhabit this forest.'},
+        {front:'Numb',back:'بی‌حس، کرخت',phonetic:'/nʌm/',example:'My fingers were numb from the cold.'},
+        {front:'Peril',back:'خطر، مخاطره',phonetic:'/ˈperəl/',example:'The ship was in great peril.'},
+        {front:'Recline',back:'تکیه دادن، لم دادن',phonetic:'/rɪˈklaɪn/',example:'She reclined in her chair.'},
+        {front:'Shriek',back:'جیغ زدن',phonetic:'/ʃriːk/',example:'She let out a shriek of terror.'},
+        {front:'Sinister',back:'شوم، شرورانه',phonetic:'/ˈsɪnɪstər/',example:'There was something sinister about him.'},
+        {front:'Tempt',back:'وسوسه کردن',phonetic:'/tempt/',example:'The dessert tempted her.'},
+        {front:'Wager',back:'شرط‌بندی کردن',phonetic:'/ˈweɪdʒər/',example:'He wagered fifty dollars.'},
+        {front:'Typical',back:'معمولی، نمونه',phonetic:'/ˈtɪpɪkəl/',example:'A typical Monday morning.'},
+        {front:'Minimum',back:'حداقل',phonetic:'/ˈmɪnɪməm/',example:'The minimum age is eighteen.'},
+        {front:'Scarce',back:'کمیاب، نایاب',phonetic:'/skers/',example:'Water is scarce in the desert.'},
+        {front:'Annual',back:'سالانه',phonetic:'/ˈænjuəl/',example:'The annual report was published.'},
+        {front:'Persuade',back:'متقاعد کردن',phonetic:'/pərˈsweɪd/',example:'She persuaded him to stay.'},
+        {front:'Essential',back:'ضروری، لازم',phonetic:'/ɪˈsenʃəl/',example:'Water is essential for life.'},
+    ]},
+    ielts:{name:'لغات IELTS',icon:'📗',words:[
+        {front:'Allocate',back:'تخصیص دادن',phonetic:'/ˈæləkeɪt/',example:'The government allocated funds for education.'},
+        {front:'Comprehensive',back:'جامع، فراگیر',phonetic:'/ˌkɒmprɪˈhensɪv/',example:'A comprehensive review of the literature.'},
+        {front:'Deteriorate',back:'بدتر شدن',phonetic:'/dɪˈtɪəriəreɪt/',example:'His health continued to deteriorate.'},
+        {front:'Elaborate',back:'مفصل، پیچیده',phonetic:'/ɪˈlæbərət/',example:'She gave an elaborate explanation.'},
+        {front:'Fluctuate',back:'نوسان کردن',phonetic:'/ˈflʌktʃueɪt/',example:'Prices fluctuate throughout the year.'},
+        {front:'Implement',back:'اجرا کردن',phonetic:'/ˈɪmplɪment/',example:'They plan to implement new policies.'},
+        {front:'Inevitable',back:'اجتناب‌ناپذیر',phonetic:'/ɪnˈevɪtəbl/',example:'Change is inevitable.'},
+        {front:'Legitimate',back:'مشروع، قانونی',phonetic:'/lɪˈdʒɪtɪmət/',example:'A legitimate business concern.'},
+        {front:'Negligible',back:'ناچیز',phonetic:'/ˈneɡlɪdʒəbl/',example:'The difference was negligible.'},
+        {front:'Predominant',back:'غالب، مسلط',phonetic:'/prɪˈdɒmɪnənt/',example:'English is the predominant language.'},
+        {front:'Subsequent',back:'بعدی، متعاقب',phonetic:'/ˈsʌbsɪkwənt/',example:'Subsequent events proved him right.'},
+        {front:'Undermine',back:'تضعیف کردن',phonetic:'/ˌʌndərˈmaɪn/',example:'Criticism undermined his confidence.'},
+        {front:'Accumulate',back:'جمع‌آوری کردن',phonetic:'/əˈkjuːmjəleɪt/',example:'Snow accumulated on the roads.'},
+        {front:'Anticipate',back:'پیش‌بینی کردن',phonetic:'/ænˈtɪsɪpeɪt/',example:'We anticipate a rise in sales.'},
+        {front:'Coincide',back:'همزمان بودن',phonetic:'/ˌkoʊɪnˈsaɪd/',example:'Our visits coincided.'},
+        {front:'Controversy',back:'بحث، جنجال',phonetic:'/ˈkɒntrəvɜːrsi/',example:'The decision caused controversy.'},
+        {front:'Diminish',back:'کاهش یافتن',phonetic:'/dɪˈmɪnɪʃ/',example:'The pain gradually diminished.'},
+        {front:'Empirical',back:'تجربی',phonetic:'/ɪmˈpɪrɪkl/',example:'Empirical evidence supports the theory.'},
+        {front:'Feasible',back:'عملی، امکان‌پذیر',phonetic:'/ˈfiːzəbl/',example:'Is this plan feasible?'},
+        {front:'Hypothesis',back:'فرضیه',phonetic:'/haɪˈpɒθəsɪs/',example:'We need to test this hypothesis.'},
+        {front:'Infrastructure',back:'زیرساخت',phonetic:'/ˈɪnfrəstrʌktʃər/',example:'The infrastructure needs upgrading.'},
+        {front:'Mitigate',back:'کاهش دادن، تخفیف دادن',phonetic:'/ˈmɪtɪɡeɪt/',example:'Measures to mitigate the effects.'},
+        {front:'Phenomenon',back:'پدیده',phonetic:'/fɪˈnɒmɪnən/',example:'A natural phenomenon.'},
+        {front:'Relevant',back:'مرتبط، مربوط',phonetic:'/ˈreləvənt/',example:'Is this relevant to the discussion?'},
+        {front:'Significant',back:'قابل توجه، مهم',phonetic:'/sɪɡˈnɪfɪkənt/',example:'A significant improvement.'},
+        {front:'Sustain',back:'حفظ کردن، تداوم',phonetic:'/səˈsteɪn/',example:'She sustained minor injuries.'},
+        {front:'Transition',back:'انتقال، گذار',phonetic:'/trænˈzɪʃn/',example:'The transition to democracy.'},
+        {front:'Validate',back:'تأیید کردن',phonetic:'/ˈvælɪdeɪt/',example:'The results validate our theory.'},
+        {front:'Whereby',back:'به موجب آن',phonetic:'/werˈbaɪ/',example:'A system whereby everyone benefits.'},
+        {front:'Yield',back:'بازده، تولید کردن',phonetic:'/jiːld/',example:'The investment yielded high returns.'},
+    ]},
+    daily:{name:'مکالمه روزمره',icon:'📘',words:[
+        {front:'How are you?',back:'حالت چطوره؟',phonetic:'/haʊ ɑːr juː/',example:'Hi! How are you doing today?'},
+        {front:'Thank you so much',back:'خیلی ممنونم',phonetic:'/θæŋk juː soʊ mʌtʃ/',example:'Thank you so much for your help!'},
+        {front:'Excuse me',back:'ببخشید',phonetic:'/ɪkˈskjuːz miː/',example:'Excuse me, where is the station?'},
+        {front:'I appreciate it',back:'قدردانی می‌کنم',phonetic:'/aɪ əˈpriːʃieɪt ɪt/',example:'I really appreciate your time.'},
+        {front:'No worries',back:'مشکلی نیست',phonetic:'/noʊ ˈwʌriz/',example:'No worries, I can wait.'},
+        {front:'Take care',back:'مراقب خودت باش',phonetic:'/teɪk ker/',example:'Goodbye, take care!'},
+        {front:'I am looking for',back:'دنبال ... می‌گردم',phonetic:'/aɪ æm ˈlʊkɪŋ fɔːr/',example:'I am looking for the pharmacy.'},
+        {front:'Could you help me?',back:'می‌تونی کمکم کنی؟',phonetic:'/kʊd juː help miː/',example:'Could you help me with this?'},
+        {front:'What do you mean?',back:'منظورت چیه؟',phonetic:'/wɒt duː juː miːn/',example:'Sorry, what do you mean by that?'},
+        {front:'I would like',back:'می‌خواستم...',phonetic:'/aɪ wʊd laɪk/',example:'I would like a coffee, please.'},
+        {front:'How much is this?',back:'این چقدره؟',phonetic:'/haʊ mʌtʃ ɪz ðɪs/',example:'Excuse me, how much is this shirt?'},
+        {front:'Never mind',back:'مهم نیست',phonetic:'/ˈnevər maɪnd/',example:'Never mind, I will figure it out.'},
+        {front:'It is up to you',back:'بستگی به خودت داره',phonetic:'/ɪt ɪz ʌp tuː juː/',example:'Where to eat? It is up to you.'},
+        {front:'By the way',back:'راستی، ضمناً',phonetic:'/baɪ ðə weɪ/',example:'By the way, did you hear the news?'},
+        {front:'I am running late',back:'دارم دیر می‌کنم',phonetic:'/aɪ æm ˈrʌnɪŋ leɪt/',example:'Sorry, I am running late.'},
+        {front:'That makes sense',back:'منطقی به نظر می‌رسه',phonetic:'/ðæt meɪks sens/',example:'Oh, that makes sense now!'},
+        {front:'I am not sure',back:'مطمئن نیستم',phonetic:'/aɪ æm nɒt ʃʊr/',example:'I am not sure about the time.'},
+        {front:'Let me know',back:'بهم خبر بده',phonetic:'/let miː noʊ/',example:'If you need anything, let me know.'},
+        {front:'It depends',back:'بستگی داره',phonetic:'/ɪt dɪˈpendz/',example:'Will you come? It depends on the weather.'},
+        {front:'I am sorry',back:'متأسفم',phonetic:'/aɪ æm ˈsɒri/',example:'I am sorry for the inconvenience.'},
+    ]}
+};
+async function addReadyDeck(deckKey){
+    const deckData=readyDecksData[deckKey];if(!deckData){showToast('دک یافت نشد','error');return;}
+    try{
+        const existing=await dbGetAll('decks');if(existing.some(d=>d.name===deckData.name)){showToast('این دک قبلاً اضافه شده','warning');return;}
+        const deckId=generateId();await dbPut('decks',{id:deckId,name:deckData.name,icon:deckData.icon,created:new Date().toISOString(),description:`${deckData.words.length} کارت`});
+        const cards=deckData.words.map(w=>{const fc=FSRS.createCard();return{id:generateId(),deck:deckId,front:w.front,back:w.back,phonetic:w.phonetic||'',example:w.example||'',tag:'',image:null,...fc,created:new Date().toISOString(),reviews:0,correctCount:0};});
+        await dbPutBatch('cards',cards);showToast(`دک "${deckData.name}" اضافه شد!`,'success');addXP(10);
+    }catch(e){showToast('خطا','error');}
+}
+
+// ============================================
+// ============= APP INITIALIZATION ===========
+// ============================================
+async function initApp(){
+    try{
+        await openDatabase();await loadSettings();
+        const today=getToday(),yesterday=new Date(Date.now()-86400000).toISOString().split('T')[0];
+        if(appState.user.lastStudyDate&&appState.user.lastStudyDate!==today&&appState.user.lastStudyDate!==yesterday){appState.user.streak=0;await saveSettings();}
+        refreshHomePage();initAudioWords();
+        setTimeout(()=>{const o=document.getElementById('loadingOverlay');o.classList.add('hide');setTimeout(()=>o.style.display='none',500);},800);
+    }catch(e){
+        console.error('App init error:',e);
+        document.getElementById('loadingOverlay').innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:48px;margin-bottom:16px">⚠️</div><div style="font-size:18px;font-weight:600;margin-bottom:8px">خطا در بارگذاری</div><div style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">${e.message||'لطفاً صفحه را رفرش کنید'}</div><button onclick="location.reload()" style="padding:10px 24px;background:var(--primary);color:white;border:none;border-radius:8px;font-family:var(--font);cursor:pointer">تلاش مجدد</button></div>`;
+    }
+}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+document.addEventListener('DOMContentLoaded',initApp);
+window.addEventListener('popstate',()=>{if(appState.currentPage!=='homePage')showPage('homePage');});
+window.addEventListener('beforeunload',e=>{if(appState.currentPage==='reviewPage'&&appState.review.sessionStats.total>0){e.preventDefault();e.returnValue='';}});
+document.addEventListener('keydown',e=>{
+    if(appState.currentPage==='reviewPage'&&document.getElementById('reviewSession').style.display!=='none'){
+        if(document.getElementById('ratingButtons').style.display==='grid'){if(e.key==='1')rateCard(1);else if(e.key==='2')rateCard(2);else if(e.key==='3')rateCard(3);else if(e.key==='4')rateCard(4);}
+        else if(e.key===' '||e.key==='Enter'){if(appState.review.mode==='normal'||appState.review.mode==='reverse'){e.preventDefault();showAnswer();}}
+    }
+});
+</script>
+</body>
+</html>
